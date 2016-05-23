@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js"></script>
+  <link href="teacher.css" rel="stylesheet" type="text/css" />
+  <link href="content/Office.css" rel="stylesheet" type="text/css" />
+  <link href="bower_components/microsoft.office.js/styles/OfficeThemes.css" rel="stylesheet" type="text/css" />
+  <link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.min.css" rel="stylesheet">
+  <link href="//appsforoffice.microsoft.com/fabric/1.0/fabric.components.min.css" rel="stylesheet">
+  <script src="scripts/MicrosoftAjax.js"></script>
+  <script src="https://richapiaddin.azurewebsites.net/App/Office/Office.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src="App.js"></script>
+  <script src="teacher.js"></script>
+</head>
+
+<body class="ms-font-m">
+	<div class="ms-Grid-col" >
+        <span class="ms-font-xl ms-fontColor-themeLighter ms-fontWeight-semibold"><p  style="color:#2180D2; margin-bottom:0;margin-left:0.2em">Teacher's Planner</p></span>
+		<div id="navigationchoice">
+			<h3>Navigate students to selected:</h3>
+			<div>
+				<input type="radio" name="contenttype" value="outline"> Paragraph<br>
+				<input type="radio" name="contenttype" value="page"> Page<br>
+			</div>
+		</div>
+    </div>
+	<hr>
+	<br />
+    <div class="home flex-container" style="margin-left:1em;">
+		<div id="defaultsection">
+			<button style="border-radius:2px" class="ms-Button ms-Button--primary" id="presentContent">
+								<span class="ms-Button-icon"><i class="ms-Icon"></i></span>
+								<span class="ms-Button-label">Navigate</span>
+								<span class="ms-Button-description">Brings all students to the selected topic (page or outline).</span>
+			</button>
+			<br/>
+			<br/>
+			<hr>
+			<br/>
+			<div id="lessonplans">
+				<h3>Recent Lesson Plans</h3>
+				<ol id="lessonplanlist">
+				</ol>
+			</div>
+			<br/>
+			<div id="createLessonPlanSection">
+				
+				
+				<button style="height:25px; width: 25px; padding:0px; text-align: center; background-color:white;  border-radius:100px; margin-right:5px; display:inline-block" id="createLessonPlan">
+									
+									<span style="color:grey; font-size:20px;" >+</span>
+									
+				</button>
+				<p style="display:inline-block">Create new lesson plan</p>
+				<br/>
+			</div>
+			<br/>
+		</div>
+		
+		<div id="lessonplansection" style="display:none">
+			<div id="agendaSection">
+				<h2>New Lesson Plan</h3>
+				<br/>				
+				<input style="width: 300px; height: 33px" id="lessonPlanName" placeholder="Lesson plan title..."/>
+				<br/>
+				<i>Example: Eclipses</i>
+				<br/>
+				<br/>
+				<h3 id="agendaheader">Agenda</h3>
+				<hr/>
+				<ol id="agenda">
+				</ol>
+			</div>
+			<br/>
+			<div id="addTopicSection">
+				<button style="height:25px; width: 25px; padding:0px; text-align: center; background-color:white;  border-radius:100px; margin-right:5px; display:inline-block" id="addNewTopic">
+									<span class="ms-Button-icon"><i class="ms-Icon"></i></span>
+									<span class="ms-Button-label">+</span>
+									<span class="ms-Button-description">Adds the selected topic</span>
+
+				</button>
+				<p style="display:inline-block">Add Topic</p>
+				<button style="height:25px; width: 25px; padding:0px; text-align: center; background-color:white;  border-radius:100px; margin-right:5px; display:inline-block" id="addNewQuiz">
+									<span class="ms-Button-icon"><i class="ms-Icon"></i></span>
+									<span class="ms-Button-label">+</span>
+									<span class="ms-Button-description">Adds the selected topic</span>
+
+				</button>
+				<p style="display:inline-block">Add Quiz</p>
+				<div id="newtopic" style="display:none">
+					<br/>
+					<br/>
+					<input type ="text" style="height: 33px" name="topicName" id="topicName" placeholder="Topic title..."/>
+					<br/>
+					<i>Example: Reasons for Eclipses</i>
+					<br />
+					<br/>
+					<div id="navigationchoice">
+						<p>Link topic to:</p>
+						<div style="margin-left:20px">
+							<input type="radio" name="contenttype2" value="outline">Selected paragraph</input>
+							<br/>
+							<input type="radio" name="contenttype2" value="page">Selected page</input>
+							<br/>
+							<input type="radio" name="contenttype2" value="distributed">Student copy of selected page</input>
+						</div>
+					</div>
+					<br/>
+					<button class="ms-Button ms-Button--primary" style="border-radius:2px; align:center"  id="saveTopic">
+										<span class="ms-Button-icon"><i class="ms-Icon"></i></span>
+										<span class="ms-Button-label">Save topic</span>
+										<span class="ms-Button-description">Adds the selected topic</span>
+
+					</button>
+				</div>
+				<div id="newQuiz" style="display:none">
+					<br/>
+					<br/>
+					<textarea placeholder="Question"></textarea>
+					<div id="answersDiv">
+						<div class="answerInput">
+							<input type="radio" name="option" checked="true" />
+							<input type="text" />
+						</div>
+						<div class="answerInput">
+							<input type="radio" name="option" />
+							<input type="text" />
+						</div>
+					</div>
+					<button id="addAnswerButton">Add Answer</button>
+					<button id="doneMakingQuizButton">Save Quiz</button>
+				</div>
+			</div>
+			<br/><br/>
+			<button class="ms-Button ms-Button--primary" style="border-radius:2px; align:center; width:90%"  id="goback">
+									<span class="ms-Button-icon"><i class="ms-Icon"></i></span>
+									<span class="ms-Button-label">Save lesson plan</span>
+									<span class="ms-Button-description">Adds the selected topic</span>
+
+				</button>
+		</div>
+	</div>
+</body>
+</html>

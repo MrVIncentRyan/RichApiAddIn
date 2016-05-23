@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />
+		<link rel="stylesheet" type="text/css" href="WolframAlpha.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src="..\..\App\Office\Office.js"></script>
+		<script src="WolframAlpha.js"></script>
+	</head>
+	
+	<body>
+		<h2 id="selectedText">Please select some text!</h2>
+		<button id="selectionActivatedButton" onclick="selectionActivate()">Stop</button>
+		<button onclick="doIt()">Go</button>
+		<img id="loadingImage" style="display:none" src="Images/ajax-loader.gif" />
+		<div id="results"></div>
+	</body>
+
+</html>

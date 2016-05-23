@@ -1,0 +1,123 @@
+Microsoft.Office.WebExtension.InitializationReason.Inserted:"inserted"
+Microsoft.Office.WebExtension.InitializationReason.DocumentOpened:"documentOpened"
+Microsoft.Office.WebExtension.ValueFormat.Unformatted:"unformatted"
+Microsoft.Office.WebExtension.ValueFormat.Formatted:"formatted"
+Microsoft.Office.WebExtension.FilterType.All:"all"
+Microsoft.Office.WebExtension.Parameters.BindingType:"bindingType"
+Microsoft.Office.WebExtension.Parameters.CoercionType:"coercionType"
+Microsoft.Office.WebExtension.Parameters.ValueFormat:"valueFormat"
+Microsoft.Office.WebExtension.Parameters.FilterType:"filterType"
+Microsoft.Office.WebExtension.Parameters.Columns:"columns"
+Microsoft.Office.WebExtension.Parameters.SampleData:"sampleData"
+Microsoft.Office.WebExtension.Parameters.GoToType:"goToType"
+Microsoft.Office.WebExtension.Parameters.SelectionMode:"selectionMode"
+Microsoft.Office.WebExtension.Parameters.Id:"id"
+Microsoft.Office.WebExtension.Parameters.PromptText:"promptText"
+Microsoft.Office.WebExtension.Parameters.ItemName:"itemName"
+Microsoft.Office.WebExtension.Parameters.FailOnCollision:"failOnCollision"
+Microsoft.Office.WebExtension.Parameters.StartRow:"startRow"
+Microsoft.Office.WebExtension.Parameters.StartColumn:"startColumn"
+Microsoft.Office.WebExtension.Parameters.RowCount:"rowCount"
+Microsoft.Office.WebExtension.Parameters.ColumnCount:"columnCount"
+Microsoft.Office.WebExtension.Parameters.Callback:"callback"
+Microsoft.Office.WebExtension.Parameters.AsyncContext:"asyncContext"
+Microsoft.Office.WebExtension.Parameters.Data:"data"
+Microsoft.Office.WebExtension.Parameters.Rows:"rows"
+Microsoft.Office.WebExtension.Parameters.OverwriteIfStale:"overwriteIfStale"
+Microsoft.Office.WebExtension.Parameters.FileType:"fileType"
+Microsoft.Office.WebExtension.Parameters.EventType:"eventType"
+Microsoft.Office.WebExtension.Parameters.Handler:"handler"
+Microsoft.Office.WebExtension.Parameters.SliceSize:"sliceSize"
+Microsoft.Office.WebExtension.Parameters.SliceIndex:"sliceIndex"
+Microsoft.Office.WebExtension.Parameters.ActiveView:"activeView"
+Microsoft.Office.WebExtension.Parameters.Status:"status"
+Microsoft.Office.WebExtension.Parameters.Xml:"xml"
+Microsoft.Office.WebExtension.Parameters.Namespace:"namespace"
+Microsoft.Office.WebExtension.Parameters.Prefix:"prefix"
+Microsoft.Office.WebExtension.Parameters.XPath:"xPath"
+Microsoft.Office.WebExtension.Parameters.Text:"text"
+Microsoft.Office.WebExtension.Parameters.ImageLeft:"imageLeft"
+Microsoft.Office.WebExtension.Parameters.ImageTop:"imageTop"
+Microsoft.Office.WebExtension.Parameters.ImageWidth:"imageWidth"
+Microsoft.Office.WebExtension.Parameters.ImageHeight:"imageHeight"
+Microsoft.Office.WebExtension.Parameters.TaskId:"taskId"
+Microsoft.Office.WebExtension.Parameters.FieldId:"fieldId"
+Microsoft.Office.WebExtension.Parameters.FieldValue:"fieldValue"
+Microsoft.Office.WebExtension.Parameters.ServerUrl:"serverUrl"
+Microsoft.Office.WebExtension.Parameters.ListName:"listName"
+Microsoft.Office.WebExtension.Parameters.ResourceId:"resourceId"
+Microsoft.Office.WebExtension.Parameters.ViewType:"viewType"
+Microsoft.Office.WebExtension.Parameters.ViewName:"viewName"
+Microsoft.Office.WebExtension.Parameters.GetRawValue:"getRawValue"
+Microsoft.Office.WebExtension.Parameters.CellFormat:"cellFormat"
+Microsoft.Office.WebExtension.Parameters.TableOptions:"tableOptions"
+Microsoft.Office.WebExtension.Parameters.TaskIndex:"taskIndex"
+Microsoft.Office.WebExtension.Parameters.ResourceIndex:"resourceIndex"
+Microsoft.Office.WebExtension.Parameters.Url:"url"
+Microsoft.Office.WebExtension.Parameters.MessageHandler:"messageHandler"
+Microsoft.Office.WebExtension.Parameters.Width:"width"
+Microsoft.Office.WebExtension.Parameters.Height:"height"
+Microsoft.Office.WebExtension.Parameters.RequireHTTPs:"requireHTTPS"
+Microsoft.Office.WebExtension.Parameters.MessageToParent:"messageToParent"
+Microsoft.Office.WebExtension.Parameters.XFrameDenySafe:"xFrameDenySafe"
+Microsoft.Office.WebExtension.ApplicationMode.WebEditor:"webEditor"
+Microsoft.Office.WebExtension.ApplicationMode.WebViewer:"webViewer"
+Microsoft.Office.WebExtension.ApplicationMode.Client:"client"
+Microsoft.Office.WebExtension.DocumentMode.ReadOnly:"readOnly"
+Microsoft.Office.WebExtension.DocumentMode.ReadWrite:"readWrite"
+Microsoft.Office.WebExtension.AsyncResultStatus.Succeeded:"succeeded"
+Microsoft.Office.WebExtension.AsyncResultStatus.Failed:"failed"
+Microsoft.Office.WebExtension.BindingType.Table:"table"
+Microsoft.Office.WebExtension.BindingType.Text:"text"
+Microsoft.Office.WebExtension.BindingType.Matrix:"matrix"
+Microsoft.Office.WebExtension.CoercionType.Text:"text"
+Microsoft.Office.WebExtension.CoercionType.Matrix:"matrix"
+Microsoft.Office.WebExtension.CoercionType.Table:"table"
+Microsoft.Office.WebExtension.GoToType.Binding:"binding"
+Microsoft.Office.WebExtension.GoToType.NamedItem:"namedItem"
+Microsoft.Office.WebExtension.GoToType.Slide:"slide"
+Microsoft.Office.WebExtension.GoToType.Index:"index"
+Microsoft.Office.WebExtension.SelectionMode.Default:"default"
+Microsoft.Office.WebExtension.SelectionMode.Selected:"selected"
+Microsoft.Office.WebExtension.SelectionMode.None:"none"
+Microsoft.Office.WebExtension.Index.First:"first"
+Microsoft.Office.WebExtension.Index.Last:"last"
+Microsoft.Office.WebExtension.Index.Next:"next"
+Microsoft.Office.WebExtension.Index.Previous:"previous"
+Microsoft.Office.WebExtension.FileType.Text:"text"
+Microsoft.Office.WebExtension.FileType.Compressed:"compressed"
+Microsoft.Office.WebExtension.FileType.Pdf:"pdf"
+Microsoft.Office.WebExtension.ActiveView.Read:"read"
+Microsoft.Office.WebExtension.ActiveView.Edit:"edit"
+addFromSelectionAsync[bindingType](id, columns)
+addFromNamedItemAsync[itemName, bindingType](id, columns)
+getAllAsync[]()
+getByIdAsync[id]()
+releaseByIdAsync[id]()
+getDataAsync[](coercionType, valueFormat, filterType, rows, columns, startRow, startColumn, rowCount, columnCount)
+setDataAsync[data](coercionType, rows, columns, startRow, startColumn)
+addRowsAsync[data]()
+addColumnsAsync[data]()
+deleteAllDataValuesAsync[]()
+getFilePropertiesAsync[]()
+goToByIdAsync[id, goToType](selectionMode)
+getFileAsync[fileType](sliceSize)
+getSliceAsync[sliceIndex]()
+closeAsync[]()
+getSelectedDataAsync[coercionType](valueFormat, filterType)
+setSelectedDataAsync[data](coercionType, imageLeft, imageTop, imageWidth, imageHeight)
+addHandlerAsync[eventType, handler]()
+removeHandlerAsync[eventType](handler)
+refreshAsync[]()
+saveAsync[](overwriteIfStale)
+getDocumentThemeAsync[]()
+getOfficeThemeAsync[]()
+getActiveViewAsync[]()
+useShortNamespace[](useShortcut)
+select[](str, errorCallback)
+TableData[](rows, headers)
+FileProperties[](filePropertiesDescriptor)
+isSetSupported[](name, minVersion)
+get[name]()
+set[name, value]()
+remove[name]()

@@ -1,0 +1,117 @@
+#content-header {
+    background: #913B8A;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* Fixed header height */
+    overflow: hidden; /* Disable scrollbars for header */
+}
+
+#hierarchy-content-main, #addPage-content-main {
+	background: #fff;
+    position: fixed;
+    top: 80px; /* Same value as #content-header's height */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto; /* Enable scrollbars within main content section */
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.padding {
+    padding: 10px;
+}
+
+#hierarchyDisplay {
+	margin-top: 10px;
+	padding: 10px;
+	height: 275px;
+	width: 250px;
+	background-color: #E6E6E6;
+	overflow: auto;
+}
+
+#hierarchyDisplay p {
+	height: 20px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.hierarchyCollapsible:hover {
+	cursor: pointer;
+}
+
+.hierarchyChildDiv {
+	margin-left: 30px;
+}
+
+.getActiveValue, button{
+	font-size: 18px;
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+	text-align: center;
+	vertical-align: middle;
+	padding: 5px;
+}
+
+.getActiveName {
+	width: 250px;
+}
+
+.getActiveValue {
+	height: 25px;
+	width: 240px;
+	margin-bottom: 10px
+}
+
+.getActiveValue, input[type="text"], textarea {
+	background-color: #F2F2F2;
+	border: 0px;
+}
+
+button {
+	display: block;
+	background-color: #CEECF5;
+}
+
+#addPage-content-main p {
+	margin-bottom: 5px
+}
+
+#addPageInput {
+	height: 36px;
+	width: 260px;
+	font-size: 17px;
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+	margin-right: 10px;
+	margin-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px
+}
+
+#addOutlineInput, #addHTMLInput {
+	height: 200px;
+	width: 265px;
+	margin-bottom: 10px;
+}
+
+input[type="radio"] {
+	margin-right: 10px;
+}
+
+#addPageButton, #addHTMLButton{
+	float: left;
+	margin-right: 10px;
+}
+
+#addPageX, #addPageY {
+	font-size: 17px;
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+	float: left;
+	width: 50px;
+	margin-top: 5px;
+	margin-right: 5px;
+	padding: 5px;
+}

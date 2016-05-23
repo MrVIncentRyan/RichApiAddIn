@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />
+		<link rel="stylesheet" type="text/css" href="RichApiAddIn.css">
+		<script src="Office2/Office.js"></script>
+		<script src="RichApiAddInHierarchy.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	</head>
+	
+	<body>
+		<div id="content-header">
+			<div class="padding">
+				<h1>Welcome</h1>
+			</div>
+		</div>
+		
+		<div id="hierarchy-content-main">
+			<p>
+				This sample shows how to get the hierarchy of Notebook, Section Group, Section, and Page. Next, open a page from the hierarchy using OneNote JavasScript API.
+			</p>
+
+			<button onclick="showHierarchy()" id="showHierarchyButton">Show Hierarchy</button>
+			<div id="hierarchyDisplay">
+			</div>
+			<p>
+				Navigate to another notebook and get the active Notebook name, Section name, and Page name using OneNote JavaScript API
+			</p>
+			
+			<button class="getActiveName" onclick="getNotebook()">Get Active Notebook</button>
+			<div class="getActiveValue" id="activeNotebook"></div>
+			<button class="getActiveName" onclick="getCurrentSection()">Get Active Section</button>
+			<div class="getActiveValue" id="activeSection"></div>
+			<button class="getActiveName" onclick="getCurrentPage()">Get Active Page</button>
+			<div class="getActiveValue" id="activePage"></div>
+			<button onclick="getParagraphs()">Get Paragraphs</button>
+		</div>
+	</body>
+
+</html>

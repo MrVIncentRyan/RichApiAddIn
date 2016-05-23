@@ -1,0 +1,13 @@
+#loadingImage {
+	display: block;
+	margin: auto;
+}
+
+#selectionActivatedButton {
+	margin-bottom: 15px;
+}
+
+.wolframPod {
+	border-top: 2px solid black;
+	padding-bottom: 15px;
+}

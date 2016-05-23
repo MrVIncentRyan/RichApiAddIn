@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- _lcid="1033" _version="16.0.6807.3002" _dal="1" -->
+<!-- _LocalBinding -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    Version 2.0
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    Example:
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="L_CatalogTabTxt" xml:space="preserve">
+    <value>MY ORGANIZATION</value>
+  </data>
+  <data name="L_FileShareTabTxt" xml:space="preserve">
+    <value>SHARED FOLDER</value>
+  </data>
+  <data name="L_RecommendationTabTxt" xml:space="preserve">
+    <value>STORE</value>
+  </data>
+  <data name="L_RecommendationTabIframeTitleTxt" xml:space="preserve">
+    <value>Add-ins from the Office Store</value>
+  </data>
+  <data name="L_GetEntitilementsGeneralError" xml:space="preserve">
+    <value>Cannot connect to catalog.</value>
+  </data>
+  <data name="L_MarketPlaceTabTxt" xml:space="preserve">
+    <value>MY ADD-INS</value>
+  </data>
+  <data name="L_NoAgavePrompt" xml:space="preserve">
+    <value>No add-ins currently available. </value>
+  </data>
+  <data name="L_SignInPrompt" xml:space="preserve">
+    <value>Please sign in with a valid profile to see add-ins. </value>
+  </data>
+  <data name="L_SignInPromptLiveId" xml:space="preserve">
+    <value>You need a Microsoft account to use add-ins from the Office Store.</value>
+  </data>
+  <data name="L_SignInLinkText" xml:space="preserve">
+    <value>Sign In.</value>
+  </data>
+  <data name="L_FixLiveIdAccountSignInPrompt" xml:space="preserve">
+    <value>Your Microsoft account needs attention. Please make sure your password is up to date.</value>
+  </data>
+  <data name="L_AccessDeniedError" xml:space="preserve">
+    <value>Access denied to catalog. </value>
+  </data>
+  <data name="L_TimeOutError" xml:space="preserve">
+    <value>The catalog didn't respond in time, please try again later.</value>
+  </data>
+  <data name="L_RequestFailedError" xml:space="preserve">
+    <value>The request for catalog information failed.</value>
+  </data>
+  <data name="L_NoFeaturedItemsError" xml:space="preserve">
+    <value>No featured add-ins available at this time, please check back later.</value>
+  </data>
+  <data name="L_NoProviderError" xml:space="preserve">
+    <value>Please add or enable add-in catalogs from the Trust Center.</value>
+  </data>
+  <data name="L_Action_Button_Txt_Tooltip" xml:space="preserve">
+    <value>Insert</value>
+    
+  </data>
+  <data name="L_OK_Button_Txt" xml:space="preserve">
+    <value>OK</value>
+    
+  </data>
+  <data name="L_OK_Button_Txt_Tooltip" xml:space="preserve">
+    <value>OK</value>
+    
+  </data>
+  <data name="L_Action_Button_Txt_Tooltip_Outlook" xml:space="preserve">
+    <value>Start</value>
+    
+  </data>
+  <data name="L_Cancel_Button_Text_Tooltip" xml:space="preserve">
+    <value>Cancel</value>
+    
+  </data>
+  <data name="L_Footer_Link_Text_Tooltip" xml:space="preserve">
+    <value>Find more add-ins at the Office Store.</value>
+    
+  </data>
+  <data name="L_WefDialog_ManageButton_Tooltip" xml:space="preserve">
+    <value>Manage My Add-ins</value>
+    
+  </data>
+  <data name="L_WefDialog_RefreshButton_Tooltip" xml:space="preserve">
+    <value>Refresh</value>
+    
+  </data>
+  <data name="L_CatalogTab_Tooltip" xml:space="preserve">
+    <value>Insert add-ins from your organization's add-in catalog.</value>
+  </data>
+  <data name="L_FileShareTab_Tooltip" xml:space="preserve">
+    <value>Insert add-ins you've got available on a shared folder.</value>
+  </data>
+  <data name="L_MarketPlaceTab_Tooltip" xml:space="preserve">
+    <value>Insert add-ins from the Office Store that you own.</value>
+  </data>
+  <data name="L_RecommendationTab_Tooltip" xml:space="preserve">
+    <value>See featured add-ins that we think you may like, available from the Office Store.</value>
+  </data>
+  <data name="L_OfficeStore_Button_Tooltip" xml:space="preserve">
+    <value>Click here to visit the Office Store</value>
+  </data>
+  <data name="L_NoAppsMessageText" xml:space="preserve">
+    <value>Add add-ins to your account at the Office Store.</value>
+  </data>
+  <data name="L_NoAppsMessageTitle" xml:space="preserve">
+    <value>No Add-ins</value>
+  </data>
+  <data name="L_ExchangeTabTxt" xml:space="preserve">
+    <value>My Add-ins</value>
+    
+  </data>
+  <data name="L_CatalogNoAppsInstalledError" xml:space="preserve">
+    <value>Your administrator has not installed Web Add-ins for your organization.</value>
+  </data>
+  <data name="L_Done_Button_Txt_Tooltip" xml:space="preserve">
+    <value>Cancel</value>
+    
+  </data>
+  <data name="L_TrustAll_Button_Txt_Tooltip" xml:space="preserve">
+    <value>Trust All</value>
+    
+  </data>
+  <data name="L_ThisDocumentTabGeneralInfo_Txt" xml:space="preserve">
+    <value>Office Add-ins bring interactive content and functionality to your documents. Add-ins can access the contents of your document and connect to the web to process information. Select an add-in to see more details. Disable an add-in to prevent it from accessing the contents of your document.</value>
+    
+  </data>
+  <data name="L_ThisDocumentTabTxt" xml:space="preserve">
+    <value>OFFICE STORE ADD-INS REQUIRING YOUR PERMISSION</value>
+    
+  </data>
+  <data name="L_ThisDocumentTab_Tooltip" xml:space="preserve">
+    <value>See Office Store Add-ins in this document.</value>
+    
+  </data>
+  <data name="L_Permission_Link_Txt_Tooltip" xml:space="preserve">
+    <value>By trusting this add-in you agree to its Permissions, Privacy Policy, and Terms of Use.</value>
+    
+  </data>
+  <data name="L_TrustUx_ReadMoreLink_Txt_Tooltip" xml:space="preserve">
+    <value>Read more on Office.com</value>
+    
+  </data>
+  <data name="L_Retry_Button_Txt" xml:space="preserve">
+    <value>Retry</value>
+    
+  </data>
+  <data name="L_TrustUx_AppsMessage" xml:space="preserve">
+    <value>These add-ins come from the Office Store. If you trust them, they will have access to the contents of the documents where you use them. Select an add-in to see more details.</value>
+    
+  </data>
+  <data name="L_TrustUx_LostConnection" xml:space="preserve">
+    <value>Sorry, you seem to have lost your network and/or Internet connection. Click "Retry" once you're back online.</value>
+    
+  </data>
+  <data name="L_PermissionTextAndLink1_Txt" xml:space="preserve">
+    <value>By trusting this add-in you agree to its </value>
+    
+  </data>
+  <data name="L_PermissionTextAndLink2_Txt" xml:space="preserve">
+    <value>Permissions, Privacy Policy, and Terms of Use.</value>
+    
+  </data>
+  <data name="L_TrustUx_ReadMoreLink_Txt" xml:space="preserve">
+    <value>Read more</value>
+    
+  </data>
+  <data name="L_OptionsMenu_Tooltip" xml:space="preserve">
+    <value>Options</value>
+    
+  </data>
+  <data name="L_OptionsMenu_AppDetails_Txt" xml:space="preserve">
+    <value>Add-in details</value>
+    
+  </data>
+  <data name="L_OptionsMenu_AppDetails_Txt_Tooltip" xml:space="preserve">
+    <value>View more details about this add-in.</value>
+    
+  </data>
+  <data name="L_OptionsMenu_RateReview_Txt" xml:space="preserve">
+    <value>Rate and review</value>
+    
+  </data>
+  <data name="L_OptionsMenu_RateReview_Txt_Tooltip" xml:space="preserve">
+    <value>Rate and review this add-in on the store.</value>
+    
+  </data>
+  <data name="L_OptionsMenu_Remove_Txt" xml:space="preserve">
+    <value>Remove</value>
+    
+  </data>
+  <data name="L_OptionsMenu_Remove_Txt_Tooltip" xml:space="preserve">
+    <value>Remove this add-in from this device.</value>
+    
+  </data>
+  <data name="L_RemoveAppGeneralError" xml:space="preserve">
+    <value>We were unable to remove {0}. Try again in a few seconds.</value>
+    
+  </data>
+  <data name="L_RemoveAppOfflineError" xml:space="preserve">
+    <value>You need to be online to remove add-ins.</value>
+    
+  </data>
+  <data name="L_Confirmation_RemoveAppAuthenticated_Message" xml:space="preserve">
+    <value>Choose 'Remove' to delete this add-in from this device and hide it in your Microsoft Account. To remove this add-in from other devices, 'Refresh' your list of add-ins on those devices.</value>
+    
+  </data>
+  <data name="L_Confirmation_RemoveAppAnonymous_Message" xml:space="preserve">
+    <value>Choose 'Remove' to delete this add-in from this device.</value>
+    
+  </data>
+  <data name="L_Confirmation_Cancel_Button_Txt" xml:space="preserve">
+    <value>Cancel</value>
+    
+  </data>
+  <data name="L_AddinCommands_MyAccount_Txt" xml:space="preserve">
+    <value>My Account</value>
+    
+  </data>
+  <data name="L_AddinCommands_UploadMyAddin_Txt" xml:space="preserve">
+    <value>Upload My Add-in</value>
+    
+  </data>
+  <data name="L_AddinCommands_UploadAddin_Txt" xml:space="preserve">
+    <value>Upload Add-in</value>
+    
+  </data>
+  <data name="L_AddinCommands_DeveloperFeature_Txt" xml:space="preserve">
+    <value>This feature is for developers to test their add-ins.</value>
+    
+  </data>
+  <data name="L_OneDriveTabTxt" xml:space="preserve">
+    <value>OneDrive</value>
+    
+  </data>
+  <data name="L_OneDriveTab_Tooltip" xml:space="preserve">
+    <value>Insert add-ins from a OneDrive folder that you own.</value>
+    
+  </data>
+  <data name="L_AddinCommands_ChooseManifest_Txt" xml:space="preserve">
+    <value>Choose your add-in manifest</value>
+    
+  </data>
+  <data name="L_Upload_Button_Txt" xml:space="preserve">
+    <value>Upload</value>
+    
+  </data>
+  <data name="L_Browse_Button_Txt" xml:space="preserve">
+    <value>Browse...</value>
+    
+  </data>
+  <data name="L_AddinCommands_LearnMore_Link" xml:space="preserve">
+    <value>Learn more.</value>
+    
+  </data>
+  <data name="L_Reload_Button_Text" xml:space="preserve">
+    <value>Reload</value>
+    
+  </data>
+  <data name="L_AddinsHasLoadingErrors" xml:space="preserve">
+    <value>One or more add-ins failed to load.</value>
+    
+  </data>
+  <data name="L_ExchangeCCTabTxt" xml:space="preserve">
+    <value>Office 365</value>
+    
+  </data>
+  <data name="L_ExchangeCCTab_Tooltip" xml:space="preserve">
+    <value>Insert add-ins that have been assigned to you.</value>
+    
+  </data>
+</root>

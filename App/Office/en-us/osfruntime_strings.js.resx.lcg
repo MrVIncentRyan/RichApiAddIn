@@ -1,0 +1,487 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="C:\Office\Target\x64\debug\osfweb\en-us.pre\jscript\osfruntime_strings.js.resx" PsrId="211" FileType="1" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <Props>
+    <Str Name="LCI" Val="\osfweb\lci\jscript\src0\osfruntime_strings.js.resx.lci" />
+  </Props>
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="FeatureCrew" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Loc" />
+    <Cmt Name="PM" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@SettingsPath@\osfclient\osfclient_main.lsconfig" Type="Config" />
+  <Item ItemId=";osfruntime_strings.js.resx" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";L_ActivateAttempLoading_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in may not load properly, but you can still try to start it.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="172" />
+        <Cmts>
+          <Cmt Name="FeatureCrew" />
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ActivateButton_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Start]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="139" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_AddinNotSupported_Message" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your add-in manifest is not valid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="187" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error message in case developers upload a manifest that is not supported.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_LearnMore_Link" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="188" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Learn more is a fwlink that takes developers to a page in MSDN.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveActivationError_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Something went wrong and we couldn't start this add-in. Please try again later or contact your system administrator.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="173" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveDisabledByAdmin_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in has been disabled by your system administrator.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="154" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveDisabledByOmex_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in has been removed from the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="155" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[FeatureNamingm rolandoj misaun O15:2894740]]></Cmt>
+          <Cmt Name="Loc"><![CDATA["Office Store" please ensure that the term "Store" is consistent with the translation use for "Windows Store" in Term studio. In some languages it is localized in others it is not.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveErrorTile_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="144" />
+      </Item>
+      <Item ItemId=";L_AgaveInformationTitle_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in Information]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="146" />
+      </Item>
+      <Item ItemId=";L_AgaveLicenseExpired_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The license information for this add-in is missing or expired, so it may have limited functionality.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="162" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj, misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveLicenseNotAquiredRefresh_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You need a license to use this add-in. If you already bought one, click "Refresh" to start it.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="161" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveLicenseNotAquired_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Click "Buy" to purchase this add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="159" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj, misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveManifestError_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, but we can't start this add-in because it isn't set up properly.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="174" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[appears in error notification if manifest has errors]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveManifestRequirementsErrorOmex_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is not supported in this version of Office. Visit the Office Store to see where the add-in is supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="184" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[appears in error notification if add-in (Rebranded from Apps to Add-ins) from OMEX has requirements that endpoint does not meet.[Tag:APPS-ODP-Office15.3397494]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveManifestRequirementsError_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is not supported in this version of Office.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="185" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[appears in error notification if add-in (Rebranded from Apps to Add-ins) from any store except OMEX has requirements that endpoint does not meet.[Tag:APPS-ODP-Office15.3397494]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveManifestRetrieve_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[We couldn't get the information needed to start this add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="153" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveName_INFO" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in name: {0}]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="164" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[name of the add-in (Rebranded from Apps to Add-ins), it will appears in error UX for the first time activation to let user know what add-in he is activating. Doesn't localize {0}, it will be replaced with real add-in name at runtime.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveNewAppTitle_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[New Office Add-in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="147" />
+      </Item>
+      <Item ItemId=";L_AgaveNewerVersion_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[An update is available for this add-in. Features, terms of use, and other details may have changed.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="156" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[OsfTerm: capabilities, rolandoj; misaun]]></Cmt>
+          <Cmt Name="PM" />
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveNotExist_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is no longer available.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="150" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj, misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveNotViewableAnonymous_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To use this add-in, sign in to Office with your Microsoft account.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="160" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveOmexNotConfigured_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your system administrator has blocked add-ins from the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="171" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+          <Cmt Name="Loc"><![CDATA["Office Store" please ensure that the term "Store" is consistent with the translation use for "Windows Store" in Term studio. In some languages it is localized in others it is not.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveProvider_INFO" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in provider: {0}]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="165" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[provider of the add-in (Rebranded from Apps to Add-ins), it will appears in error UX for the first time activation to let user know what add-in he is activating. Doesn't localize {0}, it will be replaced with real add-in provider at runtime.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveRetired_ERR" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is no longer available. See details at the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="151" />
+      </Item>
+      <Item ItemId=";L_AgaveRetiring_ERR" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is being retired and will be unavailable soon. See details at the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="152" />
+      </Item>
+      <Item ItemId=";L_AgaveServerConnectionFailed_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[We couldn't connect to the catalog server for this add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="149" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj, misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveSigninRequiredTitle_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sign-in Required]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="148" />
+      </Item>
+      <Item ItemId=";L_AgaveSoftKilled_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[There is important information you should know about this add-in. See details at the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="170" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveSouceLink_INFO" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in source page link: {0}]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="166" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[source page link of the add-in (Rebranded from Apps to Add-ins), it will appears in error UX for the first time activation to let user know what add-in he is activating. Doesn't localize {0}, it will be replaced with real add-in source page link at runtime.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveTrialRefresh_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You're trying out this add-in. If you bought a license for the full version, click "Refresh" to start it.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="158" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj]]></Cmt>
+          <Cmt Name="PM"><![CDATA['Activate' term here refers to the license of the Agave, as opposed to 'start' the app.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveTrial_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You're trying out this add-in. Buy it to get the full version.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="157" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj, misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveUnknownStoreType_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The document is missing information about this add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="167" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveUnsupportedBroswer_ERR" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This browser does not support Office Add-ins. Please try again in a supported browser.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="169" />
+      </Item>
+      <Item ItemId=";L_AgaveUnsupportedStoreType_ERR" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is not available in Office Online. Open this document in desktop version of Office to use the add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="168" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveUntrusted_INFO" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This is a new add-in. It will have access to the contents of this document if you choose Start. {0} is provided by {1}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="163" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AgaveWarningTitle_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in Warning]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="145" />
+      </Item>
+      <Item ItemId=";L_AppsDisabled_WRN" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office Add-ins are disabled]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="176" />
+      </Item>
+      <Item ItemId=";L_BuyButton_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Buy]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="136" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_EnableAppsButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enable Office Add-ins]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="182" />
+      </Item>
+      <Item ItemId=";L_FunctionCallFailed_ERR" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function {0} call failed, error code: {1}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="133" />
+      </Item>
+      <Item ItemId=";L_IframeTitle_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office Add-in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="186" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Iframe title for accessibility]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InfobarIconCloseButtonAccessibleName_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dismiss]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="177" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Accessible name for close button in Agave error UX]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InfobarIconErrorAccessibleName_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="178" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Accessible name for error icon in Agave error UX]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InfobarIconInfoAccessibleName_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Information]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="180" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Accessible name for information icon in Agave error UX]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InfobarIconSecInfoAccessibleName_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Security information]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="181" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Accessible name for security info icon in Agave error UX]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InfobarIconWarningAccessibleName_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="179" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Accessible name for warning icon in Agave error UX]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InsertionDialogTile_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office Add-ins dialog content]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="143" />
+      </Item>
+      <Item ItemId=";L_MoreInfoButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[See Details]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="142" />
+      </Item>
+      <Item ItemId=";L_NotSandBoxSupported_ERR" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You're running a browser that doesn't support some security features we can use to protect you better. We recommend that you upgrade your browser before running Office Add-ins.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="175" />
+      </Item>
+      <Item ItemId=";L_OkButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ok]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="135" />
+      </Item>
+      <Item ItemId=";L_RefreshButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Refresh]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="141" />
+      </Item>
+      <Item ItemId=";L_RefreshLicenseButton_TXT" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Refresh]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="140" />
+        <Cmts>
+          <Cmt Name="FeatureCrew"><![CDATA[rolandoj misaun]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RetryButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="134" />
+      </Item>
+      <Item ItemId=";L_SignInButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sign in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="137" />
+      </Item>
+      <Item ItemId=";L_UpdateButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Update]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="138" />
+      </Item>
+      <Item ItemId=";L_UpgradeBrowserButton_TXT" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upgrade Browser]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="183" />
+      </Item>
+      <Item ItemId=";L_UploadManifest_AddinNotAvailable" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This add-in is no longer available. To reinsert the add-in, Choose {0}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="189" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Show this in add-in's info bar when there is no manifest cached in local storage for taskpane/content add-in inserted by upload manifest dialog, {Placeholder='{0}'} Placeholder will be replaced by L_UploadManifest_LocationSequence.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_UploadManifest_LocationSequence" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert > Office Add-ins]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="190" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Sequence to find the upload manifest entrypoint, the string will be shown in bold.> should be flipped for RTL.]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>

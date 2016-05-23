@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="C:\Office\Target\x64\debug\osfweb\en-us.pre\jscript\outlook_strings.js.resx" PsrId="211" FileType="1" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <Props>
+    <Str Name="LCI" Val="\osfweb\lci\jscript\src0\outlook_strings.js.resx.lci" />
+  </Props>
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Loc" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@SettingsPath@\osfclient\osfclient_main.lsconfig" Type="Config" />
+  <Item ItemId=";outlook_strings.js.resx" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";l_AttachmentDeleteGeneralFailure_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment cannot be deleted from the item.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="207" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The attachment delete fails without a specific error.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_AttachmentDeletedBeforeUploadCompletes_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The user removed the attachment before upload has completed.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="202" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The attachment is removed by user before the item is attached.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_AttachmentErrorName_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Attachment Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="199" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The short name for error with adding attachments]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_AttachmentExceededSize_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment cannot be added because it is too big.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="203" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The attachment is not attached because it is too big.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_AttachmentUploadGeneralFailure_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment cannot be added to the item.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="204" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The attachment upload fails without a specific error.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_CannotAddAttachmentBeforeUpgrade_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Attachments cannot be added while the full reply or forward is being retrieved from the server.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="200" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Attachment cannot be added before the full reply and forward text is retrieved from the server]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_CursorPositionChanged_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The user changed the position of the cursor while the data was being inserted.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="217" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Error given when the cursor position on the body moved while performing sanitization of the data given to the setSelectedData/prepend Async APIs]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_DataWriteErrorName_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Write Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="205" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The short name for generic errors]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_DeleteAttachmentDoesNotExist_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment cannot be deleted because attachment with the attachment index cannot be found.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="206" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The attachment with the attachment index does not exist (for deleteAttachmentAsync api)]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_DisplayNameTooLong_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more of the display names provided is too long.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="215" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Error given when at least one of the display names provided to the API is too long.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_ElevatedPermissionNeededForMethod_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Elevated permission is required to call the method: '{0}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="195" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Elevated permission is needed to call a method]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_ElevatedPermissionNeeded_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Elevated permission is required to access protected members of the JavaScript API for Office.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="194" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Elevated permission is needed to access members of JavaScript object model]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_EmailAddressTooLong_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more of the email addresses provided is too long.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="216" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Error given when at least one of the email addresses provided to the API is too long.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_EwsRequestOversized_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The request exceeds the 1 MB size limit. Please modify your EWS request.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="191" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The size of the EWS request is more than 1 MB]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_ExceededMaxNumberOfAttachments_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Attachments cannot be added because the message already has the maximum number of attachments]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="201" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The message has exceeded the maximum number of allowed attachments]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_HtmlSanitizationFailure_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The HTML santization has failed.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="209" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The HTML Sanitization failed]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InternalFormatError_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[There was an internal format error.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="210" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;There was an internal formatting error]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InternalProtocolError_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Internal protocol error: '{0}'.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="192" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Internal protocl error with error code]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InvalidAttachmentId_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment ID was invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="211" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;An invalid attatchment ID.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InvalidAttachmentPath_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The attachment path was invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="212" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;An invalid attachment path.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InvalidDate_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The input doesn't resolve to a valid date.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="196" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The input parameter does not form a valid date]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InvalidEndTime_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The end time cannot be before the start time.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="208" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Cannot set the end time because it is before the start.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_InvalidEventDates_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The end date occurs before the start date.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="193" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Event end data is before start data]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_NoValidRecipientsProvided_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No valid recipients were provided.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="214" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Error given when the user calls recipients.get/setAsync with zero valid SMTP address.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_NumberOfRecipientsExceeded_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The total number of recipients in the field can't exceed {0}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="213" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Number of recipients the app can add to the message/appointment has been exceeded.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_OffsetNotfound_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[An offset for this time stamp couldn't be found.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="197" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;Could not find an offset for this time stamp]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";l_ParametersNotAsExpected_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The given parameters do not match the expected format.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="198" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-Outlook]5D;The parameters did not match the expected format.]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>

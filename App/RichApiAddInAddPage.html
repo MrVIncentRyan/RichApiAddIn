@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />
+		<link rel="stylesheet" type="text/css" href="RichApiAddIn.css">
+		<script src="Office/Office.js"></script>
+		<script src="RichApiAddInAddPage.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	</head>
+	
+	<body>
+		<div id="content-header">
+			<div class="padding">
+				<h1>Welcome</h1>
+			</div>
+		</div>
+		
+		<div id="addPage-content-main">
+			<p>
+				This sample shows how to add a new Page. Next, add an outline, image, and HTML to the page using OneNote JavaScript API.
+			</p>
+
+			<div>
+				<p><b>1. Add a new page</b></p>
+				<label>Before<input type="radio" name="insertPagePosition" value="before" /></label>
+				<label>After<input type="radio" name="insertPagePosition" value="after" /></label>
+				<label>Last<input type="radio" name="insertPagePosition" value="last" checked="true"/></label>
+				<input id="addPageInput" type="text" placeholder="Enter Title here..." />
+				<button id="addPageButton" onclick="insertPage()">Add Page</button>
+				<button id="addSectionButton" onclick="insertSection()">Add Section</button>
+			</div>
+			
+			<div>
+				<p><b>2. Add an outline with text</b></p>
+				<textarea id="addOutlineInput" placeholder="Add HTML here..." ></textarea>
+				<input id="addPageX" type="text" placeholder="x" />
+				<input id="addPageY" type="text" placeholder="y" />
+				<button id="addOutlineButton" onclick="insertOutline()">Add Outline</button>
+			</div>
+			
+			<div>
+				<p><b>3. Add HTML to the page</b></p>
+				<textarea id="addHTMLInput" placeholder="SampleHTMLhere..." ></textarea>
+				<button id="setHTMLButton" onclick="setHTML()">Set HTML</button>
+			</div>
+		</div>
+	</body>
+
+</html>

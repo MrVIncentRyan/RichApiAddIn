@@ -1,0 +1,27 @@
+/* Page-specific styling */
+#newQuiz textarea {
+	height: 40px;
+	width: 200px;
+	resize: none;
+}
+
+#newQuiz input[type=text] {
+	width: 180px;
+}
+
+#newQuiz input[type=radio] {
+	vertical-align: middle;
+}
+
+.answerInput {
+	margin-bottom: 5px;
+}
+
+.removeX {
+	color: red;
+	vertical-align: middle;
+}
+
+.removeX:hover {
+	cursor: pointer;
+}

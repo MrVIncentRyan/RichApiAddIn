@@ -1,0 +1,45 @@
+.assembly extern 'aacorlib'
+{
+	.publickeytoken = (8F C0 E3 AF 5A BC B6 C4)
+	.ver 0:5:0:0
+}
+.assembly 'outlook_strings'
+{
+	.publickey = (00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 AF D4 A0 E7 72 41 51 D5 DD 52 CB 23 A3 0D ED 7C 00 91 CC 01 CF E9 4B 2B CD 85 B3 F4 EE E3 C4 D8 F6 41 7B FF 76 37 63 A9 96 D6 B2 DF C1 E7 C2 9B CF B8 29 97 79 DF 87 85 CD E2 C1 68 CE EE 48 0E 57 07 25 F2 46 8E 78 2A 9C 24 01 30 2C F6 DC 17 E1 19 11 8E D2 01 19 37 BA E9 69 83 57 AD 21 E8 B6 DF B4 04 75 D1 6E 87 EB 03 C7 44 A5 D3 28 99 A0 DB C5 96 A6 B2 CF A1 E5 09 BE 5F BD 09 FA CF)
+	.hash algorithm 0x00008004
+	.ver 16:0:0:0
+}
+.namespace '_u'
+{
+	.class public abstract sealed 'ExtensibilityStrings'
+		extends ['aacorlib']'System'.'Object'
+	{
+		.field static public string 'l_AttachmentDeleteGeneralFailure_Text'
+		.field static public string 'l_AttachmentDeletedBeforeUploadCompletes_Text'
+		.field static public string 'l_AttachmentErrorName_Text'
+		.field static public string 'l_AttachmentExceededSize_Text'
+		.field static public string 'l_AttachmentUploadGeneralFailure_Text'
+		.field static public string 'l_CannotAddAttachmentBeforeUpgrade_Text'
+		.field static public string 'l_CursorPositionChanged_Text'
+		.field static public string 'l_DataWriteErrorName_Text'
+		.field static public string 'l_DeleteAttachmentDoesNotExist_Text'
+		.field static public string 'l_DisplayNameTooLong_Text'
+		.field static public string 'l_ElevatedPermissionNeededForMethod_Text'
+		.field static public string 'l_ElevatedPermissionNeeded_Text'
+		.field static public string 'l_EmailAddressTooLong_Text'
+		.field static public string 'l_EwsRequestOversized_Text'
+		.field static public string 'l_ExceededMaxNumberOfAttachments_Text'
+		.field static public string 'l_HtmlSanitizationFailure_Text'
+		.field static public string 'l_InternalFormatError_Text'
+		.field static public string 'l_InternalProtocolError_Text'
+		.field static public string 'l_InvalidAttachmentId_Text'
+		.field static public string 'l_InvalidAttachmentPath_Text'
+		.field static public string 'l_InvalidDate_Text'
+		.field static public string 'l_InvalidEndTime_Text'
+		.field static public string 'l_InvalidEventDates_Text'
+		.field static public string 'l_NoValidRecipientsProvided_Text'
+		.field static public string 'l_NumberOfRecipientsExceeded_Text'
+		.field static public string 'l_OffsetNotfound_Text'
+		.field static public string 'l_ParametersNotAsExpected_Text'
+	}
+}

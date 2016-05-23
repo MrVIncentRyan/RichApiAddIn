@@ -1,0 +1,595 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- _lcid="1033" _version="16.0.6723.3002" _dal="1" -->
+<!-- _LocalBinding -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    Version 2.0
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    Example:
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="L_AddBindingFromPromptDefaultText" xml:space="preserve">
+    <value>Please make a selection.</value>
+  </data>
+  <data name="L_AppNameNotExist" xml:space="preserve">
+    <value>Add-in Name for {0} doesn't exist.</value>
+  </data>
+  <data name="L_AppNotExistInitializeNotCalled" xml:space="preserve">
+    <value>Application {0} does not exist. Microsoft.Office.WebExtension.initialize(reason) is not called.</value>
+  </data>
+  <data name="L_BadSelectorString" xml:space="preserve">
+    <value>The string passed into the selector is improperly formatted or unsupported.</value>
+  </data>
+  <data name="L_CallbackNotAFunction" xml:space="preserve">
+    <value>Callback must be of type function, was of type {0}.</value>
+  </data>
+  <data name="L_EventHandlerAdditionFailed" xml:space="preserve">
+    <value>Failed to add the event handler.</value>
+  </data>
+  <data name="L_EventHandlerRemovalFailed" xml:space="preserve">
+    <value>Failed to remove the event handler.</value>
+  </data>
+  <data name="L_FunctionCallFailed" xml:space="preserve">
+    <value>Function {0} call failed, error code: {1}.</value>
+  </data>
+  <data name="L_InitializeNotReady" xml:space="preserve">
+    <value>Office.js has not been fully loaded yet. Please try again later or make sure to add your initialization code on the Office.initialize function.</value>
+  </data>
+  <data name="L_InvalidParameters" xml:space="preserve">
+    <value>Function {0} has invalid parameters.</value>
+  </data>
+  <data name="L_NotImplemented" xml:space="preserve">
+    <value>Function {0} is not implemented.</value>
+  </data>
+  <data name="L_NotSupported" xml:space="preserve">
+    <value>Function {0} is not supported.</value>
+  </data>
+  <data name="L_OsfControlTypeNotSupported" xml:space="preserve">
+    <value>OsfControl type not supported.</value>
+  </data>
+  <data name="L_RedundantCallbackSpecification" xml:space="preserve">
+    <value>Callback cannot be specified both in argument list and in optional object.</value>
+  </data>
+  <data name="L_NoCapability" xml:space="preserve">
+    <value>You don't have sufficient permissions for this action.</value>
+    
+  </data>
+  <data name="L_InvalidCoercion" xml:space="preserve">
+    <value>Invalid Coercion Type</value>
+  </data>
+  <data name="L_DataReadError" xml:space="preserve">
+    <value>Data Read Error</value>
+  </data>
+  <data name="L_DataWriteError" xml:space="preserve">
+    <value>Data Write Error</value>
+  </data>
+  <data name="L_InvalidFormat" xml:space="preserve">
+    <value>Invalid Format Error</value>
+  </data>
+  <data name="L_InvalidDataObject" xml:space="preserve">
+    <value>Invalid Data Object</value>
+  </data>
+  <data name="L_BindingCreationError" xml:space="preserve">
+    <value>Binding Creation Error</value>
+  </data>
+  <data name="L_InvalidAPICall" xml:space="preserve">
+    <value>Invalid API Call</value>
+  </data>
+  <data name="L_EventRegistrationError" xml:space="preserve">
+    <value>Event Registration Error</value>
+  </data>
+  <data name="L_PermissionDenied" xml:space="preserve">
+    <value>Permission Denied</value>
+  </data>
+  <data name="L_HostError" xml:space="preserve">
+    <value>Host Error</value>
+  </data>
+  <data name="L_DataStale" xml:space="preserve">
+    <value>Data Not Current</value>
+  </data>
+  <data name="L_InvalidNode" xml:space="preserve">
+    <value>Invalid Node</value>
+  </data>
+  <data name="L_InvalidBinding" xml:space="preserve">
+    <value>Invalid Binding</value>
+  </data>
+  <data name="L_InvalidBindingError" xml:space="preserve">
+    <value>Invalid Binding Error</value>
+  </data>
+  <data name="L_InvalidBindingOperation" xml:space="preserve">
+    <value>Invalid Binding Operation</value>
+  </data>
+  <data name="L_InternalError" xml:space="preserve">
+    <value>Internal Error</value>
+  </data>
+  <data name="L_ReadSettingsError" xml:space="preserve">
+    <value>Read Settings Error</value>
+  </data>
+  <data name="L_SaveSettingsError" xml:space="preserve">
+    <value>Save Settings Error</value>
+  </data>
+  <data name="L_SettingsStaleError" xml:space="preserve">
+    <value>Settings Stale Error</value>
+  </data>
+  <data name="L_MissingParameter" xml:space="preserve">
+    <value>Missing Parameter</value>
+    
+  </data>
+  <data name="L_InvalidValue" xml:space="preserve">
+    <value>Invalid Value</value>
+    
+  </data>
+  <data name="L_OutOfRange" xml:space="preserve">
+    <value>Out of Range</value>
+    
+  </data>
+  <data name="L_NetworkProblem" xml:space="preserve">
+    <value>Network Problem</value>
+  </data>
+  <data name="L_MemoryLimit" xml:space="preserve">
+    <value>Memory Limit Exceeded</value>
+  </data>
+  <data name="L_APINotSupported" xml:space="preserve">
+    <value>API Not Supported</value>
+  </data>
+  <data name="L_APICallFailed" xml:space="preserve">
+    <value>API Call Failed</value>
+  </data>
+  <data name="L_CoercionTypeNotSupported" xml:space="preserve">
+    <value>The specified coercion type is not supported.</value>
+    
+  </data>
+  <data name="L_GetSelectionNotSupported" xml:space="preserve">
+    <value>The current selection is not supported.</value>
+    
+  </data>
+  <data name="L_CoercionTypeNotMatchBinding" xml:space="preserve">
+    <value>The specified coercion type is not compatible with this binding type.</value>
+    
+  </data>
+  <data name="L_InvalidGetRowColumnCounts" xml:space="preserve">
+    <value>The specified rowCount or columnCount values are invalid.</value>
+    
+  </data>
+  <data name="L_SelectionNotSupportCoercionType" xml:space="preserve">
+    <value>The current selection is not compatible with the specified coercion type.</value>
+    
+  </data>
+  <data name="L_InvalidGetStartRowColumn" xml:space="preserve">
+    <value>The specified startRow or startColumn values are invalid.</value>
+    
+  </data>
+  <data name="L_NonUniformPartialGetNotSupported" xml:space="preserve">
+    <value>Coordinate parameters cannot be used with coercion type Table when the table contains merged cells.</value>
+    
+  </data>
+  <data name="L_GetDataIsTooLarge" xml:space="preserve">
+    <value>The requested data set is too large.</value>
+    
+  </data>
+  <data name="L_FileTypeNotSupported" xml:space="preserve">
+    <value>The specified file type is not supported.</value>
+    
+  </data>
+  <data name="L_GetDataParametersConflict" xml:space="preserve">
+    <value>The specified parameters conflict.</value>
+    
+  </data>
+  <data name="L_InvalidGetColumns" xml:space="preserve">
+    <value>The specified columns are invalid.</value>
+    
+  </data>
+  <data name="L_InvalidGetRows" xml:space="preserve">
+    <value>The specified rows are invalid.</value>
+    
+  </data>
+  <data name="L_InvalidReadForBlankRow" xml:space="preserve">
+    <value>The specified row is blank.</value>
+    
+  </data>
+  <data name="L_UnsupportedDataObject" xml:space="preserve">
+    <value>The supplied data object type is not supported.</value>
+    
+  </data>
+  <data name="L_CannotWriteToSelection" xml:space="preserve">
+    <value>Cannot write to the current selection.</value>
+    
+  </data>
+  <data name="L_DataNotMatchSelection" xml:space="preserve">
+    <value>The supplied data object is not compatible with the shape or dimensions of the current selection.</value>
+    
+  </data>
+  <data name="L_OverwriteWorksheetData" xml:space="preserve">
+    <value>The set operation failed because the supplied data object will overwrite or shift data.</value>
+    
+  </data>
+  <data name="L_DataNotMatchBindingSize" xml:space="preserve">
+    <value>The supplied data object does not match the size of the current selection.</value>
+    
+  </data>
+  <data name="L_InvalidSetStartRowColumn" xml:space="preserve">
+    <value>The specified startRow or startColumn values are invalid.</value>
+    
+  </data>
+  <data name="L_InvalidDataFormat" xml:space="preserve">
+    <value>The format of the specified data object is invalid.</value>
+    
+  </data>
+  <data name="L_DataNotMatchCoercionType" xml:space="preserve">
+    <value>The type of the specified data object is not compatible with the current selection.</value>
+    
+  </data>
+  <data name="L_DataNotMatchBindingType" xml:space="preserve">
+    <value>The specified data object is not compatible with the binding type.</value>
+    
+  </data>
+  <data name="L_SetDataIsTooLarge" xml:space="preserve">
+    <value>The specified data object is too large.</value>
+    
+  </data>
+  <data name="L_NonUniformPartialSetNotSupported" xml:space="preserve">
+    <value>Coordinate parameters cannot be used with coercion type Table when the table contains merged cells.</value>
+    
+  </data>
+  <data name="L_InvalidSetColumns" xml:space="preserve">
+    <value>The specified columns are invalid.</value>
+    
+  </data>
+  <data name="L_InvalidSetRows" xml:space="preserve">
+    <value>The specified rows are invalid.</value>
+    
+  </data>
+  <data name="L_SetDataParametersConflict" xml:space="preserve">
+    <value>The specified parameters conflict.</value>
+    
+  </data>
+  <data name="L_SelectionCannotBound" xml:space="preserve">
+    <value>Cannot bind to the current selection.</value>
+    
+  </data>
+  <data name="L_BindingNotExist" xml:space="preserve">
+    <value>The specified binding does not exist.</value>
+    
+  </data>
+  <data name="L_BindingToMultipleSelection" xml:space="preserve">
+    <value>Noncontiguous selections are not supported.</value>
+    
+  </data>
+  <data name="L_InvalidSelectionForBindingType" xml:space="preserve">
+    <value>A binding cannot be created with the current selection and the specified binding type.</value>
+    
+  </data>
+  <data name="L_OperationNotSupportedOnThisBindingType" xml:space="preserve">
+    <value>Operation is not supported on this binding type.</value>
+    
+  </data>
+  <data name="L_NamedItemNotFound" xml:space="preserve">
+    <value>The named item does not exist.</value>
+    
+  </data>
+  <data name="L_MultipleNamedItemFound" xml:space="preserve">
+    <value>Multiple objects with the same name were found.</value>
+    
+  </data>
+  <data name="L_InvalidNamedItemForBindingType" xml:space="preserve">
+    <value>The specified binding type is not compatible with the supplied named item.</value>
+    
+  </data>
+  <data name="L_UnknownBindingType" xml:space="preserve">
+    <value>The binding type is not supported.</value>
+    
+  </data>
+  <data name="L_OperationNotSupportedOnMatrixData" xml:space="preserve">
+    <value>Selected content needs to be in table format. Format the data as a table and try again.</value>
+    
+  </data>
+  <data name="L_InvalidColumnsForBinding" xml:space="preserve">
+    <value>The specified columns are invalid.</value>
+    
+  </data>
+  <data name="L_SettingNameNotExist" xml:space="preserve">
+    <value>The specified setting name does not exist.</value>
+    
+  </data>
+  <data name="L_SettingsCannotSave" xml:space="preserve">
+    <value>The settings could not be saved.</value>
+    
+  </data>
+  <data name="L_SettingsAreStale" xml:space="preserve">
+    <value>Settings could not be saved because they are not current.</value>
+    
+  </data>
+  <data name="L_OperationNotSupported" xml:space="preserve">
+    <value>The operation is not supported.</value>
+    
+  </data>
+  <data name="L_InternalErrorDescription" xml:space="preserve">
+    <value>An internal error has occurred.</value>
+    
+  </data>
+  <data name="L_DocumentReadOnly" xml:space="preserve">
+    <value>The requested operation is not allowed on the current document mode.</value>
+    
+  </data>
+  <data name="L_EventHandlerNotExist" xml:space="preserve">
+    <value>The specified event handler was not found for this binding.</value>
+    
+  </data>
+  <data name="L_InvalidApiCallInContext" xml:space="preserve">
+    <value>Invalid API call in the current context.</value>
+    
+  </data>
+  <data name="L_ShuttingDown" xml:space="preserve">
+    <value>Operation failed because the data is not current on the server.</value>
+    
+  </data>
+  <data name="L_UnsupportedEnumeration" xml:space="preserve">
+    <value>Unsupported Enumeration</value>
+    
+  </data>
+  <data name="L_UnsupportedEnumerationMessage" xml:space="preserve">
+    <value>The enumeration isn't supported in the current host application.</value>
+    
+  </data>
+  <data name="L_IndexOutOfRange" xml:space="preserve">
+    <value>Index out of range.</value>
+    
+  </data>
+  <data name="L_BrowserAPINotSupported" xml:space="preserve">
+    <value>This browser does not support the requested API.</value>
+    
+  </data>
+  <data name="L_RequestTimeout" xml:space="preserve">
+    <value>The call took too long to execute.</value>
+    
+  </data>
+  <data name="L_TooManyIncompleteRequests" xml:space="preserve">
+    <value>Wait until the previous call completes.</value>
+    
+  </data>
+  <data name="L_RequestTokenUnavailable" xml:space="preserve">
+    <value>This API has been throttled to slow the call frequency.</value>
+    
+  </data>
+  <data name="L_ActivityLimitReached" xml:space="preserve">
+    <value>Activity limit has been reached.</value>
+    
+  </data>
+  <data name="L_CustomXmlNodeNotFound" xml:space="preserve">
+    <value>The specified node was not found.</value>
+    
+  </data>
+  <data name="L_CustomXmlError" xml:space="preserve">
+    <value>Custom XML Error.</value>
+    
+  </data>
+  <data name="L_CannotNavigateTo" xml:space="preserve">
+    <value>The object is located in a place where navigation is not supported.</value>
+    
+  </data>
+  <data name="L_SpecifiedIdNotExist" xml:space="preserve">
+    <value>The specified ID does not exist.</value>
+    
+  </data>
+  <data name="L_NavOutOfBound" xml:space="preserve">
+    <value>The operation failed because the index is out of range.</value>
+    
+  </data>
+  <data name="L_ElementMissing" xml:space="preserve">
+    <value>We couldn't format the table cell because some parameter values are missing. Double-check the parameters and try again.</value>
+    
+  </data>
+  <data name="L_InvalidCellsValue" xml:space="preserve">
+    <value>One or more of the cells parameters have values that aren't allowed. Double-check the values and try again.</value>
+    
+  </data>
+  <data name="L_InvalidTableOptionValue" xml:space="preserve">
+    <value>One or more of the tableOptions parameters have values that aren't allowed. Double-check the values and try again.</value>
+    
+  </data>
+  <data name="L_InvalidFormatValue" xml:space="preserve">
+    <value>One or more of the format parameters have values that aren't allowed. Double-check the values and try again.</value>
+    
+  </data>
+  <data name="L_RowIndexOutOfRange" xml:space="preserve">
+    <value>The row index value is out of the allowed range. Use a value (0 or higher) that's less than the number of rows.</value>
+    
+  </data>
+  <data name="L_ColIndexOutOfRange" xml:space="preserve">
+    <value>The column index value is out of the allowed range. Use a value (0 or higher) that's less than the number of columns.</value>
+    
+  </data>
+  <data name="L_FormatValueOutOfRange" xml:space="preserve">
+    <value>The value is out of the allowed range.</value>
+    
+  </data>
+  <data name="L_CloseFileBeforeRetrieve" xml:space="preserve">
+    <value>Call closeAsync on the current File before retrieving another.</value>
+    
+  </data>
+  <data name="L_NetworkProblemRetrieveFile" xml:space="preserve">
+    <value>A network problem has prevented retrieval of the file.</value>
+    
+  </data>
+  <data name="L_SliceSizeNotSupported" xml:space="preserve">
+    <value>The specified slice size is not supported.</value>
+    
+  </data>
+  <data name="L_NotSupportedBindingType" xml:space="preserve">
+    <value>The specified binding type {0} is not supported.</value>
+  </data>
+  <data name="L_NotSupportedEventType" xml:space="preserve">
+    <value>The specified event type {0} is not supported.</value>
+  </data>
+  <data name="L_MissingRequiredArguments" xml:space="preserve">
+    <value>missing some required arguments</value>
+  </data>
+  <data name="L_TooManyArguments" xml:space="preserve">
+    <value>too many arguments</value>
+  </data>
+  <data name="L_TooManyOptionalObjects" xml:space="preserve">
+    <value>multiple optional objects in parameter list</value>
+  </data>
+  <data name="L_TooManyOptionalFunction" xml:space="preserve">
+    <value>multiple optional functions in parameter list</value>
+  </data>
+  <data name="L_InValidOptionalArgument" xml:space="preserve">
+    <value>invalid optional argument</value>
+  </data>
+  <data name="L_CellDataAmountBeyondLimits" xml:space="preserve">
+    <value>Note: The number of cells in a table is suggested to be below 20,000 cells.</value>
+    
+  </data>
+  <data name="L_CellFormatAmountBeyondLimits" xml:space="preserve">
+    <value>Note: The formatting sets set by a Formatting API call is suggested to be below 100.</value>
+    
+  </data>
+  <data name="L_DataWriteReminder" xml:space="preserve">
+    <value>Data Write Reminder</value>
+    
+  </data>
+  <data name="L_FormattingReminder" xml:space="preserve">
+    <value>Formatting Reminder</value>
+    
+  </data>
+  <data name="L_UserNotSignedIn" xml:space="preserve">
+    <value>No user is signed into Office.</value>
+    
+  </data>
+  <data name="L_InvalidObjectPath" xml:space="preserve">
+    <value>The object path '{0}' isn't working for what you're trying to do. If you're using the object across multiple "context.sync" calls and outside the sequential execution of a ".run" batch, please use the "context.trackedObjects.add()" and "context.trackedObjects.remove()" methods to manage the object's lifetime.</value>
+    
+  </data>
+  <data name="L_PropertyNotLoaded" xml:space="preserve">
+    <value>The property '{0}' is not available. Before reading the property's value, call the load method on the containing object and call "context.sync()" on the associated request context.</value>
+    
+  </data>
+  <data name="L_InvalidRequestContext" xml:space="preserve">
+    <value>Cannot use the object across different request contexts.</value>
+    
+  </data>
+  <data name="L_InvalidArgument" xml:space="preserve">
+    <value>The argument '{0}' doesn't work for this situation, is missing, or isn't in the right format.</value>
+    
+  </data>
+  <data name="L_RunMustReturnPromise" xml:space="preserve">
+    <value>The batch function passed to the ".run" method didn't return a promise. The function must return a promise, so that any automatically-tracked objects can be released at the batch's completion. Typically, you return a promise by returning the response from "context.sync()".</value>
+    
+  </data>
+  <data name="L_DialogAddressNotTrusted" xml:space="preserve">
+    <value>The specified address has not been not trusted by the add-in</value>
+    
+  </data>
+  <data name="L_DialogAlreadyOpened" xml:space="preserve">
+    <value>The operation failed because this add-in already has an active dialog.</value>
+    
+  </data>
+  <data name="L_DialogNavigateError" xml:space="preserve">
+    <value>Dialog Navigation Error</value>
+    
+  </data>
+  <data name="L_DisplayDialogError" xml:space="preserve">
+    <value>Display Dialog Error</value>
+    
+  </data>
+</root>

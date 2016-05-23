@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- _lcid="1033" _version="16.0.6723.3002" _dal="1" -->
+<!-- _LocalBinding -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    Version 2.0
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    Example:
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="l_EwsRequestOversized_Text" xml:space="preserve">
+    <value>The request exceeds the 1 MB size limit. Please modify your EWS request.</value>
+	
+  </data>
+  <data name="l_InternalProtocolError_Text" xml:space="preserve">
+    <value>Internal protocol error: '{0}'.</value>
+	
+  </data>
+  <data name="l_InvalidEventDates_Text" xml:space="preserve">
+    <value>The end date occurs before the start date.</value>
+	
+  </data>
+  <data name="l_ElevatedPermissionNeeded_Text" xml:space="preserve">
+    <value>Elevated permission is required to access protected members of the JavaScript API for Office.</value>
+	
+  </data>
+  <data name="l_ElevatedPermissionNeededForMethod_Text" xml:space="preserve">
+    <value>Elevated permission is required to call the method: '{0}'.</value>
+	
+  </data>
+  <data name="l_InvalidDate_Text" xml:space="preserve">
+    <value>The input doesn't resolve to a valid date.</value>
+	
+  </data>
+  <data name="l_OffsetNotfound_Text" xml:space="preserve">
+    <value>An offset for this time stamp couldn't be found.</value>
+	
+  </data>
+  <data name="l_ParametersNotAsExpected_Text" xml:space="preserve">
+    <value>The given parameters do not match the expected format.</value>
+	
+  </data>
+  <data name="l_AttachmentErrorName_Text" xml:space="preserve">
+    <value>Attachment Error</value>
+	
+  </data>
+  <data name="l_CannotAddAttachmentBeforeUpgrade_Text" xml:space="preserve">
+    <value>Attachments cannot be added while the full reply or forward is being retrieved from the server.</value>
+	
+  </data>
+  <data name="l_ExceededMaxNumberOfAttachments_Text" xml:space="preserve">
+    <value>Attachments cannot be added because the message already has the maximum number of attachments</value>
+	
+  </data>
+  <data name="l_AttachmentDeletedBeforeUploadCompletes_Text" xml:space="preserve">
+    <value>The user removed the attachment before upload has completed.</value>
+	
+  </data>
+  <data name="l_AttachmentExceededSize_Text" xml:space="preserve">
+    <value>The attachment cannot be added because it is too big.</value>
+	
+  </data>
+  <data name="l_AttachmentUploadGeneralFailure_Text" xml:space="preserve">
+    <value>The attachment cannot be added to the item.</value>
+	
+  </data>
+  <data name="l_DataWriteErrorName_Text" xml:space="preserve">
+    <value>Data Write Error</value>
+	
+  </data>
+  <data name="l_DeleteAttachmentDoesNotExist_Text" xml:space="preserve">
+    <value>The attachment cannot be deleted because attachment with the attachment index cannot be found.</value>
+	
+  </data>
+  <data name="l_AttachmentDeleteGeneralFailure_Text" xml:space="preserve">
+    <value>The attachment cannot be deleted from the item.</value>
+	
+  </data>
+  <data name="l_InvalidEndTime_Text" xml:space="preserve">
+    <value>The end time cannot be before the start time.</value>
+	
+  </data>
+  <data name="l_HtmlSanitizationFailure_Text" xml:space="preserve">
+    <value>The HTML santization has failed.</value>
+	
+  </data>
+  <data name="l_InternalFormatError_Text" xml:space="preserve">
+    <value>There was an internal format error.</value>
+	
+  </data>
+  <data name="l_InvalidAttachmentId_Text" xml:space="preserve">
+    <value>The attachment ID was invalid.</value>
+	
+  </data>
+  <data name="l_InvalidAttachmentPath_Text" xml:space="preserve">
+    <value>The attachment path was invalid.</value>
+	
+  </data>
+  <data name="l_NumberOfRecipientsExceeded_Text" xml:space="preserve">
+    <value>The total number of recipients in the field can't exceed {0}.</value>
+	
+  </data>
+  <data name="l_NoValidRecipientsProvided_Text" xml:space="preserve">
+    <value>No valid recipients were provided.</value>
+	
+  </data>
+  <data name="l_DisplayNameTooLong_Text" xml:space="preserve">
+    <value>One or more of the display names provided is too long.</value>
+	
+  </data>
+  <data name="l_EmailAddressTooLong_Text" xml:space="preserve">
+    <value>One or more of the email addresses provided is too long.</value>
+	
+  </data>
+  <data name="l_CursorPositionChanged_Text" xml:space="preserve">
+    <value>The user changed the position of the cursor while the data was being inserted.</value>
+	
+  </data>
+</root>

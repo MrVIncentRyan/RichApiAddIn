@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src = "..\..\App\Office\Office.js"></script>
+		<script src="GetTeams.js"></script>
+	</head>
+	
+	<body>
+		<button onclick="getTeams('nfl')">Football!</button>
+		<button onclick="getTeams('nba')">Basketball!</button>
+		<button onclick="getTeams('mlb')">Baseball!</button>
+		<input type="text" id="searchPageInput" />
+		<button onclick="searchPages()">Search!</button>
+		<div id="searchItems" />
+	</body>
+
+</html>

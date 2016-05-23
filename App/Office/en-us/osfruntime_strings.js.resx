@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- _lcid="1033" _version="16.0.6723.3002" _dal="1" -->
+<!-- _LocalBinding -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    Version 2.0
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    Example:
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="L_FunctionCallFailed_ERR" xml:space="preserve">
+    <value>Function {0} call failed, error code: {1}.</value>
+  </data>
+  <data name="L_RetryButton_TXT" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="L_OkButton_TXT" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="L_BuyButton_TXT" xml:space="preserve">
+    <value>Buy</value>
+  </data>
+  <data name="L_SignInButton_TXT" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="L_UpdateButton_TXT" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="L_ActivateButton_TXT" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="L_RefreshLicenseButton_TXT" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="L_RefreshButton_TXT" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="L_MoreInfoButton_TXT" xml:space="preserve">
+    <value>See Details</value>
+  </data>
+  <data name="L_InsertionDialogTile_TXT" xml:space="preserve">
+    <value>Office Add-ins dialog content</value>
+  </data>
+  <data name="L_AgaveErrorTile_TXT" xml:space="preserve">
+    <value>Add-in Error</value>
+  </data>
+  <data name="L_AgaveWarningTitle_TXT" xml:space="preserve">
+    <value>Add-in Warning</value>
+  </data>
+  <data name="L_AgaveInformationTitle_TXT" xml:space="preserve">
+    <value>Add-in Information</value>
+  </data>
+  <data name="L_AgaveNewAppTitle_TXT" xml:space="preserve">
+    <value>New Office Add-in</value>
+  </data>
+  <data name="L_AgaveSigninRequiredTitle_TXT" xml:space="preserve">
+    <value>Sign-in Required</value>
+  </data>
+  <data name="L_AgaveServerConnectionFailed_ERR" xml:space="preserve">
+    <value>We couldn't connect to the catalog server for this add-in.</value>
+  </data>
+  <data name="L_AgaveNotExist_ERR" xml:space="preserve">
+    <value>This add-in is no longer available.</value>
+  </data>
+  <data name="L_AgaveRetired_ERR" xml:space="preserve">
+    <value>This add-in is no longer available. See details at the Office Store.</value>
+  </data>
+  <data name="L_AgaveRetiring_ERR" xml:space="preserve">
+    <value>This add-in is being retired and will be unavailable soon. See details at the Office Store.</value>
+  </data>
+  <data name="L_AgaveManifestRetrieve_ERR" xml:space="preserve">
+    <value>We couldn't get the information needed to start this add-in.</value>
+  </data>
+  <data name="L_AgaveDisabledByAdmin_ERR" xml:space="preserve">
+    <value>This add-in has been disabled by your system administrator.</value>
+  </data>
+  <data name="L_AgaveDisabledByOmex_ERR" xml:space="preserve">
+    <value>This add-in has been removed from the Office Store.</value>
+  </data>
+  <data name="L_AgaveNewerVersion_ERR" xml:space="preserve">
+    <value>An update is available for this add-in. Features, terms of use, and other details may have changed.</value>
+  </data>
+  <data name="L_AgaveTrial_ERR" xml:space="preserve">
+    <value>You're trying out this add-in. Buy it to get the full version.</value>
+  </data>
+  <data name="L_AgaveTrialRefresh_ERR" xml:space="preserve">
+    <value>You're trying out this add-in. If you bought a license for the full version, click "Refresh" to start it.</value>
+  </data>
+  <data name="L_AgaveLicenseNotAquired_ERR" xml:space="preserve">
+    <value>Click "Buy" to purchase this add-in.</value>
+  </data>
+  <data name="L_AgaveNotViewableAnonymous_ERR" xml:space="preserve">
+    <value>To use this add-in, sign in to Office with your Microsoft account.</value>
+  </data>
+  <data name="L_AgaveLicenseNotAquiredRefresh_ERR" xml:space="preserve">
+    <value>You need a license to use this add-in. If you already bought one, click "Refresh" to start it.</value>
+  </data>
+  <data name="L_AgaveLicenseExpired_ERR" xml:space="preserve">
+    <value>The license information for this add-in is missing or expired, so it may have limited functionality.</value>
+  </data>
+  <data name="L_AgaveUntrusted_INFO" xml:space="preserve">
+    <value>This is a new add-in. It will have access to the contents of this document if you choose Start. {0} is provided by {1}.</value>
+  </data>
+  <data name="L_AgaveName_INFO" xml:space="preserve">
+    <value>Add-in name: {0}</value>
+    
+  </data>
+  <data name="L_AgaveProvider_INFO" xml:space="preserve">
+    <value>Add-in provider: {0}</value>
+    
+  </data>
+  <data name="L_AgaveSouceLink_INFO" xml:space="preserve">
+    <value>Add-in source page link: {0}</value>
+    
+  </data>
+  <data name="L_AgaveUnknownStoreType_ERR" xml:space="preserve">
+    <value>The document is missing information about this add-in.</value>
+  </data>
+  <data name="L_AgaveUnsupportedStoreType_ERR" xml:space="preserve">
+    <value>This add-in is not available in Office Online. Open this document in desktop version of Office to use the add-in.</value>
+  </data>
+  <data name="L_AgaveUnsupportedBroswer_ERR" xml:space="preserve">
+    <value>This browser does not support Office Add-ins. Please try again in a supported browser.</value>
+  </data>
+  <data name="L_AgaveSoftKilled_ERR" xml:space="preserve">
+    <value>There is important information you should know about this add-in. See details at the Office Store.</value>
+  </data>
+  <data name="L_AgaveOmexNotConfigured_ERR" xml:space="preserve">
+    <value>Your system administrator has blocked add-ins from the Office Store.</value>
+  </data>
+  <data name="L_ActivateAttempLoading_ERR" xml:space="preserve">
+    <value>This add-in may not load properly, but you can still try to start it.</value>
+  </data>
+  <data name="L_AgaveActivationError_ERR" xml:space="preserve">
+    <value>Something went wrong and we couldn't start this add-in. Please try again later or contact your system administrator.</value>
+  </data>
+  <data name="L_AgaveManifestError_ERR" xml:space="preserve">
+    <value>Sorry, but we can't start this add-in because it isn't set up properly.</value>
+    
+  </data>
+  <data name="L_NotSandBoxSupported_ERR" xml:space="preserve">
+    <value>You're running a browser that doesn't support some security features we can use to protect you better. We recommend that you upgrade your browser before running Office Add-ins.</value>
+  </data>
+  <data name="L_AppsDisabled_WRN" xml:space="preserve">
+    <value>Office Add-ins are disabled</value>
+  </data>
+  <data name="L_InfobarIconCloseButtonAccessibleName_TXT" xml:space="preserve">
+    <value>Dismiss</value>
+    
+  </data>
+  <data name="L_InfobarIconErrorAccessibleName_TXT" xml:space="preserve">
+    <value>Error</value>
+    
+  </data>
+  <data name="L_InfobarIconWarningAccessibleName_TXT" xml:space="preserve">
+    <value>Warning</value>
+    
+  </data>
+  <data name="L_InfobarIconInfoAccessibleName_TXT" xml:space="preserve">
+    <value>Information</value>
+    
+  </data>
+  <data name="L_InfobarIconSecInfoAccessibleName_TXT" xml:space="preserve">
+    <value>Security information</value>
+    
+  </data>
+  <data name="L_EnableAppsButton_TXT" xml:space="preserve">
+    <value>Enable Office Add-ins</value>
+  </data>
+  <data name="L_UpgradeBrowserButton_TXT" xml:space="preserve">
+    <value>Upgrade Browser</value>
+  </data>
+  <data name="L_AgaveManifestRequirementsErrorOmex_ERR" xml:space="preserve">
+    <value>This add-in is not supported in this version of Office. Visit the Office Store to see where the add-in is supported.</value>
+    
+  </data>
+  <data name="L_AgaveManifestRequirementsError_ERR" xml:space="preserve">
+    <value>This add-in is not supported in this version of Office.</value>
+    
+  </data>
+  <data name="L_IframeTitle_TXT" xml:space="preserve">
+    <value>Office Add-in</value>
+    
+  </data>
+  <data name="L_AddinCommands_AddinNotSupported_Message" xml:space="preserve">
+    <value>Your add-in manifest is not valid.</value>
+    
+  </data>
+  <data name="L_AddinCommands_LearnMore_Link" xml:space="preserve">
+    <value>Learn more.</value>
+    
+  </data>
+  <data name="L_UploadManifest_AddinNotAvailable" xml:space="preserve">
+    <value>This add-in is no longer available. To reinsert the add-in, Choose {0}.</value>
+    
+  </data>
+  <data name="L_UploadManifest_LocationSequence" xml:space="preserve">
+    <value>Insert &gt; Office Add-ins</value>
+    
+  </data>
+</root>

@@ -1,0 +1,607 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="C:\Office\Target\x64\debug\osfweb\en-us.pre\jscript\wefgallery_strings.js.resx" PsrId="211" FileType="1" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <Props>
+    <Str Name="LCI" Val="\osfweb\lci\jscript\src0\wefgallery_strings.js.resx.lci" />
+  </Props>
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="ja-jp.pseudo" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Loc" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@SettingsPath@\osfclient\osfclient_main.lsconfig" Type="Config" />
+  <Item ItemId=";wefgallery_strings.js.resx" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";L_AccessDeniedError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Access denied to catalog. ]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="229" />
+      </Item>
+      <Item ItemId=";L_Action_Button_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="234" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string. ResID: Action_Button_Txt]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Action_Button_Txt_Tooltip_Outlook" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Start]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="237" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string in Outlook. ResID: Action_Button_Txt [APPS - OSP - OfficeMain:460312]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_ChooseManifest_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Choose your add-in manifest]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="282" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D; description of the dialog.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_DeveloperFeature_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This feature is for developers to test their add-ins.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="279" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D; description of the dialog.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_LearnMore_Link" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Learn more.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="285" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D;Learn more is a fwlink that takes developers to a page in MSDN.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_MyAccount_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[My Account]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="276" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D; Appears on dropdown. Takes user to OMEX page where they manage their account.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_UploadAddin_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upload Add-in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="278" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D; Title of the dialog to upload manifest.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinCommands_UploadMyAddin_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upload My Add-in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="277" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D; Shows dialog to upload a local manifest file. ResID:WefDialog_UploadMyAddinButton]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddinsHasLoadingErrors" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more add-ins failed to load.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="287" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AddinCommands]5D;The error text shown in the error bar if current provider has any add-ins with loading errors.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Browse_Button_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Browse...]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="284" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D;String used as button label, click this button to pick file.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Cancel_Button_Text_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="238" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string. ResID: Cancel_Button_Text]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CatalogNoAppsInstalledError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your administrator has not installed Web Add-ins for your organization.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="250" />
+      </Item>
+      <Item ItemId=";L_CatalogTabTxt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[MY ORGANIZATION]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="218" />
+      </Item>
+      <Item ItemId=";L_CatalogTab_Tooltip" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert add-ins from your organization's add-in catalog.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="242" />
+      </Item>
+      <Item ItemId=";L_Confirmation_Cancel_Button_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="275" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-ConfirmationMessage]5D; The text for Cancel button for confirmation message in the insertion dialog]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Confirmation_RemoveAppAnonymous_Message" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Choose 'Remove' to delete this add-in from this device.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="274" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-ConfirmationMessage]5D; This is the message that displays when the user is not signed-in and tries to remove an Add-in (Rebranded from apps to add-ins)]]></Cmt>
+          <Cmt Name="ja-jp.pseudo" Enabled="false"><![CDATA[{Locked}]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Confirmation_RemoveAppAuthenticated_Message" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Choose 'Remove' to delete this add-in from this device and hide it in your Microsoft Account. To remove this add-in from other devices, 'Refresh' your list of add-ins on those devices.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="273" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-ConfirmationMessage]5D; This is the message that displays when the user is signed-in and tries to remove an Add-in (Rebranded from apps to add-ins)]]></Cmt>
+          <Cmt Name="ja-jp.pseudo"><![CDATA[{Locked}]A;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Done_Button_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="251" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-TrustUx]5D; The tooltip text for Cancel button for Trust UX dialog]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ExchangeCCTabTxt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office 365]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="288" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-EntCC]5D; Tab that shows all enterprise corporate catalog apps that have been assigned by admin to the user.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ExchangeCCTab_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert add-ins that have been assigned to you.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="289" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-EntCC]5D; Tooltip of tab that shows all enterprise corporate catalog apps that have been assigned by admin to the user.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ExchangeTabTxt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[My Add-ins]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="249" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-OutlookComposeUI]5D;Only for Outlook Compose Add-ins (Rebranded from apps to add-ins) insertion dialog]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_FileShareTabTxt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[SHARED FOLDER]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="219" />
+      </Item>
+      <Item ItemId=";L_FileShareTab_Tooltip" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert add-ins you've got available on a shared folder.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="243" />
+      </Item>
+      <Item ItemId=";L_FixLiveIdAccountSignInPrompt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Your Microsoft account needs attention. Please make sure your password is up to date.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="228" />
+      </Item>
+      <Item ItemId=";L_Footer_Link_Text_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Find more add-ins at the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="239" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as footer link string inside the htm file. ResID: Footer_Link_Text]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_GetEntitilementsGeneralError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cannot connect to catalog.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="222" />
+      </Item>
+      <Item ItemId=";L_MarketPlaceTabTxt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[MY ADD-INS]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="223" />
+      </Item>
+      <Item ItemId=";L_MarketPlaceTab_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert add-ins from the Office Store that you own.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="244" />
+        <Cmts>
+          <Cmt Name="Loc"><![CDATA["Office Store" please ensure that the term "Store" is consistent with the translation use for "Windows Store" in Term studio. In some languages it is localized in others it is not.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NoAgavePrompt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No add-ins currently available. ]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="224" />
+      </Item>
+      <Item ItemId=";L_NoAppsMessageText" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add add-ins to your account at the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="247" />
+      </Item>
+      <Item ItemId=";L_NoAppsMessageTitle" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No Add-ins]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="248" />
+      </Item>
+      <Item ItemId=";L_NoFeaturedItemsError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No featured add-ins available at this time, please check back later.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="232" />
+      </Item>
+      <Item ItemId=";L_NoProviderError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Please add or enable add-in catalogs from the Trust Center.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="233" />
+      </Item>
+      <Item ItemId=";L_OK_Button_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="235" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Text for the OK button. Click it to use the selected app.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OK_Button_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="236" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string. ResID: Action_Button_OK]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OfficeStore_Button_Tooltip" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Click here to visit the Office Store]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="246" />
+      </Item>
+      <Item ItemId=";L_OneDriveTabTxt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OneDrive]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="280" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[OneDrive]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OneDriveTab_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert add-ins from OneDrive folder that you own.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="281" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[OneDrive catalog tab tooltip]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_AppDetails_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in details]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="265" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Add-in (Rebranded from apps to add-ins) details option text of add-in management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_AppDetails_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[View more details about this add-in.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="266" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Add-in (Rebranded from apps to add-ins) details option tooltip of add-in management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_RateReview_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Rate and review]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="267" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Rate and review option text of app management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_RateReview_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Rate and review this add-in on the store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="268" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Rate and review option tooltip of Add-in (Rebranded from apps to add-ins) management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_Remove_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="269" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Remove option text of app management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_Remove_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove this add-in from this device.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="270" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Remove option tooltip of Add-in (Rebranded from apps to add-ins) management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OptionsMenu_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Options]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="264" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Tooltip for the button to show app management menu.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_PermissionTextAndLink1_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[By trusting this add-in you agree to its ]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="261" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[First part of text for permisson and link.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_PermissionTextAndLink2_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Permissions, Privacy Policy, and Terms of Use.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="262" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Second part of the text for permission and link. This text has a link associated with it.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Permission_Link_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[By trusting this add-in you agree to its Permissions, Privacy Policy, and Terms of Use.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="256" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Tool tip message of the whole permisson text and link.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RecommendationTabIframeTitleTxt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-ins from the Office Store]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="221" />
+      </Item>
+      <Item ItemId=";L_RecommendationTabTxt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[STORE]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="220" />
+      </Item>
+      <Item ItemId=";L_RecommendationTab_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[See featured add-ins that we think you may like, available from the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="245" />
+        <Cmts>
+          <Cmt Name="Loc"><![CDATA["Office Store" please ensure that the term "Store" is consistent with the translation use for "Windows Store" in Term studio. In some languages it is localized in others it is not.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Reload_Button_Text" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Reload]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="286" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AddinCommands]5D;The button allows users to reload the add-in which encounters loading error before.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RemoveAppGeneralError" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[We were unable to remove {0}. Try again in a few seconds.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="271" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Error that occurs when web service fails to remove app. {Placeholder='{0}'} Placeholder is the name of the app.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RemoveAppOfflineError" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You need to be online to remove add-ins.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="272" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-AppManagement]5D; Error that occurs when user is offline and tries to remove an Add-in (Rebranded from apps to add-ins)]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RequestFailedError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The request for catalog information failed.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="231" />
+      </Item>
+      <Item ItemId=";L_Retry_Button_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retry]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="258" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Retry button  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SignInLinkText" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sign In.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="227" />
+      </Item>
+      <Item ItemId=";L_SignInPrompt" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Please sign in with a valid profile to see add-ins. ]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="225" />
+      </Item>
+      <Item ItemId=";L_SignInPromptLiveId" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You need a Microsoft account to use add-ins from the Office Store.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="226" />
+        <Cmts>
+          <Cmt Name="Loc"><![CDATA["Office Store" please ensure that the term "Store" is consistent with the translation use for "Windows Store" in Term studio. In some languages it is localized in others it is not.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ThisDocumentTabGeneralInfo_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office Add-ins bring interactive content and functionality to your documents. Add-ins can access the contents of your document and connect to the web to process information. Select an add-in to see more details. Disable an add-in to prevent it from accessing the contents of your document.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="253" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ThisDocumentTabTxt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OFFICE STORE ADD-INS REQUIRING YOUR PERMISSION]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="254" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ThisDocumentTab_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[See Office Store Add-ins in this document.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="255" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TimeOutError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The catalog didn't respond in time, please try again later.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="230" />
+      </Item>
+      <Item ItemId=";L_TrustAll_Button_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Trust All]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="252" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-TrustUx]5D;Trust All means trust all the apps in my document that has not been acquired by the user.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TrustUx_AppsMessage" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[These add-ins come from the Office Store. If you trust them, they will have access to the contents of the documents where you use them. Select an add-in to see more details.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="259" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[An message shown inside Trust Ux dialog.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TrustUx_LostConnection" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Sorry, you seem to have lost your network and/or Internet connection. Click "Retry" once you're back online.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="260" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[No connection error message.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TrustUx_ReadMoreLink_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Read more]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="263" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Read more link text.  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TrustUx_ReadMoreLink_Txt_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Read more on Office.com]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="257" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[And text and link to see the page of the app  [Tag:APPS-ODP-TrustUx]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_Upload_Button_Txt" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upload]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="283" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ECO-AddinCommands]5D;String used to upload a manifest from upload My Add-in entry.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_WefDialog_ManageButton_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Manage My Add-ins]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="240" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string. ResID: WefDialog_ManageButton]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_WefDialog_RefreshButton_Tooltip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Refresh]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="241" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[This string should be same as the button string. ResID: WefDialog_RefreshButton]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>

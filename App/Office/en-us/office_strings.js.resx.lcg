@@ -1,0 +1,1075 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="C:\Office\Target\x64\debug\osfweb\en-us.pre\jscript\office_strings.js.resx" PsrId="211" FileType="1" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <Props>
+    <Str Name="LCI" Val="\osfweb\lci\jscript\src0\office_strings.js.resx.lci" />
+  </Props>
+  <OwnedComments>
+    <Cmt Name="Dev" />
+    <Cmt Name="LcxAdmin" />
+    <Cmt Name="Loc" />
+    <Cmt Name="Rccx" />
+  </OwnedComments>
+  <Settings Name="@SettingsPath@\osfclient\osfclient_main.lsconfig" Type="Config" />
+  <Item ItemId=";office_strings.js.resx" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";L_APICallFailed" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[API Call Failed]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="41" />
+      </Item>
+      <Item ItemId=";L_APINotSupported" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[API Not Supported]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="40" />
+      </Item>
+      <Item ItemId=";L_ActivityLimitReached" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Activity limit has been reached.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="96" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5102]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_AddBindingFromPromptDefaultText" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Please make a selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="1" />
+      </Item>
+      <Item ItemId=";L_AppNameNotExist" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add-in Name for {0} doesn't exist.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="2" />
+      </Item>
+      <Item ItemId=";L_AppNotExistInitializeNotCalled" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Application {0} does not exist. Microsoft.Office.WebExtension.initialize(reason) is not called.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="3" />
+      </Item>
+      <Item ItemId=";L_BadSelectorString" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The string passed into the selector is improperly formatted or unsupported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="4" />
+      </Item>
+      <Item ItemId=";L_BindingCreationError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Binding Creation Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="21" />
+      </Item>
+      <Item ItemId=";L_BindingNotExist" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified binding does not exist.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="70" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_BindingToMultipleSelection" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Noncontiguous selections are not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="71" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3003]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_BrowserAPINotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This browser does not support the requested API.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="92" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5009]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CallbackNotAFunction" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Callback must be of type function, was of type {0}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="5" />
+      </Item>
+      <Item ItemId=";L_CannotNavigateTo" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The object is located in a place where navigation is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="99" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 7001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CannotWriteToSelection" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cannot write to the current selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="56" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CellDataAmountBeyondLimits" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Note: The number of cells in a table is suggested to be below 20,000 cells.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="119" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2014, used for set data api. [Tag:MODC-ECO-1285894]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CellFormatAmountBeyondLimits" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Note: The formatting sets set by a Formatting API call is suggested to be below 100.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="120" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8023, used for format api. [Tag:MODC-ECO-1285894]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CloseFileBeforeRetrieve" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Call closeAsync on the current File before retrieving another.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="109" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 11000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CoercionTypeNotMatchBinding" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified coercion type is not compatible with this binding type.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="44" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CoercionTypeNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified coercion type is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="42" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ColIndexOutOfRange" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The column index value is out of the allowed range. Use a value (0 or higher) that's less than the number of columns.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="107" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8021, used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CustomXmlError" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Custom XML Error.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="98" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 6100]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_CustomXmlNodeNotFound" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified node was not found.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="97" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 6000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DataNotMatchBindingSize" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The supplied data object does not match the size of the current selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="59" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2004]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DataNotMatchBindingType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified data object is not compatible with the binding type.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="63" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2008]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DataNotMatchCoercionType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The type of the specified data object is not compatible with the current selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="62" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2007]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DataNotMatchSelection" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The supplied data object is not compatible with the shape or dimensions of the current selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="57" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DataReadError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Read Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="17" />
+      </Item>
+      <Item ItemId=";L_DataStale" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Not Current]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="26" />
+      </Item>
+      <Item ItemId=";L_DataWriteError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Write Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="18" />
+      </Item>
+      <Item ItemId=";L_DataWriteReminder" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Write Reminder]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="121" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Used for set data api. [Tag:MODC-ECO-1285894]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DialogAddressNotTrusted" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified address has not been not trusted by the add-in]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="129" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-DialogAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DialogAlreadyOpened" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The operation failed because this add-in already has an active dialog.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="130" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 12007, exception with value -2147467259. dialog already opened.   [Tag:APPS-ODP-DialogAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DialogNavigateError" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dialog Navigation Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="131" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-DialogAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DisplayDialogError" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Display Dialog Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="132" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[[Tag:APPS-ODP-DialogAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_DocumentReadOnly" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The requested operation is not allowed on the current document mode.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="85" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ElementMissing" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[We couldn't format the table cell because some parameter values are missing. Double-check the parameters and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="102" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8000, used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_EventHandlerAdditionFailed" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Failed to add the event handler.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="6" />
+      </Item>
+      <Item ItemId=";L_EventHandlerNotExist" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified event handler was not found for this binding.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="86" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5003]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_EventHandlerRemovalFailed" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Failed to remove the event handler.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="7" />
+      </Item>
+      <Item ItemId=";L_EventRegistrationError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Event Registration Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="23" />
+      </Item>
+      <Item ItemId=";L_FileTypeNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified file type is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="50" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1009]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_FormatValueOutOfRange" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The value is out of the allowed range.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="108" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8022, used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_FormattingReminder" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Formatting Reminder]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="122" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Used for format api. [Tag:MODC-ECO-1285894]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_FunctionCallFailed" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function {0} call failed, error code: {1}.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="8" />
+      </Item>
+      <Item ItemId=";L_GetDataIsTooLarge" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The requested data set is too large.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="49" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1008. The user selects to read data beyond the data limits defined by host apps.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_GetDataParametersConflict" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified parameters conflict.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="51" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1010]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_GetSelectionNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The current selection is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="43" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_HostError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Host Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="25" />
+      </Item>
+      <Item ItemId=";L_InValidOptionalArgument" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[invalid optional argument]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="118" />
+      </Item>
+      <Item ItemId=";L_IndexOutOfRange" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Index out of range.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="91" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5008]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InitializeNotReady" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Office.js has not been fully loaded yet. Please try again later or make sure to add your initialization code on the Office.initialize function.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="9" />
+      </Item>
+      <Item ItemId=";L_InternalError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Internal Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="31" />
+      </Item>
+      <Item ItemId=";L_InternalErrorDescription" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[An internal error has occurred.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="84" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidAPICall" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid API Call]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="22" />
+      </Item>
+      <Item ItemId=";L_InvalidApiCallInContext" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid API call in the current context.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="87" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5004]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidArgument" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The argument '{0}' doesn't work for this situation, is missing, or isn't in the right format.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="127" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The argument is not valid.]D;]A;        {0}: The argument name.]D;]A;        [Tag:APPS-ODP-RichApi]5D;]D;]A;    ]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidBinding" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Binding]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="28" />
+      </Item>
+      <Item ItemId=";L_InvalidBindingError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Binding Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="29" />
+      </Item>
+      <Item ItemId=";L_InvalidBindingOperation" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Binding Operation]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="30" />
+      </Item>
+      <Item ItemId=";L_InvalidCellsValue" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more of the cells parameters have values that aren't allowed. Double-check the values and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="103" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8010, used for format api. That *cells* is agave api terminology. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidCoercion" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Coercion Type]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="16" />
+      </Item>
+      <Item ItemId=";L_InvalidColumnsForBinding" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified columns are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="79" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3011]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidDataFormat" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The format of the specified data object is invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="61" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2006, for html/ooxml format error]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidDataObject" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Data Object]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="20" />
+      </Item>
+      <Item ItemId=";L_InvalidFormat" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Format Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="19" />
+      </Item>
+      <Item ItemId=";L_InvalidFormatValue" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more of the format parameters have values that aren't allowed. Double-check the values and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="105" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8012, used for format api. That *format* is agave api terminology. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidGetColumns" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified columns are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="52" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1011]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidGetRowColumnCounts" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified rowCount or columnCount values are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="45" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1003]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidGetRows" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified rows are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="53" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1012]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidGetStartRowColumn" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified startRow or startColumn values are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="47" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1005]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidNamedItemForBindingType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified binding type is not compatible with the supplied named item.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="76" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3008]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidNode" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Node]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="27" />
+      </Item>
+      <Item ItemId=";L_InvalidObjectPath" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The object path '{0}' isn't working for what you're trying to do. If you're using the object across multiple "context.sync" calls and outside the sequential execution of a ".run" batch, please use the "context.trackedObjects.add()" and "context.trackedObjects.remove()" methods to manage the object's lifetime.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="124" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The object path is not valid and it cannot be used for the subsequent request.]D;]A;        {0}: The expression of object path, such as sheets.getItem().range()]D;]A;        [Tag:APPS-ODP-RichApi]5D;]D;]A;    ]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidParameters" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function {0} has invalid parameters.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="10" />
+      </Item>
+      <Item ItemId=";L_InvalidReadForBlankRow" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified row is blank.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="54" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1013, used to indicate that specified row does not have any data [Tag:APPS-ODP-GetTaskByIndexAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidRequestContext" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cannot use the object across different request contexts.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="126" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The contexts are different. The object associated with one request context cannot be used for another request context.]D;]A;        [Tag:APPS-ODP-RichApi]5D;]D;]A;    ]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidSelectionForBindingType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A binding cannot be created with the current selection and the specified binding type.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="72" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3004]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidSetColumns" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified columns are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="66" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2011]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidSetRows" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified rows are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="67" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2012]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidSetStartRowColumn" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified startRow or startColumn values are invalid.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="60" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2005]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidTableOptionValue" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[One or more of the tableOptions parameters have values that aren't allowed. Double-check the values and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="104" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8011, used for format api. That *tableOptions* is agave api terminology. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_InvalidValue" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid Value]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="36" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_MemoryLimit" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Memory Limit Exceeded]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="39" />
+      </Item>
+      <Item ItemId=";L_MissingParameter" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Missing Parameter]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="35" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_MissingRequiredArguments" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[missing some required arguments]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="114" />
+      </Item>
+      <Item ItemId=";L_MultipleNamedItemFound" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Multiple objects with the same name were found.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="75" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3007]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NamedItemNotFound" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The named item does not exist.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="74" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3006]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NavOutOfBound" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The operation failed because the index is out of range.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="101" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 7004]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NetworkProblem" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Network Problem]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="38" />
+      </Item>
+      <Item ItemId=";L_NetworkProblemRetrieveFile" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A network problem has prevented retrieval of the file.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="110" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 11001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NoCapability" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[You don't have sufficient permissions for this action.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="15" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 7000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NonUniformPartialGetNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Coordinate parameters cannot be used with coercion type Table when the table contains merged cells.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="48" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1006]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NonUniformPartialSetNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Coordinate parameters cannot be used with coercion type Table when the table contains merged cells.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="65" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2010. User tries to set partial data from a not uniform table (i.e. table with merged cells).]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_NotImplemented" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function {0} is not implemented.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="11" />
+      </Item>
+      <Item ItemId=";L_NotSupported" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function {0} is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="12" />
+      </Item>
+      <Item ItemId=";L_NotSupportedBindingType" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified binding type {0} is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="112" />
+      </Item>
+      <Item ItemId=";L_NotSupportedEventType" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified event type {0} is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="113" />
+      </Item>
+      <Item ItemId=";L_OperationNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The operation is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="83" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OperationNotSupportedOnMatrixData" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Selected content needs to be in table format. Format the data as a table and try again.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="78" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3010. This error message is thrown when the user is trying to do some operation on data in matrix format, where this operation is actually only applicable to data in table format. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OperationNotSupportedOnThisBindingType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Operation is not supported on this binding type.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="73" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3005]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OsfControlTypeNotSupported" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OsfControl type not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="13" />
+      </Item>
+      <Item ItemId=";L_OutOfRange" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Out of Range]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="37" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_OverwriteWorksheetData" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The set operation failed because the supplied data object will overwrite or shift data.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="58" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2003, Excel only]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_PermissionDenied" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Permission Denied]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="24" />
+      </Item>
+      <Item ItemId=";L_PropertyNotLoaded" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The property '{0}' is not available. Before reading the property's value, call the load method on the containing object and call "context.sync()" on the associated request context.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="125" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The property was not available.]D;]A;        {0}: The property name.]D;]A;        [Tag:APPS-ODP-RichApi]5D;]D;]A;    ]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_ReadSettingsError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Read Settings Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="32" />
+      </Item>
+      <Item ItemId=";L_RedundantCallbackSpecification" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Callback cannot be specified both in argument list and in optional object.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="14" />
+      </Item>
+      <Item ItemId=";L_RequestTimeout" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The call took too long to execute.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="93" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5011]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RequestTokenUnavailable" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This API has been throttled to slow the call frequency.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="95" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5101]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RowIndexOutOfRange" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The row index value is out of the allowed range. Use a value (0 or higher) that's less than the number of rows.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="106" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 8020, used for format api. [Tag:MODC-ECO-589690]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_RunMustReturnPromise" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The batch function passed to the ".run" method didn't return a promise. The function must return a promise, so that any automatically-tracked objects can be released at the batch's completion. Typically, you return a promise by returning the response from "context.sync()".]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="128" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[The batch function passed to the ".run" method didn't return a promise.]D;]A;        [Tag:APPS-ODP-RichApi]5D;]D;]A;    ]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SaveSettingsError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Save Settings Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="33" />
+      </Item>
+      <Item ItemId=";L_SelectionCannotBound" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cannot bind to the current selection.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="69" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SelectionNotSupportCoercionType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The current selection is not compatible with the specified coercion type.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="46" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 1004]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SetDataIsTooLarge" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified data object is too large.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="64" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2009. The user tries to set data beyond the data limits defined by host apps.]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SetDataParametersConflict" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified parameters conflict.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="68" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2013]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SettingNameNotExist" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified setting name does not exist.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="80" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 4000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SettingsAreStale" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings could not be saved because they are not current.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="82" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 4002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SettingsCannotSave" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The settings could not be saved.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="81" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 4001]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SettingsStaleError" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Settings Stale Error]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="34" />
+      </Item>
+      <Item ItemId=";L_ShuttingDown" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Operation failed because the data is not current on the server.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="88" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5005]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SliceSizeNotSupported" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified slice size is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="111" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 11002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_SpecifiedIdNotExist" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The specified ID does not exist.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="100" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 7002]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TooManyArguments" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[too many arguments]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="115" />
+      </Item>
+      <Item ItemId=";L_TooManyIncompleteRequests" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Wait until the previous call completes.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="94" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5100]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_TooManyOptionalFunction" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[multiple optional functions in parameter list]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="117" />
+      </Item>
+      <Item ItemId=";L_TooManyOptionalObjects" ItemType="0;.resx" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[multiple optional objects in parameter list]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="116" />
+      </Item>
+      <Item ItemId=";L_UnknownBindingType" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The binding type is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="77" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 3009]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_UnsupportedDataObject" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The supplied data object type is not supported.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="55" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 2000]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_UnsupportedEnumeration" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported Enumeration]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="89" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5007]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_UnsupportedEnumerationMessage" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The enumeration isn't supported in the current host application.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="90" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 5007]]></Cmt>
+        </Cmts>
+      </Item>
+      <Item ItemId=";L_UserNotSignedIn" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No user is signed into Office.]]></Val>
+        </Str>
+        <Disp Icon="Str" Order="123" />
+        <Cmts>
+          <Cmt Name="Dev"><![CDATA[Error code = 10000, used for UserIdentity API. [Tag:APPS-ODP-UserIdentityAPI]5D;]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>
