@@ -3,7 +3,7 @@ Office.initialize = function() {};
 function getNotebook() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var notebook = app.activeNotebook;
+		var notebook = app.getActiveNotebook();
 		ctx.load(notebook);
 		return ctx.sync()
 			.then(function() {
@@ -19,7 +19,7 @@ function getNotebook() {
 function getCurrentSection() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var section = app.activeSection;
+		var section = app.getActiveSection();
 		ctx.load(section);
 		return ctx.sync()
 			.then(function() {
@@ -35,7 +35,7 @@ function getCurrentSection() {
 function getCurrentPage() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var page = app.activePage;
+		var page = app.getActivePageOrNull();
 		ctx.load(page);
 		return ctx.sync()
 			.then(function() {
@@ -51,7 +51,7 @@ function getCurrentPage() {
 function showHierarchy() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var notebook = app.activeNotebook;
+		var notebook = app.getActiveNotebook();
 		var sections = notebook.getSections(false);
 		var sectionGroups = notebook.getSectionGroups(false);
 		var notebookInnerDiv;
@@ -59,7 +59,7 @@ function showHierarchy() {
 		var display = document.getElementById("hierarchyDisplay");
 		display.innerHTML = "";
 		
-		var currentPage = app.activePage;
+		var currentPage = app.getActivePageOrNull();
 		ctx.load(currentPage);
 		ctx.sync()
 			.then(function() {
@@ -201,7 +201,7 @@ function hideChildren() {
 function getParagraphs() {
 	OneNote.run(function (ctx) {
 	var application = ctx.application;
-	var page = application.activePage;
+	var page = application.getActivePageOrNull();
 	var pageContents = page.getContents();
 	var paragraphs;
 	ctx.load(pageContents, "type,outline,outline/paragraphs");

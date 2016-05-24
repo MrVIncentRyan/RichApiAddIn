@@ -8,8 +8,8 @@ function insertPage() {
 	
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var section = app.activeSection;
-		var page = app.activePage;
+		var section = app.getActiveSection();
+		var page = app.getActivePageOrNull();
 		switch ($('input[name=insertPagePosition]:checked').val()) {
 			case "before":
 				page.insertPageAsSibling(0, title);
@@ -36,8 +36,8 @@ function insertSection() {
 	
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var notebook = app.activeNotebook;
-		var section = app.activeSection;
+		var notebook = app.getActiveNotebook();
+		var section = app.getActiveSection();
 		switch ($('input[name=insertPagePosition]:checked').val()) {
 			case "before":
 				section.insertSectionAsSibling(0, title);
@@ -66,7 +66,7 @@ function insertOutline() {
 	
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var page = app.activePage;
+		var page = app.getActivePageOrNull();
 		page.addOutline(x, y, html);
 		return ctx.sync();
 	})

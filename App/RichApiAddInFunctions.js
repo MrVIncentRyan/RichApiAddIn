@@ -5,7 +5,7 @@ function addPage(args) {
 	
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var section = app.activeSection;
+		var section = app.getActiveSection();
 		section.addPage(title);
 		return ctx.sync();
 	})
