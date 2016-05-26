@@ -1,5 +1,5 @@
 /* OneNote specific JavaScript API library */
-/* Version: 16.0.7017.3000 */
+/* Version: 16.0.7017.3002 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
@@ -9837,25 +9837,34 @@ var OneNote;
 			configurable: true
 		});
 		Application.prototype.getActiveNotebook=function () {
-			return new OneNote.Notebook(this.context, _createMethodObjectPath(this.context, this, "GetActiveNotebook", 0 , [], false, false));
+			return new OneNote.Notebook(this.context, _createMethodObjectPath(this.context, this, "GetActiveNotebook", 1 , [], false, false));
+		};
+		Application.prototype.getActiveNotebookOrNull=function () {
+			return new OneNote.Notebook(this.context, _createMethodObjectPath(this.context, this, "GetActiveNotebookOrNull", 1 , [], false, false));
+		};
+		Application.prototype.getActiveOutline=function () {
+			return new OneNote.Outline(this.context, _createMethodObjectPath(this.context, this, "GetActiveOutline", 1 , [], false, false));
 		};
 		Application.prototype.getActiveOutlineOrNull=function () {
-			return new OneNote.Outline(this.context, _createMethodObjectPath(this.context, this, "GetActiveOutlineOrNull", 0 , [], false, false));
+			return new OneNote.Outline(this.context, _createMethodObjectPath(this.context, this, "GetActiveOutlineOrNull", 1 , [], false, false));
+		};
+		Application.prototype.getActivePage=function () {
+			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "GetActivePage", 1 , [], false, false));
 		};
 		Application.prototype.getActivePageOrNull=function () {
-			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "GetActivePageOrNull", 0 , [], false, false));
+			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "GetActivePageOrNull", 1 , [], false, false));
 		};
 		Application.prototype.getActiveSection=function () {
-			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "GetActiveSection", 0 , [], false, false));
+			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "GetActiveSection", 1 , [], false, false));
+		};
+		Application.prototype.getActiveSectionOrNull=function () {
+			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "GetActiveSectionOrNull", 1 , [], false, false));
 		};
 		Application.prototype.navigateToPage=function (page) {
 			_createMethodAction(this.context, this, "NavigateToPage", 1 , [page]);
 		};
 		Application.prototype.navigateToPageWithClientUrl=function (url) {
 			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "NavigateToPageWithClientUrl", 1 , [url], false, false));
-		};
-		Application.prototype.navigateToPageWithPagePath=function (pagePath) {
-			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "NavigateToPageWithPagePath", 1 , [pagePath], false, false));
 		};
 		Application.prototype._GetObjectByReferenceId=function (referenceId) {
 			var action=_createMethodAction(this.context, this, "_GetObjectByReferenceId", 1 , [referenceId]);
@@ -10056,6 +10065,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(SectionGroup.prototype, "parentSectionGroup", {
+			get: function () {
+				if (!this.m_parentSectionGroup) {
+					this.m_parentSectionGroup=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "ParentSectionGroup", false, false));
+				}
+				return this.m_parentSectionGroup;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(SectionGroup.prototype, "parentSectionGroupOrNull", {
 			get: function () {
 				if (!this.m_parentSectionGroupOrNull) {
@@ -10128,7 +10147,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "parentSectionGroupOrNull", "ParentSectionGroupOrNull"]);
+			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "parentSectionGroup", "ParentSectionGroup", "parentSectionGroupOrNull", "ParentSectionGroupOrNull"]);
 		};
 		SectionGroup.prototype.load=function (option) {
 			_load(this, option);
@@ -10228,6 +10247,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(Section.prototype, "sectionGroup", {
+			get: function () {
+				if (!this.m_sectionGroup) {
+					this.m_sectionGroup=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "SectionGroup", false, false));
+				}
+				return this.m_sectionGroup;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(Section.prototype, "sectionGroupOrNull", {
 			get: function () {
 				if (!this.m_sectionGroupOrNull) {
@@ -10300,7 +10329,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "sectionGroupOrNull", "SectionGroupOrNull"]);
+			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "sectionGroup", "SectionGroup", "sectionGroupOrNull", "SectionGroupOrNull"]);
 		};
 		Section.prototype.load=function (option) {
 			_load(this, option);
