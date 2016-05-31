@@ -35,7 +35,7 @@ function getCurrentSection() {
 function getCurrentPage() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var page = app.getActivePageOrNull();
+		var page = app.getActivePage();
 		ctx.load(page);
 		return ctx.sync()
 			.then(function() {
@@ -59,7 +59,7 @@ function showHierarchy() {
 		var display = document.getElementById("hierarchyDisplay");
 		display.innerHTML = "";
 		
-		var currentPage = app.getActivePageOrNull();
+		var currentPage = app.getActivePage();
 		ctx.load(currentPage);
 		ctx.sync()
 			.then(function() {
@@ -201,7 +201,7 @@ function hideChildren() {
 function getParagraphs() {
 	OneNote.run(function (ctx) {
 	var application = ctx.application;
-	var page = application.getActivePageOrNull();
+	var page = application.getActivePage();
 	var pageContents = page.getContents();
 	var paragraphs;
 	ctx.load(pageContents, "type,outline,outline/paragraphs");

@@ -9,7 +9,7 @@ function insertPage() {
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
 		var section = app.getActiveSection();
-		var page = app.getActivePageOrNull();
+		var page = app.getActivePage();
 		switch ($('input[name=insertPagePosition]:checked').val()) {
 			case "before":
 				page.insertPageAsSibling(0, title);
@@ -66,7 +66,7 @@ function insertOutline() {
 	
 	OneNote.run(function(ctx) {
 		var app = ctx.application;
-		var page = app.getActivePageOrNull();
+		var page = app.getActivePage();
 		page.addOutline(x, y, html);
 		return ctx.sync();
 	})
