@@ -1,5 +1,5 @@
 /* OneNote specific JavaScript API library */
-/* Version: 16.0.7017.3002 */
+/* Version: 16.0.7031.3001 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
@@ -31,7 +31,8 @@ var OfficeExt;
 				Sys.StringBuilder && typeof (Sys.StringBuilder)==="function" &&
 				Type.registerNamespace && typeof (Type.registerNamespace)==="function" &&
 				Type.registerClass && typeof (Type.registerClass)==="function" &&
-				typeof (Function._validateParams)==="function") {
+				typeof (Function._validateParams)==="function" &&
+				Sys.Serialization && Sys.Serialization.JavaScriptSerializer && typeof (Sys.Serialization.JavaScriptSerializer.serialize)==="function") {
 				return true;
 			}
 			else {
@@ -711,6 +712,18 @@ OSF.OUtil=(function () {
 		isiOS: function OSF_Outil$isiOS() {
 			return (window.navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
 		},
+		isChrome: function OSF_Outil$isChrome() {
+			return (window.navigator.userAgent.indexOf("Chrome") > 0) && !OSF.OUtil.isEdge();
+		},
+		isEdge: function OSF_Outil$isEdge() {
+			return window.navigator.userAgent.indexOf("Edge") > 0;
+		},
+		isIE: function OSF_Outil$isIE() {
+			return window.navigator.userAgent.indexOf("Trident") > 0;
+		},
+		isFirefox: function OSF_Outil$isFirefox() {
+			return window.navigator.userAgent.indexOf("Firefox") > 0;
+		},
 		shallowCopy: function OSF_Outil$shallowCopy(sourceObj) {
 			var copyObj=sourceObj.constructor();
 			for (var property in sourceObj) {
@@ -745,6 +758,108 @@ OSF.OUtil=(function () {
 		hasClass: function OSF_OUtil$hasClass(elmt, clsName) {
 			var className=elmt.getAttribute(_classN);
 			return className && className.match(new RegExp('(\\s|^)'+clsName+'(\\s|$)'));
+		},
+		focusToFirstTabbable: function OSF_OUtil$focusToFirstTabbable(all, backward) {
+			var next;
+			var focused=false;
+			var candidate;
+			var setFlag=function (e) {
+				focused=true;
+			};
+			var findNextPos=function (allLen, currPos, backward) {
+				if (currPos < 0 || currPos > allLen) {
+					return -1;
+				}
+				else if (currPos===0 && backward) {
+					return -1;
+				}
+				else if (currPos===allLen - 1 && !backward) {
+					return -1;
+				}
+				if (backward) {
+					return currPos - 1;
+				}
+				else {
+					return currPos+1;
+				}
+			};
+			next=backward ? all.length - 1 : 0;
+			if (all.length===0) {
+				return null;
+			}
+			while (!focused && next >=0 && next < all.length) {
+				candidate=all[next];
+				window.focus();
+				candidate.addEventListener('focus', setFlag);
+				candidate.focus();
+				candidate.removeEventListener('focus', setFlag);
+				next=findNextPos(all.length, next, backward);
+				if (!focused && OSF.OUtil.isIE() && candidate===document.activeElement) {
+					focused=true;
+				}
+			}
+			if (focused) {
+				return candidate;
+			}
+			else {
+				return null;
+			}
+		},
+		focusToNextTabbable: function OSF_OUtil$focusToNextTabbable(all, curr, shift) {
+			var currPos;
+			var next;
+			var focused=false;
+			var candidate;
+			var setFlag=function (e) {
+				focused=true;
+			};
+			var findCurrPos=function (all, curr) {
+				var i=0;
+				for (; i < all.length; i++) {
+					if (all[i]===curr) {
+						return i;
+					}
+				}
+				return -1;
+			};
+			var findNextPos=function (allLen, currPos, shift) {
+				if (currPos < 0 || currPos > allLen) {
+					return -1;
+				}
+				else if (currPos===0 && shift) {
+					return -1;
+				}
+				else if (currPos===allLen - 1 && !shift) {
+					return -1;
+				}
+				if (shift) {
+					return currPos - 1;
+				}
+				else {
+					return currPos+1;
+				}
+			};
+			currPos=findCurrPos(all, curr);
+			next=findNextPos(all.length, currPos, shift);
+			if (next < 0) {
+				return null;
+			}
+			while (!focused && next >=0 && next < all.length) {
+				candidate=all[next];
+				candidate.addEventListener('focus', setFlag);
+				candidate.focus();
+				candidate.removeEventListener('focus', setFlag);
+				next=findNextPos(all.length, next, shift);
+				if (!focused && OSF.OUtil.isIE() && candidate===document.activeElement) {
+					focused=true;
+				}
+			}
+			if (focused) {
+				return candidate;
+			}
+			else {
+				return null;
+			}
 		}
 	};
 })();
@@ -798,7 +913,8 @@ OSF.AppName={
 	ExcelWinRT: 524288,
 	WordWinRT: 1048576,
 	PowerpointWinRT: 2097152,
-	OutlookAndroid: 4194304
+	OutlookAndroid: 4194304,
+	OneNoteWinRT: 8388608
 };
 OSF.InternalPerfMarker={
 	DataCoercionBegin: "Agave.HostCall.CoerceDataStart",
@@ -820,7 +936,13 @@ OSF.AgaveHostAction={
 	"SelectWithError": 7,
 	"NotifyHostError": 8,
 	"RefreshAddinCommands": 9,
-	"PageIsReady": 10
+	"PageIsReady": 10,
+	"TabIn": 11,
+	"TabInShift": 12,
+	"TabExit": 13,
+	"TabExitShift": 14,
+	"EscExit": 15,
+	"F2Exit": 16
 };
 OSF.SharedConstants={
 	"NotificationConversationIdSuffix": '_ntf'
@@ -5006,20 +5128,7 @@ OSF.InitializationHelper.prototype.setAgaveHostCommunication=function OSF_Initia
 		me._webAppState.serviceEndPoint=Microsoft.Office.Common.XdmCommunicationManager.createServiceEndPoint(me._webAppState.id);
 		var notificationConversationId=me._webAppState.conversationID+OSF.SharedConstants.NotificationConversationIdSuffix;
 		me._webAppState.serviceEndPoint.registerConversation(notificationConversationId, me._webAppState.webAppUrl);
-		var focusFirstItem=function OSF_OfficeAppFactory_initialize$focusFirstItem() {
-			if (!me._webAppState.focused) {
-				me._webAppState.focused=true;
-				var list=document.querySelectorAll('input,a,button');
-				for (var i=0; i < list.length; i++) {
-					var node=list[i];
-					if (node instanceof HTMLElement) {
-						var element=node;
-						element.focus();
-						break;
-					}
-				}
-			}
-		};
+		var tabbableElements="a[href]:not([tabindex='-1']),"+"area[href]:not([tabindex='-1']),"+"button:not([disabled]):not([tabindex='-1']),"+"input:not([disabled]):not([tabindex='-1']),"+"select:not([disabled]):not([tabindex='-1']),"+"textarea:not([disabled]):not([tabindex='-1']),"+"*[tabindex]:not([tabindex='-1']),"+"*[contenteditable]:not([disabled]):not([tabindex='-1'])";
 		var notifyAgave=function OSF__OfficeAppFactory_initialize$notifyAgave(actionId) {
 			switch (actionId) {
 				case OSF.AgaveHostAction.Select:
@@ -5028,8 +5137,23 @@ OSF.InitializationHelper.prototype.setAgaveHostCommunication=function OSF_Initia
 				case OSF.AgaveHostAction.UnSelect:
 					me._webAppState.focused=false;
 					break;
+				case OSF.AgaveHostAction.TabIn:
 				case OSF.AgaveHostAction.CtrlF6In:
-					focusFirstItem();
+					var list=document.querySelectorAll(tabbableElements);
+					var focused=OSF.OUtil.focusToFirstTabbable(list, false);
+					if (!focused) {
+						me._webAppState.focused=false;
+						me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.TabExit]);
+					}
+					break;
+				case OSF.AgaveHostAction.TabInShift:
+					var list=document.querySelectorAll(tabbableElements);
+					var focused=OSF.OUtil.focusToFirstTabbable(list, true);
+					if (!focused) {
+						me._webAppState.focused=false;
+						me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.TabExitShift]);
+					}
+					break;
 				default:
 					OsfMsAjaxFactory.msAjaxDebug.trace("actionId "+actionId+" notifyAgave is wrong.");
 					break;
@@ -5049,18 +5173,36 @@ OSF.InitializationHelper.prototype.setAgaveHostCommunication=function OSF_Initia
 			me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.UnSelect]);
 		});
 		OSF.OUtil.addEventListener(window, "keydown", function (e) {
-			if (e.keyCode==117 && e.ctrlKey) {
-				if (e.preventDefault) {
-					e.preventDefault();
-				}
-				else {
-					e.returnValue=false;
-				}
+			e.preventDefault=e.preventDefault || function () {
+				e.returnValue=false;
+			};
+			if (e.keyCode==117 && (e.ctrlKey || e.metaKey)) {
 				var actionId=OSF.AgaveHostAction.CtrlF6Exit;
 				if (e.shiftKey) {
 					actionId=OSF.AgaveHostAction.CtrlF6ExitShift;
 				}
 				me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, actionId]);
+			}
+			else if (e.keyCode==9) {
+				e.preventDefault();
+				var allTabbableElements=document.querySelectorAll(tabbableElements);
+				var focused=OSF.OUtil.focusToNextTabbable(allTabbableElements, e.target || e.srcElement, e.shiftKey);
+				if (!focused) {
+					if (e.shiftKey) {
+						me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.TabExitShift]);
+					}
+					else {
+						me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.TabExit]);
+					}
+				}
+			}
+			else if (e.keyCode==27) {
+				e.preventDefault();
+				me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.EscExit]);
+			}
+			else if (e.keyCode==113) {
+				e.preventDefault();
+				me._webAppState.clientEndPoint.invoke("ContextActivationManager_notifyHost", null, [me._webAppState.id, OSF.AgaveHostAction.F2Exit]);
 			}
 		});
 		OSF.OUtil.addEventListener(window, "keypress", function (e) {
@@ -9916,6 +10058,26 @@ var OneNote;
 		function Notebook() {
 			_super.apply(this, arguments);
 		}
+		Object.defineProperty(Notebook.prototype, "sectionGroups", {
+			get: function () {
+				if (!this.m_sectionGroups) {
+					this.m_sectionGroups=new OneNote.SectionGroupCollection(this.context, _createPropertyObjectPath(this.context, this, "SectionGroups", true, false));
+				}
+				return this.m_sectionGroups;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Notebook.prototype, "sections", {
+			get: function () {
+				if (!this.m_sections) {
+					this.m_sections=new OneNote.SectionCollection(this.context, _createPropertyObjectPath(this.context, this, "Sections", true, false));
+				}
+				return this.m_sections;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(Notebook.prototype, "clientUrl", {
 			get: function () {
 				_throwIfNotLoaded("clientUrl", this.m_clientUrl, "Notebook", this._isNull);
@@ -9951,12 +10113,6 @@ var OneNote;
 		Notebook.prototype.addSection=function (name) {
 			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "AddSection", 0 , [name], false, true));
 		};
-		Notebook.prototype.getSectionGroups=function () {
-			return new OneNote.SectionGroupCollection(this.context, _createMethodObjectPath(this.context, this, "GetSectionGroups", 1 , [], true, false));
-		};
-		Notebook.prototype.getSections=function (recursive) {
-			return new OneNote.SectionCollection(this.context, _createMethodObjectPath(this.context, this, "GetSections", 1 , [recursive], true, false));
-		};
 		Notebook.prototype._KeepReference=function () {
 			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
 		};
@@ -9978,6 +10134,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
+			_handleNavigationPropertyResults(this, obj, ["sectionGroups", "SectionGroups", "sections", "Sections"]);
 		};
 		Notebook.prototype.load=function (option) {
 			_load(this, option);
@@ -10097,6 +10254,26 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(SectionGroup.prototype, "sectionGroups", {
+			get: function () {
+				if (!this.m_sectionGroups) {
+					this.m_sectionGroups=new OneNote.SectionGroupCollection(this.context, _createPropertyObjectPath(this.context, this, "SectionGroups", true, false));
+				}
+				return this.m_sectionGroups;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(SectionGroup.prototype, "sections", {
+			get: function () {
+				if (!this.m_sections) {
+					this.m_sections=new OneNote.SectionCollection(this.context, _createPropertyObjectPath(this.context, this, "Sections", true, false));
+				}
+				return this.m_sections;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(SectionGroup.prototype, "clientUrl", {
 			get: function () {
 				_throwIfNotLoaded("clientUrl", this.m_clientUrl, "SectionGroup", this._isNull);
@@ -10132,12 +10309,6 @@ var OneNote;
 		SectionGroup.prototype.addSection=function (title) {
 			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "AddSection", 0 , [title], false, true));
 		};
-		SectionGroup.prototype.getSectionGroups=function () {
-			return new OneNote.SectionGroupCollection(this.context, _createMethodObjectPath(this.context, this, "GetSectionGroups", 1 , [], true, false));
-		};
-		SectionGroup.prototype.getSections=function (recursive) {
-			return new OneNote.SectionCollection(this.context, _createMethodObjectPath(this.context, this, "GetSections", 1 , [recursive], true, false));
-		};
 		SectionGroup.prototype._KeepReference=function () {
 			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
 		};
@@ -10159,7 +10330,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "parentSectionGroup", "ParentSectionGroup", "parentSectionGroupOrNull", "ParentSectionGroupOrNull"]);
+			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "parentSectionGroup", "ParentSectionGroup", "parentSectionGroupOrNull", "ParentSectionGroupOrNull", "sectionGroups", "SectionGroups", "sections", "Sections"]);
 		};
 		SectionGroup.prototype.load=function (option) {
 			_load(this, option);
@@ -10259,22 +10430,32 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
-		Object.defineProperty(Section.prototype, "sectionGroup", {
+		Object.defineProperty(Section.prototype, "pages", {
 			get: function () {
-				if (!this.m_sectionGroup) {
-					this.m_sectionGroup=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "SectionGroup", false, false));
+				if (!this.m_pages) {
+					this.m_pages=new OneNote.PageCollection(this.context, _createPropertyObjectPath(this.context, this, "Pages", true, false));
 				}
-				return this.m_sectionGroup;
+				return this.m_pages;
 			},
 			enumerable: true,
 			configurable: true
 		});
-		Object.defineProperty(Section.prototype, "sectionGroupOrNull", {
+		Object.defineProperty(Section.prototype, "parentSectionGroup", {
 			get: function () {
-				if (!this.m_sectionGroupOrNull) {
-					this.m_sectionGroupOrNull=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "SectionGroupOrNull", false, false));
+				if (!this.m_parentSectionGroup) {
+					this.m_parentSectionGroup=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "ParentSectionGroup", false, false));
 				}
-				return this.m_sectionGroupOrNull;
+				return this.m_parentSectionGroup;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Section.prototype, "parentSectionGroupOrNull", {
+			get: function () {
+				if (!this.m_parentSectionGroupOrNull) {
+					this.m_parentSectionGroupOrNull=new OneNote.SectionGroup(this.context, _createPropertyObjectPath(this.context, this, "ParentSectionGroupOrNull", false, false));
+				}
+				return this.m_parentSectionGroupOrNull;
 			},
 			enumerable: true,
 			configurable: true
@@ -10314,9 +10495,6 @@ var OneNote;
 		Section.prototype.addPage=function (title) {
 			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "AddPage", 0 , [title], false, true));
 		};
-		Section.prototype.getPages=function () {
-			return new OneNote.PageCollection(this.context, _createMethodObjectPath(this.context, this, "GetPages", 1 , [], true, false));
-		};
 		Section.prototype.insertSectionAsSibling=function (location, title) {
 			return new OneNote.Section(this.context, _createMethodObjectPath(this.context, this, "InsertSectionAsSibling", 0 , [location, title], false, true));
 		};
@@ -10341,7 +10519,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "sectionGroup", "SectionGroup", "sectionGroupOrNull", "SectionGroupOrNull"]);
+			_handleNavigationPropertyResults(this, obj, ["notebook", "Notebook", "pages", "Pages", "parentSectionGroup", "ParentSectionGroup", "parentSectionGroupOrNull", "ParentSectionGroupOrNull"]);
 		};
 		Section.prototype.load=function (option) {
 			_load(this, option);
@@ -10431,12 +10609,22 @@ var OneNote;
 		function Page() {
 			_super.apply(this, arguments);
 		}
-		Object.defineProperty(Page.prototype, "section", {
+		Object.defineProperty(Page.prototype, "contents", {
 			get: function () {
-				if (!this.m_section) {
-					this.m_section=new OneNote.Section(this.context, _createPropertyObjectPath(this.context, this, "Section", false, false));
+				if (!this.m_contents) {
+					this.m_contents=new OneNote.PageContentCollection(this.context, _createPropertyObjectPath(this.context, this, "Contents", true, false));
 				}
-				return this.m_section;
+				return this.m_contents;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Page.prototype, "parentSection", {
+			get: function () {
+				if (!this.m_parentSection) {
+					this.m_parentSection=new OneNote.Section(this.context, _createPropertyObjectPath(this.context, this, "ParentSection", false, false));
+				}
+				return this.m_parentSection;
 			},
 			enumerable: true,
 			configurable: true
@@ -10492,9 +10680,6 @@ var OneNote;
 		Page.prototype.addOutline=function (left, top, html) {
 			return new OneNote.Outline(this.context, _createMethodObjectPath(this.context, this, "AddOutline", 0 , [left, top, html], false, true));
 		};
-		Page.prototype.getContents=function () {
-			return new OneNote.PageContentCollection(this.context, _createMethodObjectPath(this.context, this, "GetContents", 1 , [], true, false));
-		};
 		Page.prototype.insertPageAsSibling=function (location, title) {
 			return new OneNote.Page(this.context, _createMethodObjectPath(this.context, this, "InsertPageAsSibling", 0 , [location, title], false, true));
 		};
@@ -10522,7 +10707,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["section", "Section"]);
+			_handleNavigationPropertyResults(this, obj, ["contents", "Contents", "parentSection", "ParentSection"]);
 		};
 		Page.prototype.load=function (option) {
 			_load(this, option);
@@ -10632,12 +10817,12 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
-		Object.defineProperty(PageContent.prototype, "page", {
+		Object.defineProperty(PageContent.prototype, "parentPage", {
 			get: function () {
-				if (!this.m_page) {
-					this.m_page=new OneNote.Page(this.context, _createPropertyObjectPath(this.context, this, "Page", false, false));
+				if (!this.m_parentPage) {
+					this.m_parentPage=new OneNote.Page(this.context, _createPropertyObjectPath(this.context, this, "ParentPage", false, false));
 				}
-				return this.m_page;
+				return this.m_parentPage;
 			},
 			enumerable: true,
 			configurable: true
@@ -10720,7 +10905,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "page", "Page"]);
+			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "parentPage", "ParentPage"]);
 		};
 		PageContent.prototype.load=function (option) {
 			_load(this, option);
@@ -10843,11 +11028,17 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
-		Outline.prototype.append=function (html) {
-			_createMethodAction(this.context, this, "Append", 0 , [html]);
+		Outline.prototype.appendHtml=function (html) {
+			_createMethodAction(this.context, this, "AppendHtml", 0 , [html]);
 		};
-		Outline.prototype.prepend=function (html) {
-			_createMethodAction(this.context, this, "Prepend", 0 , [html]);
+		Outline.prototype.appendImage=function (base64EncodedImage, width, height) {
+			return new OneNote.Image(this.context, _createMethodObjectPath(this.context, this, "AppendImage", 0 , [base64EncodedImage, width, height], false, false));
+		};
+		Outline.prototype.appendRichText=function (paragraphText) {
+			return new OneNote.RichText(this.context, _createMethodObjectPath(this.context, this, "AppendRichText", 0 , [paragraphText], false, false));
+		};
+		Outline.prototype.appendTable=function (rowCount, columnCount, values) {
+			return new OneNote.Table(this.context, _createMethodObjectPath(this.context, this, "AppendTable", 0 , [rowCount, columnCount, values], false, true));
 		};
 		Outline.prototype.select=function () {
 			_createMethodAction(this.context, this, "Select", 0 , []);
@@ -10914,6 +11105,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(Paragraph.prototype, "table", {
+			get: function () {
+				if (!this.m_table) {
+					this.m_table=new OneNote.Table(this.context, _createPropertyObjectPath(this.context, this, "Table", false, false));
+				}
+				return this.m_table;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(Paragraph.prototype, "id", {
 			get: function () {
 				_throwIfNotLoaded("id", this.m_id, "Paragraph", this._isNull);
@@ -10941,8 +11142,17 @@ var OneNote;
 		Paragraph.prototype.delete=function () {
 			_createMethodAction(this.context, this, "Delete", 0 , []);
 		};
-		Paragraph.prototype.insertAsSibling=function (html, insertLocation) {
-			_createMethodAction(this.context, this, "InsertAsSibling", 0 , [html, insertLocation]);
+		Paragraph.prototype.insertHtmlAsSibling=function (insertLocation, html) {
+			_createMethodAction(this.context, this, "InsertHtmlAsSibling", 0 , [insertLocation, html]);
+		};
+		Paragraph.prototype.insertImageAsSibling=function (insertLocation, base64EncodedImage, width, height) {
+			return new OneNote.Image(this.context, _createMethodObjectPath(this.context, this, "InsertImageAsSibling", 0 , [insertLocation, base64EncodedImage, width, height], false, false));
+		};
+		Paragraph.prototype.insertRichTextAsSibling=function (insertLocation, paragraphText) {
+			return new OneNote.RichText(this.context, _createMethodObjectPath(this.context, this, "InsertRichTextAsSibling", 0 , [insertLocation, paragraphText], false, false));
+		};
+		Paragraph.prototype.insertTableAsSibling=function (insertLocation, rowCount, columnCount, values) {
+			return new OneNote.Table(this.context, _createMethodObjectPath(this.context, this, "InsertTableAsSibling", 0 , [insertLocation, rowCount, columnCount, values], false, false));
 		};
 		Paragraph.prototype.select=function () {
 			_createMethodAction(this.context, this, "Select", 0 , []);
@@ -10965,7 +11175,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "richText", "RichText"]);
+			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "richText", "RichText", "table", "Table"]);
 		};
 		Paragraph.prototype.load=function (option) {
 			_load(this, option);
@@ -11250,6 +11460,462 @@ var OneNote;
 		return Image;
 	})(OfficeExtension.ClientObject);
 	OneNote.Image=Image;
+	var Table=(function (_super) {
+		__extends(Table, _super);
+		function Table() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(Table.prototype, "paragraph", {
+			get: function () {
+				if (!this.m_paragraph) {
+					this.m_paragraph=new OneNote.Paragraph(this.context, _createPropertyObjectPath(this.context, this, "Paragraph", false, false));
+				}
+				return this.m_paragraph;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Table.prototype, "rows", {
+			get: function () {
+				if (!this.m_rows) {
+					this.m_rows=new OneNote.TableRowCollection(this.context, _createPropertyObjectPath(this.context, this, "Rows", true, false));
+				}
+				return this.m_rows;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Table.prototype, "columnCount", {
+			get: function () {
+				_throwIfNotLoaded("columnCount", this.m_columnCount, "Table", this._isNull);
+				return this.m_columnCount;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Table.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "Table", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Table.prototype, "rowCount", {
+			get: function () {
+				_throwIfNotLoaded("rowCount", this.m_rowCount, "Table", this._isNull);
+				return this.m_rowCount;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Table.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "Table", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Table.prototype.appendColumn=function (values) {
+			_createMethodAction(this.context, this, "AppendColumn", 0 , [values]);
+		};
+		Table.prototype.appendRow=function (values) {
+			return new OneNote.TableRow(this.context, _createMethodObjectPath(this.context, this, "AppendRow", 0 , [values], false, false));
+		};
+		Table.prototype.deleteColumns=function (columnIndex, columnCount) {
+			_createMethodAction(this.context, this, "DeleteColumns", 0 , [columnIndex, columnCount]);
+		};
+		Table.prototype.deleteRows=function (rowIndex, rowCount) {
+			_createMethodAction(this.context, this, "DeleteRows", 0 , [rowIndex, rowCount]);
+		};
+		Table.prototype.getCell=function (rowIndex, cellIndex) {
+			return new OneNote.TableCell(this.context, _createMethodObjectPath(this.context, this, "GetCell", 0 , [rowIndex, cellIndex], false, false));
+		};
+		Table.prototype.hideBorder=function () {
+			_createMethodAction(this.context, this, "HideBorder", 0 , []);
+		};
+		Table.prototype.insertColumn=function (index, values) {
+			_createMethodAction(this.context, this, "InsertColumn", 0 , [index, values]);
+		};
+		Table.prototype.insertRow=function (index, values) {
+			return new OneNote.TableRow(this.context, _createMethodObjectPath(this.context, this, "InsertRow", 0 , [index, values], false, false));
+		};
+		Table.prototype.showBorder=function () {
+			_createMethodAction(this.context, this, "ShowBorder", 0 , []);
+		};
+		Table.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		Table.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["ColumnCount"])) {
+				this.m_columnCount=obj["ColumnCount"];
+			}
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["RowCount"])) {
+				this.m_rowCount=obj["RowCount"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["paragraph", "Paragraph", "rows", "Rows"]);
+		};
+		Table.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		Table.prototype._initReferenceId=function (value) {
+			this.m__ReferenceId=value;
+		};
+		return Table;
+	})(OfficeExtension.ClientObject);
+	OneNote.Table=Table;
+	var TableRow=(function (_super) {
+		__extends(TableRow, _super);
+		function TableRow() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(TableRow.prototype, "cells", {
+			get: function () {
+				if (!this.m_cells) {
+					this.m_cells=new OneNote.TableCellCollection(this.context, _createPropertyObjectPath(this.context, this, "Cells", true, false));
+				}
+				return this.m_cells;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRow.prototype, "parentTable", {
+			get: function () {
+				if (!this.m_parentTable) {
+					this.m_parentTable=new OneNote.Table(this.context, _createPropertyObjectPath(this.context, this, "ParentTable", false, false));
+				}
+				return this.m_parentTable;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRow.prototype, "cellCount", {
+			get: function () {
+				_throwIfNotLoaded("cellCount", this.m_cellCount, "TableRow", this._isNull);
+				return this.m_cellCount;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRow.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "TableRow", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRow.prototype, "rowIndex", {
+			get: function () {
+				_throwIfNotLoaded("rowIndex", this.m_rowIndex, "TableRow", this._isNull);
+				return this.m_rowIndex;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRow.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "TableRow", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		TableRow.prototype.delete=function () {
+			_createMethodAction(this.context, this, "Delete", 0 , []);
+		};
+		TableRow.prototype.insertRowAsSibling=function (insertLocation, values) {
+			return new OneNote.TableRow(this.context, _createMethodObjectPath(this.context, this, "InsertRowAsSibling", 1 , [insertLocation, values], false, false));
+		};
+		TableRow.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		TableRow.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["CellCount"])) {
+				this.m_cellCount=obj["CellCount"];
+			}
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["RowIndex"])) {
+				this.m_rowIndex=obj["RowIndex"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["cells", "Cells", "parentTable", "ParentTable"]);
+		};
+		TableRow.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		TableRow.prototype._initReferenceId=function (value) {
+			this.m__ReferenceId=value;
+		};
+		return TableRow;
+	})(OfficeExtension.ClientObject);
+	OneNote.TableRow=TableRow;
+	var TableRowCollection=(function (_super) {
+		__extends(TableRowCollection, _super);
+		function TableRowCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(TableRowCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "TableRowCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRowCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "TableRowCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableRowCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "TableRowCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		TableRowCollection.prototype.getItem=function (index) {
+			return new OneNote.TableRow(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		TableRowCollection.prototype.getItemAt=function (index) {
+			return new OneNote.TableRow(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false));
+		};
+		TableRowCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		TableRowCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.TableRow(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		TableRowCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		TableRowCollection.prototype._initReferenceId=function (value) {
+			this.m__ReferenceId=value;
+		};
+		return TableRowCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.TableRowCollection=TableRowCollection;
+	var TableCell=(function (_super) {
+		__extends(TableCell, _super);
+		function TableCell() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(TableCell.prototype, "paragraphs", {
+			get: function () {
+				if (!this.m_paragraphs) {
+					this.m_paragraphs=new OneNote.ParagraphCollection(this.context, _createPropertyObjectPath(this.context, this, "Paragraphs", true, false));
+				}
+				return this.m_paragraphs;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "parentRow", {
+			get: function () {
+				if (!this.m_parentRow) {
+					this.m_parentRow=new OneNote.TableRow(this.context, _createPropertyObjectPath(this.context, this, "ParentRow", false, false));
+				}
+				return this.m_parentRow;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "parentTable", {
+			get: function () {
+				if (!this.m_parentTable) {
+					this.m_parentTable=new OneNote.Table(this.context, _createPropertyObjectPath(this.context, this, "ParentTable", false, false));
+				}
+				return this.m_parentTable;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "cellIndex", {
+			get: function () {
+				_throwIfNotLoaded("cellIndex", this.m_cellIndex, "TableCell", this._isNull);
+				return this.m_cellIndex;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "TableCell", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "rowIndex", {
+			get: function () {
+				_throwIfNotLoaded("rowIndex", this.m_rowIndex, "TableCell", this._isNull);
+				return this.m_rowIndex;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCell.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "TableCell", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		TableCell.prototype.appendHtml=function (html) {
+			_createMethodAction(this.context, this, "AppendHtml", 0 , [html]);
+		};
+		TableCell.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		TableCell.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["CellIndex"])) {
+				this.m_cellIndex=obj["CellIndex"];
+			}
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["RowIndex"])) {
+				this.m_rowIndex=obj["RowIndex"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["paragraphs", "Paragraphs", "parentRow", "ParentRow", "parentTable", "ParentTable"]);
+		};
+		TableCell.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		TableCell.prototype._initReferenceId=function (value) {
+			this.m__ReferenceId=value;
+		};
+		return TableCell;
+	})(OfficeExtension.ClientObject);
+	OneNote.TableCell=TableCell;
+	var TableCellCollection=(function (_super) {
+		__extends(TableCellCollection, _super);
+		function TableCellCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(TableCellCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "TableCellCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCellCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "TableCellCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(TableCellCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "TableCellCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		TableCellCollection.prototype.getItem=function (index) {
+			return new OneNote.TableCell(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		TableCellCollection.prototype.getItemAt=function (index) {
+			return new OneNote.TableCell(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false));
+		};
+		TableCellCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		TableCellCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.TableCell(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		TableCellCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		TableCellCollection.prototype._initReferenceId=function (value) {
+			this.m__ReferenceId=value;
+		};
+		return TableCellCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.TableCellCollection=TableCellCollection;
 	var InsertLocation;
 	(function (InsertLocation) {
 		InsertLocation.before="Before";
@@ -11278,6 +11944,7 @@ var OneNote;
 	(function (ParagraphType) {
 		ParagraphType.richText="RichText";
 		ParagraphType.image="Image";
+		ParagraphType.table="Table";
 		ParagraphType.other="Other";
 	})(ParagraphType=OneNote.ParagraphType || (OneNote.ParagraphType={}));
 	var ErrorCodes;
