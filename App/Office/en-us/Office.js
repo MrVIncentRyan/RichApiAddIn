@@ -15,7 +15,8 @@ OSF.HostSpecificFileVersionMap = {
     },
     "onenote": {
         "web": "16.00",
-        "win32": "16.00"
+        "win32": "16.00",
+        "winrt": "16.00"
     },
     "outlook": {
         "ios": "16.00",
