@@ -1,5 +1,5 @@
 /* OneNote specific JavaScript API library */
-/* Version: 16.0.7216.3003 */
+/* Version: 16.0.7226.3006 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
@@ -1030,7 +1030,7 @@ OSF.DialogMessageType={
 	DialogMessageReceived: 0,
 	DialogClosed: 12006
 };
-OSF.OfficeAppContext=function OSF_OfficeAppContext(id, appName, appVersion, appUILocale, dataLocale, docUrl, clientMode, settings, reason, osfControlType, eToken, correlationId, appInstanceId, touchEnabled, commerceAllowed, appMinorVersion, requirementMatrix, hostCustomMessage) {
+OSF.OfficeAppContext=function OSF_OfficeAppContext(id, appName, appVersion, appUILocale, dataLocale, docUrl, clientMode, settings, reason, osfControlType, eToken, correlationId, appInstanceId, touchEnabled, commerceAllowed, appMinorVersion, requirementMatrix, hostCustomMessage, hostFullVersion, clientWindowHeight, clientWindowWidth, addinName) {
 	this._id=id;
 	this._appName=appName;
 	this._appVersion=appVersion;
@@ -1049,7 +1049,11 @@ OSF.OfficeAppContext=function OSF_OfficeAppContext(id, appName, appVersion, appU
 	this._appMinorVersion=appMinorVersion;
 	this._requirementMatrix=requirementMatrix;
 	this._hostCustomMessage=hostCustomMessage;
+	this._hostFullVersion=hostFullVersion;
 	this._isDialog=false;
+	this._clientWindowHeight=clientWindowHeight;
+	this._clientWindowWidth=clientWindowWidth;
+	this._addinName=addinName;
 	this.get_id=function get_id() { return this._id; };
 	this.get_appName=function get_appName() { return this._appName; };
 	this.get_appVersion=function get_appVersion() { return this._appVersion; };
@@ -1069,7 +1073,11 @@ OSF.OfficeAppContext=function OSF_OfficeAppContext(id, appName, appVersion, appU
 	this.get_appMinorVersion=function get_appMinorVersion() { return this._appMinorVersion; };
 	this.get_requirementMatrix=function get_requirementMatrix() { return this._requirementMatrix; };
 	this.get_hostCustomMessage=function get_hostCustomMessage() { return this._hostCustomMessage; };
+	this.get_hostFullVersion=function get_hostFullVersion() { return this._hostFullVersion; };
 	this.get_isDialog=function get_isDialog() { return this._isDialog; };
+	this.get_clientWindowHeight=function get_clientWindowHeight() { return this._clientWindowHeight; };
+	this.get_clientWindowWidth=function get_clientWindowWidth() { return this._clientWindowWidth; };
+	this.get_addinName=function get_addinName() { return this._addinName; };
 };
 OSF.OsfControlType={
 	DocumentLevel: 0,
@@ -1151,7 +1159,7 @@ Microsoft.Office.WebExtension.Parameters={
 	Height: "height",
 	RequireHTTPs: "requireHTTPS",
 	MessageToParent: "messageToParent",
-	XFrameDenySafe: "xFrameDenySafe"
+	DisplayInIframe: "displayInIframe"
 };
 OSF.OUtil.setNamespace("DDA", OSF);
 OSF.DDA.DocumentMode={
@@ -1254,6 +1262,7 @@ OSF.DDA.EventDispId={
 	dispidDocumentThemeChangedEvent: 8,
 	dispidOfficeThemeChangedEvent: 9,
 	dispidDialogMessageReceivedEvent: 10,
+	dispidDialogNotificationShownInAddinEvent: 11,
 	dispidActivationStatusChangedEvent: 32,
 	dispidAppCommandInvokedEvent: 39,
 	dispidOlkItemSelectedChangedEvent: 46,
@@ -2898,8 +2907,8 @@ OSF.DDA.DispIdHost.Facade=function OSF_DDA_DispIdHost_Facade(getDelegateMethods,
 				delegate[OSF.DDA.DispIdHost.Delegates.ExecuteAsync]({
 					"dispId": dispId,
 					"hostCallArgs": hostCallArgs,
-					"onCalling": function OSF_DDA_DispIdFacade$Execute_onCalling() { OSF.OUtil.writeProfilerMark(OSF.HostCallPerfMarker.IssueCall); },
-					"onReceiving": function OSF_DDA_DispIdFacade$Execute_onReceiving() { OSF.OUtil.writeProfilerMark(OSF.HostCallPerfMarker.ReceiveResponse); },
+					"onCalling": function OSF_DDA_DispIdFacade$Execute_onCalling() { },
+					"onReceiving": function OSF_DDA_DispIdFacade$Execute_onReceiving() { },
 					"onComplete": function (status, hostResponseArgs) {
 						var responseArgs;
 						if (status==OSF.DDA.ErrorCodeManager.errorCodes.ooeSuccess) {
@@ -3168,10 +3177,14 @@ OSF.DDA.DispIdHost.addEventSupport=function OSF_DDA_DispIdHost$AddEventSupport(t
 	}
 };
 OSF.ShowWindowDialogParameterKeys={
-	WindowUrl: "windowUrl",
-	WindowSpecs: "windowSpecs",
-	WindowName: "windowName",
-	MarketPlaceId: "marketPlaceId"
+	Url: "url",
+	Width: "width",
+	Height: "height",
+	DisplayInIframe: "displayInIframe"
+};
+OSF.HostThemeButtonStyleKeys={
+	ButtonBorderColor: "buttonBorderColor",
+	ButtonBackgroundColor: "buttonBackgroundColor"
 };
 var OfficeExt;
 (function (OfficeExt) {
@@ -3333,6 +3346,18 @@ var OfficeExt;
 		function MsAjaxDebug() {
 		}
 		MsAjaxDebug.trace=function (text) {
+			if (typeof Debug !=="undefined" && Debug.writeln)
+				Debug.writeln(text);
+			if (window.console && window.console.log)
+				window.console.log(text);
+			if (window.opera && window.opera.postError)
+				window.opera.postError(text);
+			if (window.debugService && window.debugService.trace)
+				window.debugService.trace(text);
+			var a=document.getElementById("TraceConsole");
+			if (a && a.tagName.toUpperCase()==="TEXTAREA") {
+				a.innerHTML+=text+"\n";
+			}
 		};
 		return MsAjaxDebug;
 	})();
@@ -4926,6 +4951,84 @@ OSF.DDA.WAC.Delegate.unregisterEventAsync=function OSF_DDA_WAC_Delegate$Unregist
 };
 var OfficeExt;
 (function (OfficeExt) {
+	var WacCommonUICssManager;
+	(function (WacCommonUICssManager) {
+		var hostType={
+			Excel: "excel",
+			Word: "word",
+			PowerPoint: "powerpoint"
+		};
+		function getDialogCssManager(applicationHostType) {
+			switch (applicationHostType) {
+				case hostType.Excel:
+				case hostType.Word:
+				case hostType.PowerPoint:
+					return new DefaultDialogCSSManager();
+			}
+			return null;
+		}
+		WacCommonUICssManager.getDialogCssManager=getDialogCssManager;
+		var DefaultDialogCSSManager=(function () {
+			function DefaultDialogCSSManager() {
+				this.overlayElementCSS=[
+					"position: absolute",
+					"top: 0",
+					"left: 0",
+					"width: 100%",
+					"height: 100%",
+					"background-color: rgba(198, 198, 198, 0.5)",
+					"z-index: 998"
+				];
+				this.dialogNotificationPanelCSS=[
+					"width: 100%",
+					"height: 120px",
+					"position: absolute",
+					"z-index: 999",
+					"background-color: rgba(255, 255, 255, 1)",
+					"left: 0px",
+					"top: 50%",
+					"margin-top: -60px"
+				];
+				this.dialogNotificationTextPanelCSS=[
+					"margin: 20px 30px",
+					"font-family: Segoe UI,Arial,Verdana,sans-serif",
+					"font-size: 14px",
+					"height: 40px"
+				];
+				this.dialogNotificationButtonPanelCSS="margin:0px 25px";
+				this.buttonStyleCSS=[
+					"text-align: center",
+					"width: 70px",
+					"height: 25px",
+					"font-size: 14px",
+					"font-family: Segoe UI,Arial,Verdana,sans-serif",
+					"margin: 0px 5px",
+					"border-width: 1px",
+					"border-style: solid"
+				];
+			}
+			DefaultDialogCSSManager.prototype.getOverlayElementCSS=function () {
+				return this.overlayElementCSS.join(";");
+			};
+			DefaultDialogCSSManager.prototype.getDialogNotificationPanelCSS=function () {
+				return this.dialogNotificationPanelCSS.join(";");
+			};
+			DefaultDialogCSSManager.prototype.getDialogNotificationTextPanelCSS=function () {
+				return this.dialogNotificationTextPanelCSS.join(";");
+			};
+			DefaultDialogCSSManager.prototype.getDialogNotificationButtonPanelCSS=function () {
+				return this.dialogNotificationButtonPanelCSS;
+			};
+			DefaultDialogCSSManager.prototype.getDialogButtonCSS=function () {
+				return this.buttonStyleCSS.join(";");
+			};
+			return DefaultDialogCSSManager;
+		})();
+		WacCommonUICssManager.DefaultDialogCSSManager=DefaultDialogCSSManager;
+	})(WacCommonUICssManager=OfficeExt.WacCommonUICssManager || (OfficeExt.WacCommonUICssManager={}));
+})(OfficeExt || (OfficeExt={}));
+var OfficeExt;
+(function (OfficeExt) {
 	var AddinNativeAction;
 	(function (AddinNativeAction) {
 		var Dialog;
@@ -4935,47 +5038,120 @@ var OfficeExt;
 			var closeDialogKey="action=closeDialog";
 			var showDialogCallback=null;
 			var checkWindowDialogCloseInterval=-1;
-			function showDialog(args) {
-				var showDialogArgs=args.input;
-				var appContext=OSF._OfficeAppFactory.getInitializationHelper()._appContext;
-				appContext._id=showDialogArgs[OSF.ShowWindowDialogParameterKeys.MarketPlaceId];
-				var windowUrl=showDialogArgs[OSF.ShowWindowDialogParameterKeys.WindowUrl];
-				var windowName=showDialogArgs[OSF.ShowWindowDialogParameterKeys.WindowName];
-				windowName[OSF.WindowNameItemKeys.AppContext]=appContext;
-				windowInstance=window.open(windowUrl, OfficeExt.WACUtils.serializeObjectToString(windowName), showDialogArgs[OSF.ShowWindowDialogParameterKeys.WindowSpecs]);
-				function receiveMessage(event) {
-					if (event.source==windowInstance) {
-						try {
-							handler([OSF.DialogMessageType.DialogMessageReceived, event.data]);
-						}
-						catch (e) {
-							OsfMsAjaxFactory.msAjaxDebug.trace("Error happened during message handler. Exception: "+e);
-						}
-					}
-				}
-				window.addEventListener("message", receiveMessage);
-				function checkWindowClose() {
-					try {
-						if (windowInstance==null || windowInstance.closed) {
-							window.clearInterval(checkWindowDialogCloseInterval);
-							handler([OSF.DialogMessageType.DialogClosed]);
-						}
-					}
-					catch (e) {
-						OsfMsAjaxFactory.msAjaxDebug.trace("Error happened during check or handle window close. Exception: "+e);
-					}
-				}
-				checkWindowDialogCloseInterval=window.setInterval(checkWindowClose, 1000);
-				if (showDialogCallback !=null) {
-					showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeSuccess);
-				}
-				else {
-					OsfMsAjaxFactory.msAjaxDebug.trace("showDialogCallback can not be null.");
+			var hostThemeButtonStyle=null;
+			function setHostThemeButtonStyle(args) {
+				var hostThemeButtonStyleArgs=args.input;
+				if (hostThemeButtonStyleArgs !=null) {
+					hostThemeButtonStyle={
+						HostButtonBorderColor: hostThemeButtonStyleArgs[OSF.HostThemeButtonStyleKeys.ButtonBorderColor],
+						HostButtonBackgroundColor: hostThemeButtonStyleArgs[OSF.HostThemeButtonStyleKeys.ButtonBackgroundColor]
+					};
 				}
 				args.completed();
 			}
-			Dialog.showDialog=showDialog;
-			;
+			Dialog.setHostThemeButtonStyle=setHostThemeButtonStyle;
+			function handleNewWindowDialog(dialogInfo) {
+				var hostInfoObj=OSF._OfficeAppFactory.getInitializationHelper()._hostInfo;
+				var dialogCssManager=OfficeExt.WacCommonUICssManager.getDialogCssManager(hostInfoObj.hostType);
+				var overlayElement=document.createElement("div");
+				overlayElement.style.cssText=dialogCssManager.getOverlayElementCSS();
+				document.body.insertBefore(overlayElement, document.body.firstChild);
+				var dialogNotificationPanel=document.createElement("div");
+				dialogNotificationPanel.style.cssText=dialogCssManager.getDialogNotificationPanelCSS();
+				var dialogNotificationTextPanel=document.createElement("div");
+				dialogNotificationTextPanel.innerText=OSF.OUtil.formatString(Strings.OfficeOM.L_ShowWindowDialogNotification, OSF._OfficeAppFactory.getInitializationHelper()._appContext._addinName);
+				dialogNotificationTextPanel.style.cssText=dialogCssManager.getDialogNotificationTextPanelCSS();
+				var dialogNotificationButtonPanel=document.createElement("div");
+				dialogNotificationButtonPanel.style.cssText=dialogCssManager.getDialogNotificationButtonPanelCSS();
+				if (document.documentElement.getAttribute("dir")=="rtl") {
+					dialogNotificationButtonPanel.style.cssFloat="left";
+				}
+				else {
+					dialogNotificationButtonPanel.style.cssFloat="right";
+				}
+				var commonButtonBorderColor="#ababab";
+				var commonButtonBackgroundColor="#ffffff";
+				var allowButton=document.createElement("input");
+				allowButton.setAttribute("type", "button");
+				allowButton.style.cssText=dialogCssManager.getDialogButtonCSS();
+				allowButton.style.borderColor=commonButtonBorderColor;
+				allowButton.style.backgroundColor=commonButtonBackgroundColor;
+				allowButton.setAttribute("value", Strings.OfficeOM.L_ShowWindowDialogNotificationAllow);
+				var allowButtonEventInHandler=function () {
+					if (hostThemeButtonStyle !=null) {
+						allowButton.style.borderColor=hostThemeButtonStyle.HostButtonBorderColor;
+						allowButton.style.backgroundColor=hostThemeButtonStyle.HostButtonBackgroundColor;
+					}
+					else {
+						allowButton.style.borderColor=OSF.CommonUI.HostButtonBorderColor;
+						allowButton.style.backgroundColor=OSF.CommonUI.HostButtonBackgroundColor;
+					}
+				};
+				var allowButtonEventOutHandler=function () {
+					allowButton.style.borderColor=commonButtonBorderColor;
+					allowButton.style.backgroundColor=commonButtonBackgroundColor;
+				};
+				allowButton.addEventListener("mouseover", allowButtonEventInHandler);
+				allowButton.addEventListener("focus", allowButtonEventInHandler);
+				allowButton.addEventListener("mouseout", allowButtonEventOutHandler);
+				allowButton.addEventListener("focusout", allowButtonEventOutHandler);
+				var ignoreButton=document.createElement("input");
+				ignoreButton.setAttribute("type", "button");
+				ignoreButton.style.cssText=dialogCssManager.getDialogButtonCSS();
+				ignoreButton.style.borderColor=commonButtonBorderColor;
+				ignoreButton.style.backgroundColor=commonButtonBackgroundColor;
+				ignoreButton.setAttribute("value", Strings.OfficeOM.L_ShowWindowDialogNotificationIgnore);
+				var ignoreButtonEventInHandler=function () {
+					if (hostThemeButtonStyle !=null) {
+						ignoreButton.style.borderColor=hostThemeButtonStyle.HostButtonBorderColor;
+						ignoreButton.style.backgroundColor=hostThemeButtonStyle.HostButtonBackgroundColor;
+					}
+					else {
+						ignoreButton.style.borderColor=OSF.CommonUI.HostButtonBorderColor;
+						ignoreButton.style.backgroundColor=OSF.CommonUI.HostButtonBackgroundColor;
+					}
+				};
+				var ignoreButtonEventOutHandler=function () {
+					ignoreButton.style.borderColor=commonButtonBorderColor;
+					ignoreButton.style.backgroundColor=commonButtonBackgroundColor;
+				};
+				ignoreButton.addEventListener("mouseover", ignoreButtonEventInHandler);
+				ignoreButton.addEventListener("focus", ignoreButtonEventInHandler);
+				ignoreButton.addEventListener("mouseout", ignoreButtonEventOutHandler);
+				ignoreButton.addEventListener("focusout", ignoreButtonEventOutHandler);
+				dialogNotificationButtonPanel.appendChild(allowButton);
+				dialogNotificationButtonPanel.appendChild(ignoreButton);
+				dialogNotificationPanel.appendChild(dialogNotificationTextPanel);
+				dialogNotificationPanel.appendChild(dialogNotificationButtonPanel);
+				document.body.insertBefore(dialogNotificationPanel, document.body.firstChild);
+				var registerDialogNotificationShownArgs={
+					"dispId": OSF.DDA.EventDispId.dispidDialogNotificationShownInAddinEvent,
+					"eventType": OSF.DDA.Marshaling.DialogNotificationShownEventType.DialogNotificationShown,
+					"onComplete": null
+				};
+				allowButton.onclick=function () {
+					function unregisterDialogNotificationShownEventCallback(status) {
+						document.body.removeChild(dialogNotificationPanel);
+						document.body.removeChild(overlayElement);
+						showDialog(dialogInfo);
+					}
+					registerDialogNotificationShownArgs.onComplete=unregisterDialogNotificationShownEventCallback;
+					OSF.DDA.WAC.Delegate.unregisterEventAsync(registerDialogNotificationShownArgs);
+				};
+				ignoreButton.onclick=function () {
+					function unregisterDialogNotificationShownEventCallback(status) {
+						document.body.removeChild(dialogNotificationPanel);
+						document.body.removeChild(overlayElement);
+						showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeEndUserIgnore);
+					}
+					registerDialogNotificationShownArgs.onComplete=unregisterDialogNotificationShownEventCallback;
+					OSF.DDA.WAC.Delegate.unregisterEventAsync(registerDialogNotificationShownArgs);
+				};
+				window.focus();
+				allowButton.focus();
+				OSF.DDA.WAC.Delegate.registerEventAsync(registerDialogNotificationShownArgs);
+			}
+			Dialog.handleNewWindowDialog=handleNewWindowDialog;
 			function closeDialog(callback) {
 				if (windowInstance !=null) {
 					windowInstance.postMessage(closeDialogKey, getWindowLocationOrigin());
@@ -4988,7 +5164,6 @@ var OfficeExt;
 				}
 			}
 			Dialog.closeDialog=closeDialog;
-			;
 			function messageParent(params) {
 				var message=params.hostCallArgs[Microsoft.Office.WebExtension.Parameters.MessageToParent];
 				window.opener.postMessage(message, getWindowLocationOrigin());
@@ -5008,6 +5183,61 @@ var OfficeExt;
 				showDialogCallback=callback;
 			}
 			Dialog.setHandlerAndShowDialogCallback=setHandlerAndShowDialogCallback;
+			function showDialog(dialogInfo) {
+				var hostInfoObj=OSF._OfficeAppFactory.getInitializationHelper()._hostInfo;
+				var hostInfoVals=[
+					hostInfoObj.hostType,
+					hostInfoObj.hostPlatform,
+					hostInfoObj.hostSpecificFileVersion,
+					hostInfoObj.hostLocale,
+					hostInfoObj.osfControlAppCorrelationId,
+					"isDialog"
+				];
+				var hostInfo=hostInfoVals.join("|");
+				var appContext=OSF._OfficeAppFactory.getInitializationHelper()._appContext;
+				var windowUrl=dialogInfo[OSF.ShowWindowDialogParameterKeys.Url];
+				var windowName=JSON.parse(window.name);
+				windowName[OSF.WindowNameItemKeys.HostInfo]=hostInfo;
+				windowName[OSF.WindowNameItemKeys.AppContext]=appContext;
+				var width=dialogInfo[OSF.ShowWindowDialogParameterKeys.Width] * appContext._clientWindowWidth / 100;
+				var height=dialogInfo[OSF.ShowWindowDialogParameterKeys.Height] * appContext._clientWindowHeight / 100;
+				var windowSpecs="width="+width+", height="+height+",channelmode=no,directories=no,fullscreen=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,titlebar=yes,toolbar=no";
+				windowInstance=window.open(windowUrl, OfficeExt.WACUtils.serializeObjectToString(windowName), windowSpecs);
+				function receiveMessage(event) {
+					if (event.source==windowInstance) {
+						try {
+							var dialogMessageReceivedArgs={};
+							dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageType]=OSF.DialogMessageType.DialogMessageReceived;
+							dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageContent]=event.data;
+							handler(dialogMessageReceivedArgs);
+						}
+						catch (e) {
+							OsfMsAjaxFactory.msAjaxDebug.trace("Error happened during message handler. Exception: "+e);
+						}
+					}
+				}
+				window.addEventListener("message", receiveMessage);
+				function checkWindowClose() {
+					try {
+						if (windowInstance==null || windowInstance.closed) {
+							window.clearInterval(checkWindowDialogCloseInterval);
+							var dialogClosedArgs={};
+							dialogClosedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageType]=OSF.DialogMessageType.DialogClosed;
+							handler(dialogClosedArgs);
+						}
+					}
+					catch (e) {
+						OsfMsAjaxFactory.msAjaxDebug.trace("Error happened during check or handle window close. Exception: "+e);
+					}
+				}
+				checkWindowDialogCloseInterval=window.setInterval(checkWindowClose, 1000);
+				if (showDialogCallback !=null) {
+					showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeSuccess);
+				}
+				else {
+					OsfMsAjaxFactory.msAjaxDebug.trace("showDialogCallback can not be null.");
+				}
+			}
 			function getWindowLocationOrigin() {
 				if (!window.location.origin) {
 					return window.location.protocol+"//"+window.location.hostname+(window.location.port ? ':'+window.location.port : '');
@@ -5158,7 +5388,7 @@ OSF.InitializationHelper.prototype.getAppContext=function OSF_InitializationHelp
 			if (appContext._requirementMatrix !=undefined) {
 				requirementMatrix=appContext._requirementMatrix;
 			}
-			var returnedContext=new OSF.OfficeAppContext(appContext._id, appContext._appName, appContext._appVersion, appContext._appUILocale, appContext._dataLocale, appContext._docUrl, appContext._clientMode, settings, appContext._reason, appContext._osfControlType, appContext._eToken, appContext._correlationId, appInstanceId, touchEnabled, commerceAllowed, minorVersion, requirementMatrix, appContext._hostCustomMessage);
+			var returnedContext=new OSF.OfficeAppContext(appContext._id, appContext._appName, appContext._appVersion, appContext._appUILocale, appContext._dataLocale, appContext._docUrl, appContext._clientMode, settings, appContext._reason, appContext._osfControlType, appContext._eToken, appContext._correlationId, appInstanceId, touchEnabled, commerceAllowed, minorVersion, requirementMatrix, appContext._hostCustomMessage, appContext._hostFullVersion, appContext._clientWindowHeight, appContext._clientWindowWidth, appContext._addinName);
 			if (OSF.AppTelemetry) {
 				OSF.AppTelemetry.initialize(returnedContext);
 			}
@@ -5175,8 +5405,6 @@ OSF.InitializationHelper.prototype.getAppContext=function OSF_InitializationHelp
 	try {
 		if (this._hostInfo.isDialog && window.opener !=null) {
 			var appContext=OfficeExt.WACUtils.parseAppContextFromWindowName(false, OSF._OfficeAppFactory.getWindowName());
-			appContext._correlationId=this._hostInfo.osfControlAppCorrelationId;
-			appContext._appInstanceId=OSF.OUtil.getXdmFieldValue(OSF.XdmFieldName.AppId, false);
 			getInvocationCallbackWebApp(0, appContext);
 		}
 		else {
@@ -5191,6 +5419,8 @@ OSF.InitializationHelper.prototype.getAppContext=function OSF_InitializationHelp
 	}
 };
 OSF.InitializationHelper.prototype.setAgaveHostCommunication=function OSF_InitializationHelper$setAgaveHostCommunication() {
+	if (this._hostInfo.isDialog && window.opener !=null)
+		return;
 	try {
 		var me=this;
 		var xdmInfoValue=OSF.OUtil.parseXdmInfoWithGivenFragment(false, OSF._OfficeAppFactory.getWindowLocationHash());
@@ -5462,6 +5692,24 @@ var OSFLog;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(AppActivatedUsageData.prototype, "DocUrl", {
+			get: function () { return this.Fields["DocUrl"]; },
+			set: function (value) { this.Fields["DocUrl"]=value; },
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(AppActivatedUsageData.prototype, "OfficeJSVersion", {
+			get: function () { return this.Fields["OfficeJSVersion"]; },
+			set: function (value) { this.Fields["OfficeJSVersion"]=value; },
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(AppActivatedUsageData.prototype, "HostJSVersion", {
+			get: function () { return this.Fields["HostJSVersion"]; },
+			set: function (value) { this.Fields["HostJSVersion"]=value; },
+			enumerable: true,
+			configurable: true
+		});
 		AppActivatedUsageData.prototype.SerializeFields=function () {
 			this.SetSerializedField("CorrelationId", this.CorrelationId);
 			this.SetSerializedField("SessionId", this.SessionId);
@@ -5477,6 +5725,9 @@ var OSFLog;
 			this.SetSerializedField("AppSizeWidth", this.AppSizeWidth);
 			this.SetSerializedField("AppSizeHeight", this.AppSizeHeight);
 			this.SetSerializedField("Message", this.Message);
+			this.SetSerializedField("DocUrl", this.DocUrl);
+			this.SetSerializedField("OfficeJSVersion", this.OfficeJSVersion);
+			this.SetSerializedField("HostJSVersion", this.HostJSVersion);
 		};
 		return AppActivatedUsageData;
 	})(BaseUsageData);
@@ -5779,6 +6030,7 @@ var OSFAppTelemetry;
 	var appInfo;
 	var sessionId=OSF.OUtil.Guid.generateNewGuid();
 	var osfControlAppCorrelationId="";
+	var omexDomainRegex=new RegExp("^https?://store\\.office(ppe|-int)?\\.com/", "i");
 	;
 	var AppInfo=(function () {
 		function AppInfo() {
@@ -5883,7 +6135,12 @@ var OSFAppTelemetry;
 			return;
 		}
 		appInfo=new AppInfo();
-		appInfo.hostVersion=context.get_appVersion();
+		if (context.get_hostFullVersion()) {
+			appInfo.hostVersion=context.get_hostFullVersion();
+		}
+		else {
+			appInfo.hostVersion=context.get_appVersion();
+		}
 		appInfo.appId=context.get_id();
 		appInfo.host=context.get_appName();
 		appInfo.browser=window.navigator.userAgent;
@@ -5894,6 +6151,10 @@ var OSFAppTelemetry;
 			appInfo.appInstanceId=appInfo.appInstanceId.replace(/[{}]/g, "").toLowerCase();
 		}
 		appInfo.message=context.get_hostCustomMessage();
+		appInfo.officeJSVersion=OSF.ConstantNames.FileVersion;
+		appInfo.hostJSVersion="16.0.7226.3003";
+		var docUrl=context.get_docUrl();
+		appInfo.docUrl=omexDomainRegex.test(docUrl) ? docUrl : "";
 		var index=location.href.indexOf("?");
 		appInfo.appURL=(index==-1) ? location.href : location.href.substring(0, index);
 		(function getUserIdAndAssetIdFromToken(token, appInfo) {
@@ -5982,6 +6243,9 @@ var OSFAppTelemetry;
 		data.AppSizeHeight=window.innerHeight;
 		data.AppInstanceId=appInfo.appInstanceId;
 		data.Message=appInfo.message;
+		data.DocUrl=appInfo.docUrl;
+		data.OfficeJSVersion=appInfo.officeJSVersion;
+		data.HostJSVersion=appInfo.hostJSVersion;
 		(new AppLogger()).LogData(data);
 		setTimeout(function () {
 			if (!OSF.Logger) {
@@ -8173,7 +8437,7 @@ OSF.DDA.AsyncMethodCalls.define({
 			}
 		},
 		{
-			name: Microsoft.Office.WebExtension.Parameters.XFrameDenySafe,
+			name: Microsoft.Office.WebExtension.Parameters.DisplayInIframe,
 			value: {
 				"types": ["boolean"],
 				"defaultValue": true
@@ -8260,6 +8524,9 @@ OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys={
 OSF.DDA.Marshaling.MessageParentKeys={
 	MessageToParent: "messageToParent"
 };
+OSF.DDA.Marshaling.DialogNotificationShownEventType={
+	DialogNotificationShown: "dialogNotificationShown"
+};
 OSF.DDA.WAC.Delegate.ParameterMap.define({
 	type: OSF.DDA.EventDispId.dispidDialogMessageReceivedEvent,
 	fromHost: [
@@ -8281,6 +8548,7 @@ OSF.DDA.WAC.Delegate.ParameterMap.define({
 	]
 });
 OSF.DDA.WAC.Delegate.openDialog=function OSF_DDA_WAC_Delegate$OpenDialog(args) {
+	var dialogInfo=JSON.parse(args.targetId);
 	var callback=OSF.DDA.WAC.Delegate._getOnAfterRegisterEvent(true, args);
 	function showDialogCallback(status) {
 		var payload={ "Error": status };
@@ -8288,13 +8556,32 @@ OSF.DDA.WAC.Delegate.openDialog=function OSF_DDA_WAC_Delegate$OpenDialog(args) {
 	}
 	if (OSF.DialogShownStatus.hasDialogShown) {
 		showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeDialogAlreadyOpened);
+		return;
+	}
+	if (dialogInfo[OSF.ShowWindowDialogParameterKeys.DisplayInIframe]) {
+		OSF.DialogShownStatus.isWindowDialog=true;
+		OfficeExt.AddinNativeAction.Dialog.setHandlerAndShowDialogCallback(function OSF_DDA_WACDelegate$RegisterEventAsync_OnEvent(payload) {
+			if (args.onEvent) {
+				args.onEvent(payload);
+			}
+			if (OSF.AppTelemetry) {
+				OSF.AppTelemetry.onEventDone(args.dispId);
+			}
+		}, showDialogCallback);
+		OfficeExt.AddinNativeAction.Dialog.handleNewWindowDialog(dialogInfo);
 	}
 	else {
+		OSF.DialogShownStatus.isWindowDialog=false;
 		OSF.DDA.WAC.Delegate.registerEventAsync(args);
 	}
 };
 OSF.DDA.WAC.Delegate.messageParent=function OSF_DDA_WAC_Delegate$MessageParent(args) {
-	OSF.DDA.WAC.Delegate.executeAsync(args);
+	if (window.opener !=null) {
+		OfficeExt.AddinNativeAction.Dialog.messageParent(args);
+	}
+	else {
+		OSF.DDA.WAC.Delegate.executeAsync(args);
+	}
 };
 OSF.DDA.WAC.Delegate.closeDialog=function OSF_DDA_WAC_Delegate$CloseDialog(args) {
 	var callback=OSF.DDA.WAC.Delegate._getOnAfterRegisterEvent(false, args);
@@ -8306,7 +8593,15 @@ OSF.DDA.WAC.Delegate.closeDialog=function OSF_DDA_WAC_Delegate$CloseDialog(args)
 		closeDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeWebDialogClosed);
 	}
 	else {
-		OSF.DDA.WAC.Delegate.unregisterEventAsync(args);
+		if (OSF.DialogShownStatus.isWindowDialog) {
+			if (args.onCalling) {
+				args.onCalling();
+			}
+			OfficeExt.AddinNativeAction.Dialog.closeDialog(closeDialogCallback);
+		}
+		else {
+			OSF.DDA.WAC.Delegate.unregisterEventAsync(args);
+		}
 	}
 };
 var OSFOneNoteWAC;
@@ -10823,6 +11118,950 @@ var OneNote;
 		return Application;
 	})(OfficeExtension.ClientObject);
 	OneNote.Application=Application;
+	var InkAnalysis=(function (_super) {
+		__extends(InkAnalysis, _super);
+		function InkAnalysis() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysis.prototype, "page", {
+			get: function () {
+				if (!this.m_page) {
+					this.m_page=new OneNote.Page(this.context, _createPropertyObjectPath(this.context, this, "Page", false, false));
+				}
+				return this.m_page;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysis.prototype, "paragraphs", {
+			get: function () {
+				if (!this.m_paragraphs) {
+					this.m_paragraphs=new OneNote.InkAnalysisParagraphCollection(this.context, _createPropertyObjectPath(this.context, this, "Paragraphs", true, false));
+				}
+				return this.m_paragraphs;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysis.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkAnalysis", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysis.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysis", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysis.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysis.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["page", "Page", "paragraphs", "Paragraphs"]);
+		};
+		InkAnalysis.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysis.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkAnalysis;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysis=InkAnalysis;
+	var InkAnalysisParagraph=(function (_super) {
+		__extends(InkAnalysisParagraph, _super);
+		function InkAnalysisParagraph() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisParagraph.prototype, "inkAnalysis", {
+			get: function () {
+				if (!this.m_inkAnalysis) {
+					this.m_inkAnalysis=new OneNote.InkAnalysis(this.context, _createPropertyObjectPath(this.context, this, "InkAnalysis", false, false));
+				}
+				return this.m_inkAnalysis;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisParagraph.prototype, "lines", {
+			get: function () {
+				if (!this.m_lines) {
+					this.m_lines=new OneNote.InkAnalysisLineCollection(this.context, _createPropertyObjectPath(this.context, this, "Lines", true, false));
+				}
+				return this.m_lines;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisParagraph.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkAnalysisParagraph", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisParagraph.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisParagraph", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisParagraph.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisParagraph.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["inkAnalysis", "InkAnalysis", "lines", "Lines"]);
+		};
+		InkAnalysisParagraph.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisParagraph.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkAnalysisParagraph;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisParagraph=InkAnalysisParagraph;
+	var InkAnalysisParagraphCollection=(function (_super) {
+		__extends(InkAnalysisParagraphCollection, _super);
+		function InkAnalysisParagraphCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisParagraphCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "InkAnalysisParagraphCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisParagraphCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "InkAnalysisParagraphCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisParagraphCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisParagraphCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisParagraphCollection.prototype.getItem=function (index) {
+			return new OneNote.InkAnalysisParagraph(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		InkAnalysisParagraphCollection.prototype.getItemAt=function (index) {
+			return new OneNote.InkAnalysisParagraph(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false, null));
+		};
+		InkAnalysisParagraphCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisParagraphCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.InkAnalysisParagraph(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		InkAnalysisParagraphCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisParagraphCollection.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+		};
+		return InkAnalysisParagraphCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisParagraphCollection=InkAnalysisParagraphCollection;
+	var InkAnalysisLine=(function (_super) {
+		__extends(InkAnalysisLine, _super);
+		function InkAnalysisLine() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisLine.prototype, "paragraph", {
+			get: function () {
+				if (!this.m_paragraph) {
+					this.m_paragraph=new OneNote.InkAnalysisParagraph(this.context, _createPropertyObjectPath(this.context, this, "Paragraph", false, false));
+				}
+				return this.m_paragraph;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisLine.prototype, "words", {
+			get: function () {
+				if (!this.m_words) {
+					this.m_words=new OneNote.InkAnalysisWordCollection(this.context, _createPropertyObjectPath(this.context, this, "Words", true, false));
+				}
+				return this.m_words;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisLine.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkAnalysisLine", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisLine.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisLine", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisLine.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisLine.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["paragraph", "Paragraph", "words", "Words"]);
+		};
+		InkAnalysisLine.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisLine.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkAnalysisLine;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisLine=InkAnalysisLine;
+	var InkAnalysisLineCollection=(function (_super) {
+		__extends(InkAnalysisLineCollection, _super);
+		function InkAnalysisLineCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisLineCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "InkAnalysisLineCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisLineCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "InkAnalysisLineCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisLineCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisLineCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisLineCollection.prototype.getItem=function (index) {
+			return new OneNote.InkAnalysisLine(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		InkAnalysisLineCollection.prototype.getItemAt=function (index) {
+			return new OneNote.InkAnalysisLine(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false, null));
+		};
+		InkAnalysisLineCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisLineCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.InkAnalysisLine(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		InkAnalysisLineCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisLineCollection.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+		};
+		return InkAnalysisLineCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisLineCollection=InkAnalysisLineCollection;
+	var InkAnalysisWord=(function (_super) {
+		__extends(InkAnalysisWord, _super);
+		function InkAnalysisWord() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisWord.prototype, "line", {
+			get: function () {
+				if (!this.m_line) {
+					this.m_line=new OneNote.InkAnalysisLine(this.context, _createPropertyObjectPath(this.context, this, "Line", false, false));
+				}
+				return this.m_line;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWord.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkAnalysisWord", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWord.prototype, "languageId", {
+			get: function () {
+				_throwIfNotLoaded("languageId", this.m_languageId, "InkAnalysisWord", this._isNull);
+				return this.m_languageId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWord.prototype, "strokePointers", {
+			get: function () {
+				_throwIfNotLoaded("strokePointers", this.m_strokePointers, "InkAnalysisWord", this._isNull);
+				return this.m_strokePointers;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWord.prototype, "wordAlternates", {
+			get: function () {
+				_throwIfNotLoaded("wordAlternates", this.m_wordAlternates, "InkAnalysisWord", this._isNull);
+				return this.m_wordAlternates;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWord.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisWord", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisWord.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisWord.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["LanguageId"])) {
+				this.m_languageId=obj["LanguageId"];
+			}
+			if (!_isUndefined(obj["StrokePointers"])) {
+				this.m_strokePointers=obj["StrokePointers"];
+			}
+			if (!_isUndefined(obj["WordAlternates"])) {
+				this.m_wordAlternates=obj["WordAlternates"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["line", "Line"]);
+		};
+		InkAnalysisWord.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisWord.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkAnalysisWord;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisWord=InkAnalysisWord;
+	var InkAnalysisWordCollection=(function (_super) {
+		__extends(InkAnalysisWordCollection, _super);
+		function InkAnalysisWordCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkAnalysisWordCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "InkAnalysisWordCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWordCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "InkAnalysisWordCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkAnalysisWordCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkAnalysisWordCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkAnalysisWordCollection.prototype.getItem=function (index) {
+			return new OneNote.InkAnalysisWord(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		InkAnalysisWordCollection.prototype.getItemAt=function (index) {
+			return new OneNote.InkAnalysisWord(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false, null));
+		};
+		InkAnalysisWordCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkAnalysisWordCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.InkAnalysisWord(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		InkAnalysisWordCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkAnalysisWordCollection.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+		};
+		return InkAnalysisWordCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkAnalysisWordCollection=InkAnalysisWordCollection;
+	var FloatingInk=(function (_super) {
+		__extends(FloatingInk, _super);
+		function FloatingInk() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(FloatingInk.prototype, "inkStrokes", {
+			get: function () {
+				if (!this.m_inkStrokes) {
+					this.m_inkStrokes=new OneNote.InkStrokeCollection(this.context, _createPropertyObjectPath(this.context, this, "InkStrokes", true, false));
+				}
+				return this.m_inkStrokes;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(FloatingInk.prototype, "pageContent", {
+			get: function () {
+				if (!this.m_pageContent) {
+					this.m_pageContent=new OneNote.PageContent(this.context, _createPropertyObjectPath(this.context, this, "PageContent", false, false));
+				}
+				return this.m_pageContent;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(FloatingInk.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "FloatingInk", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(FloatingInk.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "FloatingInk", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		FloatingInk.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		FloatingInk.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["inkStrokes", "InkStrokes", "pageContent", "PageContent"]);
+		};
+		FloatingInk.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		FloatingInk.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return FloatingInk;
+	})(OfficeExtension.ClientObject);
+	OneNote.FloatingInk=FloatingInk;
+	var InkStroke=(function (_super) {
+		__extends(InkStroke, _super);
+		function InkStroke() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkStroke.prototype, "floatingInk", {
+			get: function () {
+				if (!this.m_floatingInk) {
+					this.m_floatingInk=new OneNote.FloatingInk(this.context, _createPropertyObjectPath(this.context, this, "FloatingInk", false, false));
+				}
+				return this.m_floatingInk;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkStroke.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkStroke", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkStroke.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkStroke", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkStroke.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkStroke.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["floatingInk", "FloatingInk"]);
+		};
+		InkStroke.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkStroke.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkStroke;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkStroke=InkStroke;
+	var InkStrokeCollection=(function (_super) {
+		__extends(InkStrokeCollection, _super);
+		function InkStrokeCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkStrokeCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "InkStrokeCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkStrokeCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "InkStrokeCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkStrokeCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkStrokeCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkStrokeCollection.prototype.getItem=function (index) {
+			return new OneNote.InkStroke(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		InkStrokeCollection.prototype.getItemAt=function (index) {
+			return new OneNote.InkStroke(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false, null));
+		};
+		InkStrokeCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkStrokeCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.InkStroke(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		InkStrokeCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkStrokeCollection.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+		};
+		return InkStrokeCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkStrokeCollection=InkStrokeCollection;
+	var InkWord=(function (_super) {
+		__extends(InkWord, _super);
+		function InkWord() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkWord.prototype, "paragraph", {
+			get: function () {
+				if (!this.m_paragraph) {
+					this.m_paragraph=new OneNote.Paragraph(this.context, _createPropertyObjectPath(this.context, this, "Paragraph", false, false));
+				}
+				return this.m_paragraph;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWord.prototype, "id", {
+			get: function () {
+				_throwIfNotLoaded("id", this.m_id, "InkWord", this._isNull);
+				return this.m_id;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWord.prototype, "languageId", {
+			get: function () {
+				_throwIfNotLoaded("languageId", this.m_languageId, "InkWord", this._isNull);
+				return this.m_languageId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWord.prototype, "wordAlternates", {
+			get: function () {
+				_throwIfNotLoaded("wordAlternates", this.m_wordAlternates, "InkWord", this._isNull);
+				return this.m_wordAlternates;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWord.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkWord", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkWord.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkWord.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Id"])) {
+				this.m_id=obj["Id"];
+			}
+			if (!_isUndefined(obj["LanguageId"])) {
+				this.m_languageId=obj["LanguageId"];
+			}
+			if (!_isUndefined(obj["WordAlternates"])) {
+				this.m_wordAlternates=obj["WordAlternates"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			_handleNavigationPropertyResults(this, obj, ["paragraph", "Paragraph"]);
+		};
+		InkWord.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkWord.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+			if (!_isUndefined(value["Id"])) {
+				this.m_id=value["Id"];
+			}
+		};
+		return InkWord;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkWord=InkWord;
+	var InkWordCollection=(function (_super) {
+		__extends(InkWordCollection, _super);
+		function InkWordCollection() {
+			_super.apply(this, arguments);
+		}
+		Object.defineProperty(InkWordCollection.prototype, "items", {
+			get: function () {
+				_throwIfNotLoaded("items", this.m__items, "InkWordCollection", this._isNull);
+				return this.m__items;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWordCollection.prototype, "count", {
+			get: function () {
+				_throwIfNotLoaded("count", this.m_count, "InkWordCollection", this._isNull);
+				return this.m_count;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(InkWordCollection.prototype, "_ReferenceId", {
+			get: function () {
+				_throwIfNotLoaded("_ReferenceId", this.m__ReferenceId, "InkWordCollection", this._isNull);
+				return this.m__ReferenceId;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		InkWordCollection.prototype.getItem=function (index) {
+			return new OneNote.InkWord(this.context, _createIndexerObjectPath(this.context, this, [index]));
+		};
+		InkWordCollection.prototype.getItemAt=function (index) {
+			return new OneNote.InkWord(this.context, _createMethodObjectPath(this.context, this, "GetItemAt", 1 , [index], false, false, null));
+		};
+		InkWordCollection.prototype._KeepReference=function () {
+			_createMethodAction(this.context, this, "_KeepReference", 1 , []);
+		};
+		InkWordCollection.prototype._handleResult=function (value) {
+			_super.prototype._handleResult.call(this, value);
+			if (_isNullOrUndefined(value))
+				return;
+			var obj=value;
+			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["Count"])) {
+				this.m_count=obj["Count"];
+			}
+			if (!_isUndefined(obj["_ReferenceId"])) {
+				this.m__ReferenceId=obj["_ReferenceId"];
+			}
+			if (!_isNullOrUndefined(obj[OfficeExtension.Constants.items])) {
+				this.m__items=[];
+				var _data=obj[OfficeExtension.Constants.items];
+				for (var i=0; i < _data.length; i++) {
+					var _item=new OneNote.InkWord(this.context, _createChildItemObjectPathUsingIndexerOrGetItemAt(true, this.context, this, _data[i], i));
+					_item._handleResult(_data[i]);
+					this.m__items.push(_item);
+				}
+			}
+		};
+		InkWordCollection.prototype.load=function (option) {
+			_load(this, option);
+			return this;
+		};
+		InkWordCollection.prototype._handleIdResult=function (value) {
+			_super.prototype._handleIdResult.call(this, value);
+			if (_isNullOrUndefined(value)) {
+				return;
+			}
+			if (!_isUndefined(value["_ReferenceId"])) {
+				this.m__ReferenceId=value["_ReferenceId"];
+			}
+		};
+		return InkWordCollection;
+	})(OfficeExtension.ClientObject);
+	OneNote.InkWordCollection=InkWordCollection;
 	var Notebook=(function (_super) {
 		__extends(Notebook, _super);
 		function Notebook() {
@@ -11446,6 +12685,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(Page.prototype, "inkAnalysisOrNull", {
+			get: function () {
+				if (!this.m_inkAnalysisOrNull) {
+					this.m_inkAnalysisOrNull=new OneNote.InkAnalysis(this.context, _createPropertyObjectPath(this.context, this, "InkAnalysisOrNull", false, false));
+				}
+				return this.m_inkAnalysisOrNull;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(Page.prototype, "parentSection", {
 			get: function () {
 				if (!this.m_parentSection) {
@@ -11548,7 +12797,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["contents", "Contents", "parentSection", "ParentSection"]);
+			_handleNavigationPropertyResults(this, obj, ["contents", "Contents", "inkAnalysisOrNull", "InkAnalysisOrNull", "parentSection", "ParentSection"]);
 		};
 		Page.prototype.load=function (option) {
 			_load(this, option);
@@ -11663,6 +12912,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(PageContent.prototype, "ink", {
+			get: function () {
+				if (!this.m_ink) {
+					this.m_ink=new OneNote.FloatingInk(this.context, _createPropertyObjectPath(this.context, this, "Ink", false, false));
+				}
+				return this.m_ink;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(PageContent.prototype, "outline", {
 			get: function () {
 				if (!this.m_outline) {
@@ -11758,7 +13017,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "parentPage", "ParentPage"]);
+			_handleNavigationPropertyResults(this, obj, ["image", "Image", "ink", "Ink", "outline", "Outline", "parentPage", "ParentPage"]);
 		};
 		PageContent.prototype.load=function (option) {
 			_load(this, option);
@@ -11959,6 +13218,16 @@ var OneNote;
 			enumerable: true,
 			configurable: true
 		});
+		Object.defineProperty(Paragraph.prototype, "inkWords", {
+			get: function () {
+				if (!this.m_inkWords) {
+					this.m_inkWords=new OneNote.InkWordCollection(this.context, _createPropertyObjectPath(this.context, this, "InkWords", true, false));
+				}
+				return this.m_inkWords;
+			},
+			enumerable: true,
+			configurable: true
+		});
 		Object.defineProperty(Paragraph.prototype, "outline", {
 			get: function () {
 				if (!this.m_outline) {
@@ -12096,7 +13365,7 @@ var OneNote;
 			if (!_isUndefined(obj["_ReferenceId"])) {
 				this.m__ReferenceId=obj["_ReferenceId"];
 			}
-			_handleNavigationPropertyResults(this, obj, ["image", "Image", "outline", "Outline", "paragraphs", "Paragraphs", "parentParagraph", "ParentParagraph", "parentParagraphOrNull", "ParentParagraphOrNull", "parentTableCell", "ParentTableCell", "parentTableCellOrNull", "ParentTableCellOrNull", "richText", "RichText", "table", "Table"]);
+			_handleNavigationPropertyResults(this, obj, ["image", "Image", "inkWords", "InkWords", "outline", "Outline", "paragraphs", "Paragraphs", "parentParagraph", "ParentParagraph", "parentParagraphOrNull", "ParentParagraphOrNull", "parentTableCell", "ParentTableCell", "parentTableCellOrNull", "ParentTableCellOrNull", "richText", "RichText", "table", "Table"]);
 		};
 		Paragraph.prototype.load=function (option) {
 			_load(this, option);
@@ -12503,14 +13772,8 @@ var OneNote;
 		Table.prototype.clear=function () {
 			_createMethodAction(this.context, this, "Clear", 0 , []);
 		};
-		Table.prototype.deleteColumns=function (columnIndex, columnCount) {
-			_createMethodAction(this.context, this, "DeleteColumns", 0 , [columnIndex, columnCount]);
-		};
-		Table.prototype.deleteRows=function (rowIndex, rowCount) {
-			_createMethodAction(this.context, this, "DeleteRows", 0 , [rowIndex, rowCount]);
-		};
 		Table.prototype.getCell=function (rowIndex, cellIndex) {
-			return new OneNote.TableCell(this.context, _createMethodObjectPath(this.context, this, "GetCell", 0 , [rowIndex, cellIndex], false, true, null));
+			return new OneNote.TableCell(this.context, _createMethodObjectPath(this.context, this, "GetCell", 1 , [rowIndex, cellIndex], false, false, null));
 		};
 		Table.prototype.insertColumn=function (index, values) {
 			_createMethodAction(this.context, this, "InsertColumn", 0 , [index, values]);
@@ -12625,9 +13888,6 @@ var OneNote;
 		});
 		TableRow.prototype.clear=function () {
 			_createMethodAction(this.context, this, "Clear", 0 , []);
-		};
-		TableRow.prototype.delete=function () {
-			_createMethodAction(this.context, this, "Delete", 0 , []);
 		};
 		TableRow.prototype.insertRowAsSibling=function (insertLocation, values) {
 			return new OneNote.TableRow(this.context, _createMethodObjectPath(this.context, this, "InsertRowAsSibling", 0 , [insertLocation, values], false, true, null));
@@ -12980,6 +14240,7 @@ var OneNote;
 	(function (PageContentType) {
 		PageContentType.outline="Outline";
 		PageContentType.image="Image";
+		PageContentType.ink="Ink";
 		PageContentType.other="Other";
 	})(PageContentType=OneNote.PageContentType || (OneNote.PageContentType={}));
 	var ParagraphType;
@@ -12987,6 +14248,7 @@ var OneNote;
 		ParagraphType.richText="RichText";
 		ParagraphType.image="Image";
 		ParagraphType.table="Table";
+		ParagraphType.ink="Ink";
 		ParagraphType.other="Other";
 	})(ParagraphType=OneNote.ParagraphType || (OneNote.ParagraphType={}));
 	var ErrorCodes;
