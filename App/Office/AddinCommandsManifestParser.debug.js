@@ -21,6 +21,11 @@ var OfficeExt;
             }
             return AddInInternalException;
         })();
+        function CheckValueNotNull(objectValue, errorMessage) {
+            if (objectValue == null) {
+                throw new AddInManifestException(errorMessage);
+            }
+        }
         var ManifestResourceManager = (function () {
             function ManifestResourceManager(context) {
                 this.Images = {};
@@ -55,9 +60,7 @@ var OfficeExt;
             }
             ParsingContext.prototype.parseIdRequired = function (node) {
                 var id = node.getAttribute("id");
-                if (id == null) {
-                    throw new AddInManifestException("id requird");
-                }
+                CheckValueNotNull(id, "Id required");
                 return id;
             };
             ParsingContext.prototype.parseLabel = function (node) {
@@ -69,16 +72,12 @@ var OfficeExt;
             };
             ParsingContext.prototype.parseLabelRequired = function (node) {
                 var label = this.parseLabel(node);
-                if (label == null) {
-                    throw new AddInManifestException("label required");
-                }
+                CheckValueNotNull(label, "Label required");
                 return label;
             };
             ParsingContext.prototype.parseRequiredSuperTip = function (node) {
                 var superTip = this.parseSuperTip(node);
-                if (superTip == null) {
-                    throw new AddInManifestException("SuperTip required");
-                }
+                CheckValueNotNull(superTip, "SuperTip required");
                 return superTip;
             };
             ParsingContext.prototype.parseSuperTip = function (node) {
@@ -88,8 +87,10 @@ var OfficeExt;
                     var tipNode = child;
                     var title, description;
                     child = this.manifest._xmlProcessor.selectSingleNode("ov:Title", tipNode);
+                    CheckValueNotNull(child, "Title is necessary for SuperTip.");
                     title = this.getShortString(child);
                     child = this.manifest._xmlProcessor.selectSingleNode("ov:Description", tipNode);
+                    CheckValueNotNull(child, "Description is necessary for SuperTip.");
                     description = this.getLongString(child);
                     superTip = {
                         title: title,
@@ -100,9 +101,7 @@ var OfficeExt;
             };
             ParsingContext.prototype.parseRequiredIcon = function (node) {
                 var icon = this.parseIcon(node);
-                if (icon == null) {
-                    throw new AddInManifestException("Icon required");
-                }
+                CheckValueNotNull(icon, "Icon required");
                 return icon;
             };
             ParsingContext.prototype.parseIcon = function (node) {
@@ -129,9 +128,7 @@ var OfficeExt;
                 for (var i = 0; i < len; i++) {
                     var e = nodes[i];
                     var control = parser(this, e);
-                    if (control == null) {
-                        throw new AddInManifestException("parser must return a control.");
-                    }
+                    CheckValueNotNull(control, "parser must return a control.");
                     controls.push(control);
                 }
                 return controls;
@@ -161,6 +158,7 @@ var OfficeExt;
                 var values = {};
                 var defaultValue = node.getAttribute("DefaultValue");
                 values[this.manifest._defaultLocale] = defaultValue;
+                values[this.manifest._defaultLocale.toLocaleLowerCase()] = defaultValue;
                 var overrideNodes = this.manifest._xmlProcessor.selectNodes("bt:Override", node);
                 if (overrideNodes) {
                     var len = overrideNodes.length;
@@ -169,6 +167,7 @@ var OfficeExt;
                         var locale = node.getAttribute("Locale");
                         var value = node.getAttribute("Value");
                         values[locale] = value;
+                        values[locale.toLocaleLowerCase()] = value;
                     }
                 }
                 return this.manifest._getDefaultValue(values);
@@ -194,9 +193,7 @@ var OfficeExt;
             ParsingContext.prototype.getResourceByNode = function (resources, resourceNode) {
                 var resid = resourceNode.getAttribute("resid");
                 var res = resources[resid];
-                if (res == null) {
-                    throw new AddInManifestException("resid: " + resid + " not found");
-                }
+                CheckValueNotNull(res, "resid: " + resid + " not found");
                 return res;
             };
             ParsingContext.prototype.getImageResource = function (resourceNode) {
@@ -234,6 +231,22 @@ var OfficeExt;
             }
             return AddinBuildingContext;
         })();
+        var GetStartedNode = (function () {
+            function GetStartedNode() {
+            }
+            GetStartedNode.prototype.parse = function (context, node) {
+                var xmlProcessor = context.manifest._xmlProcessor;
+                var titleNode = xmlProcessor.selectSingleNode("ov:Title", node);
+                CheckValueNotNull(titleNode, "Title is necessary for GetStarted.");
+                this.title = context.getShortString(titleNode);
+                var descriptionNode = xmlProcessor.selectSingleNode("ov:Description", node);
+                CheckValueNotNull(descriptionNode, "Description is necessary for GetStarted.");
+                this.description = context.getLongString(descriptionNode);
+                var learnMoreNode = xmlProcessor.selectSingleNode("ov:LearnMoreUrl", node);
+                this.learnMoreUrl = context.getUrlResource(learnMoreNode);
+            };
+            return GetStartedNode;
+        })();
         var ActionBase = (function () {
             function ActionBase(type) {
                 this.type = type;
@@ -248,11 +261,12 @@ var OfficeExt;
             __extends(ShowUIAction, _super);
             function ShowUIAction() {
                 _super.apply(this, arguments);
+                this.title = null;
             }
             ShowUIAction.prototype.parse = function (context, node) {
                 var child = context.manifest._xmlProcessor.selectSingleNode("ov:SourceLocation", node);
-                var url = context.getUrlResource(child);
-                this.sourceLocation = url;
+                CheckValueNotNull(child, "SourceLocation is necessary for ShowTaskpane action");
+                this.sourceLocation = context.getUrlResource(child);
             };
             return ShowUIAction;
         })(ActionBase);
@@ -262,19 +276,20 @@ var OfficeExt;
                 _super.apply(this, arguments);
             }
             ShowTaskPaneAction.prototype.buildAction = function (context) {
-                return context.actionBuilder.buildShowTaskpane(this.sourceLocation);
+                return context.actionBuilder.buildShowTaskpane(this.sourceLocation, this.title, this.taskpaneId);
+            };
+            ShowTaskPaneAction.prototype.parse = function (context, node) {
+                _super.prototype.parse.call(this, context, node);
+                var child = context.manifest._xmlProcessor.selectSingleNode("ov:TaskpaneId", node);
+                if (child != null) {
+                    this.taskpaneId = child.firstChild.nodeValue;
+                }
+                child = context.manifest._xmlProcessor.selectSingleNode("ov:Title", node);
+                if (child != null) {
+                    this.title = context.getShortString(child);
+                }
             };
             return ShowTaskPaneAction;
-        })(ShowUIAction);
-        var ShowDialogAction = (function (_super) {
-            __extends(ShowDialogAction, _super);
-            function ShowDialogAction() {
-                _super.apply(this, arguments);
-            }
-            ShowDialogAction.prototype.buildAction = function (context) {
-                return context.actionBuilder.buildShowDialog(this.sourceLocation);
-            };
-            return ShowDialogAction;
         })(ShowUIAction);
         var ExecuteFunctionAction = (function (_super) {
             __extends(ExecuteFunctionAction, _super);
@@ -282,15 +297,12 @@ var OfficeExt;
                 _super.apply(this, arguments);
             }
             ExecuteFunctionAction.prototype.buildAction = function (context) {
-                if (context.functionFile != null) {
-                    return context.actionBuilder.buildCallFunction(context.functionFile, this.functionName);
-                }
-                else {
-                    throw new AddInManifestException("Function file source url is necessary for ExecuteFunctionAction.");
-                }
+                CheckValueNotNull(context.functionFile, "Function file source url is necessary for ExecuteFunctionAction.");
+                return context.actionBuilder.buildCallFunction(context.functionFile, this.functionName, this.controlId);
             };
             ExecuteFunctionAction.prototype.parse = function (context, node) {
                 var child = context.manifest._xmlProcessor.selectSingleNode("ov:FunctionName", node);
+                CheckValueNotNull(child, "FunctionName is necessary for ExecuteFunctionAction.");
                 this.functionName = context.manifest._xmlProcessor.getNodeValue(child);
             };
             return ExecuteFunctionAction;
@@ -348,17 +360,16 @@ var OfficeExt;
                 this.icon = this.parseIcon(context, node);
                 this.superTip = context.parseRequiredSuperTip(node);
                 var child = context.manifest._xmlProcessor.selectSingleNode("ov:Action", node);
+                CheckValueNotNull(child, "Action is necessary for itemControl.");
                 var actionType = child.getAttribute(ParsingContext.typeAttributeName);
                 var action;
                 switch (actionType) {
                     case "ShowTaskpane":
                         action = new ShowTaskPaneAction(actionType);
                         break;
-                    case "ShowDialog":
-                        action = new ShowDialogAction(actionType);
-                        break;
                     case "ExecuteFunction":
-                        action = new ExecuteFunctionAction(actionType);
+                        var execAction = action = new ExecuteFunctionAction(actionType);
+                        execAction.controlId = this.id;
                         break;
                     default:
                         throw new AddInManifestException("Unsupported action type.");
@@ -524,6 +535,8 @@ var OfficeExt;
         })();
         var VersionOverrides = (function () {
             function VersionOverrides() {
+                this.getStartedNode = null;
+                this.functionFile = null;
                 this.cacheableUrls = [];
                 this.ExtensionPoints = [];
             }
@@ -535,6 +548,7 @@ var OfficeExt;
                     builder.startApplyAddin({
                         entitlement: this.extensionEntitlement,
                         manifest: this.extensionManifest,
+                        startedNode: this.getStartedNode,
                         overrides: {
                             type: this.type,
                             description: this.description
@@ -572,6 +586,11 @@ var OfficeExt;
                             selectSingleNode("ov:" + context.formFactor, hostNode);
                         break;
                     }
+                }
+                var startedNode = context.manifest._xmlProcessor.selectSingleNode("ov:GetStarted", formFactorNode);
+                if (startedNode != null) {
+                    this.getStartedNode = new GetStartedNode();
+                    this.getStartedNode.parse(context, startedNode);
                 }
                 node = context.manifest._xmlProcessor.selectSingleNode("ov:FunctionFile", formFactorNode);
                 if (node != null) {

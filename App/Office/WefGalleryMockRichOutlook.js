@@ -159,7 +159,7 @@ var WEF;
         UI.DefaultGalleryWidth = 695;
         UI.DefaultTabMaxWidth = 113;
         UI.DefaultDialogBtnMaxWidth = 150;
-        UI.DefaultHeaderHeight = 52;
+        UI.DefaultHeaderHeight = 62;
         UI.DefaultNotificationHeight = 30;
         UI.DefaultSelectedItemHeight = 42;
         UI.DefaultSelectedDescriptionTextMaxWidth = 380;
@@ -360,6 +360,7 @@ var WEF;
             spinWheelDiv.style.width = "100%";
             spinWheelDiv.style.height = "100%";
             gallery.appendChild(spinWheelDiv);
+            gallery.setAttribute("aria-busy", "true");
             return spinWheelDiv;
         }
         WefGalleryHelper.addSpinWheel = addSpinWheel;
@@ -517,6 +518,7 @@ var WEF;
             this.result = result;
             this.index = index;
             this.galleryItem = null;
+            this.moeInnerDiv = null;
             this.focusOnCallBack = focusOnCallBack;
             this.appOptions = null;
             this.itemCreated = false;
@@ -531,34 +533,53 @@ var WEF;
             WEF.WefGalleryHelper.addClass(moeDiv, "Moe");
             // "data-ri" attribute is used by automation.
             moeDiv.setAttribute("data-ri", this.index.toString());
+            moeDiv.setAttribute("role", "option");
+            // Construct the MOE item in the gallery using the information from result.
+            var moeInnerDiv = document.createElement("div");
+            moeDiv.appendChild(moeInnerDiv);
+            WEF.WefGalleryHelper.addClass(moeInnerDiv, "MoeInner");
+            WEF.WefGalleryHelper.dpiScale(moeInnerDiv);
+            moeInnerDiv.setAttribute("title", this.result.description);
+            moeInnerDiv.setAttribute("tabindex", "-1");
+            // "data-inner-moe" attribute so automation can detect click events etc.
+            moeInnerDiv.setAttribute("data-inner-moe", this.index.toString());
+            this.moeInnerDiv = moeInnerDiv;
             // Scale to fit the right DPI.
             WEF.WefGalleryHelper.dpiScale(moeDiv);
             WEF.WefGalleryHelper.dpiScaleMarginLeft(moeDiv);
+            moeDiv.onfocus = function WEF_GalleryItem_displayAgave$onfocus() {
+                moeDiv.setAttribute("aria-selected", "true");
+            };
+            moeDiv.onblur = function WEF_GalleryItem_displayAgave$onblur() {
+                moeDiv.setAttribute("aria-selected", "false");
+            };
             moeDiv.oncontextmenu = function WEF_GalleryItem_displayAgave$oncontextmenu() {
                 return false;
             };
             this.galleryItem = moeDiv;
+        };
+        GalleryItem.prototype.ShowRateReviewAtGalleryItem = function () {
+            return false;
         };
         /**
          * When the GalleryItem is visible on UI, download the image and attach necessary event handlers.
          */
         GalleryItem.prototype.updateImage = function (insertHandler) {
             var _this = this;
-            if (!this.galleryItem) {
+            if (!this.galleryItem || !this.moeInnerDiv) {
                 return;
             }
-            var moeDiv = this.galleryItem;
             if (!this.itemCreated) {
                 // When MOE is click by the user, select and deselect the items
-                moeDiv.onclick = function () {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "click", function () {
                     WEF.IMPage.selectGalleryItems(_this.index);
-                };
+                });
                 // When MOE is double clicked by the user, insert the app
-                moeDiv.ondblclick = function () {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "dblclick", function () {
                     insertHandler(_this);
-                };
+                });
                 // When MOE is right clicked, show the option menu
-                moeDiv.onmousedown = function (e) {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mousedown", function (e) {
                     if (!e)
                         e = event;
                     if (e.which === 3 /*rightMouse*/ || e.button === 2 /*rightMouse*/) {
@@ -566,32 +587,25 @@ var WEF;
                             _this.appOptions.popupMenu();
                         }
                     }
-                };
+                });
                 // When mouse over, change the style of the MOE.
-                moeDiv.onmouseover = function () {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mouseover", function () {
                     WEF.WefGalleryHelper.addClass(_this.galleryItem, "mouseover");
                     _this.appOptions.showOptionsButton();
-                };
+                });
                 // When mouse out, change the style back.
-                moeDiv.onmouseout = function () {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mouseout", function () {
                     WEF.WefGalleryHelper.removeClass(_this.galleryItem, "mouseover");
                     if (!WEF.WefGalleryHelper.hasClass(_this.galleryItem, "selected")) {
                         _this.appOptions.hideOptionsButton();
                     }
-                };
+                });
                 var agaveIconUrl = this.result.iconUrl;
-                // Construct the MOE item in the gallery using the information from result.
-                var moeInnerDiv = document.createElement("div");
-                moeDiv.appendChild(moeInnerDiv);
-                WEF.WefGalleryHelper.addClass(moeInnerDiv, "MoeInner");
-                WEF.WefGalleryHelper.dpiScale(moeInnerDiv);
-                moeInnerDiv.setAttribute("title", this.result.description);
-                moeInnerDiv.setAttribute("tabindex", "-1");
                 var tnDiv = document.createElement("div");
-                moeInnerDiv.appendChild(tnDiv);
+                this.moeInnerDiv.appendChild(tnDiv);
                 WEF.WefGalleryHelper.addClass(tnDiv, "Tn");
                 var detailsDiv = document.createElement("div");
-                moeInnerDiv.appendChild(detailsDiv);
+                this.moeInnerDiv.appendChild(detailsDiv);
                 WEF.WefGalleryHelper.addClass(detailsDiv, "Details");
                 WEF.WefGalleryHelper.dpiScale(detailsDiv);
                 WEF.WefGalleryHelper.createHtmlEncodedTextNode(detailsDiv, "Title", this.result.displayName);
@@ -604,6 +618,20 @@ var WEF;
                 }
                 else {
                     WEF.WefGalleryHelper.createHtmlEncodedTextNode(detailsDiv, "Description", this.result.providerName);
+                }
+                if (this.ShowRateReviewAtGalleryItem()) {
+                    var rateDiv = document.createElement("div");
+                    detailsDiv.appendChild(rateDiv);
+                    var rateLink = document.createElement("a");
+                    rateDiv.appendChild(rateLink);
+                    rateLink.setAttribute("tabindex", "0");
+                    rateLink.setAttribute("id", "rateReviewLink");
+                    rateLink.text = Strings.wefgallery.L_OptionsMenu_RateReview_Txt;
+                    WEF.WefGalleryHelper.addEventListener(rateLink, "click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        WEF.IMPage.invokeWindowOpen(_this.result.rateReviewUrl);
+                    });
                 }
                 // Create icon image.
                 var img = document.createElement("img");
@@ -635,13 +663,28 @@ var WEF;
                 img.onabort = iconErrorHandler;
                 // Assign the icon url, the image will start loading. If onload event is failed, then we just do nothing and show the gray square as place holder
                 img.setAttribute("src", agaveIconUrl);
-                // Enable Narrator reading
-                moeInnerDiv.setAttribute("aria-label", this.result.displayName);
-                moeInnerDiv.setAttribute("role", "Option");
                 this.appOptions = WEF.IMPage.menuHandler.createAppOptions(this.result);
                 var optionsButton = this.appOptions.createOptionsButton(this.index, tnDiv, img);
                 if (optionsButton) {
-                    moeInnerDiv.appendChild(optionsButton);
+                    this.moeInnerDiv.appendChild(optionsButton);
+                }
+                // Enable Narrator reading
+                var arialLabelDiv = this.galleryItem;
+                if (window.navigator.userAgent.indexOf("AppleWebKit") > 0) {
+                    // Set aria-label attribute on InnerMoe when it is Safari or Chrome,
+                    // somehow for Safari, when the arial-label is set on the Moe, it prevents arrow key from working when voiceover is on 
+                    // and chrome works for setting arial-lable on either Moe or InnerMoe
+                    arialLabelDiv = this.moeInnerDiv;
+                }
+                // set the arial-label, when it gets focus, narrator will read the string out.
+                if (optionsButton) {
+                    arialLabelDiv.setAttribute("aria-label", Strings.wefgallery.L_GalleryItem_Name_InsertAndOptions_Txt.replace("{0}", this.result.displayName));
+                }
+                else if (WEF.IMPage.currentStoreType === WEF.StoreTypeEnum.ThisDocument) {
+                    arialLabelDiv.setAttribute("aria-label", this.result.displayName); // In [View all add-ins] page, there is no Insert/Options
+                }
+                else {
+                    arialLabelDiv.setAttribute("aria-label", Strings.wefgallery.L_GalleryItem_Name_InsertOnly_Txt.replace("{0}", this.result.displayName));
                 }
                 // Special UI change for the app with loading error (app command scenario)
                 if (this.result.hasLoadingError) {
@@ -703,6 +746,7 @@ var WEF;
             this.delaying = false;
             this.delayLoad = 200;
             this.delayTime = null;
+            this.delayCallbacks = [];
             // UI HTML elements object. Make them all public and sort them in alphabetical order
             this.btnAction = null;
             this.btnCancel = null;
@@ -713,6 +757,7 @@ var WEF;
             this.errorMessage = null;
             this.footer = null;
             this.footerLink = null;
+            this.mainPage = null;
             this.gallery = null;
             this.galleryContainer = null;
             this.header = null;
@@ -729,6 +774,7 @@ var WEF;
             this.officeStoreBtn = null;
             this.permissionATag = null;
             this.permissionTextAndLink = null;
+            this.permissionTextTR = null;
             this.readMoreATag = null;
             this.selectedDescriptionReadMoreLink = null;
             this.selectedDescriptionText = null;
@@ -736,9 +782,11 @@ var WEF;
             this.tabs = null;
             this.uploadMenuDiv = null;
             this.refreshMenuDiv = null;
+            this.refreshATag = HTMLAnchorElement = null;
             this.manageMenuDiv = null;
             this.menuRightSeparatorDiv = null;
             this.tabTitles = [];
+            this.enterKeyTarget = null;
             /** The width of a separator in the option bar (excluding margin) */
             this.menuSeparatorWidth = null;
             /** The max possible width of the menu right in the option bar. */
@@ -746,7 +794,10 @@ var WEF;
             // Gallery status controlling variables
             this.galleryItems = null;
             this.uiState = { "Ready": false, "StoreIdBeforeReady": "", "ErrorBeforeReady": "", "ErrorLinkTextBeforeReady": "", "ErrorLinkHandlerBeforeReady": null };
+            // currentIndex: it is current index of the gallery items that can be selected or de-selected, and it is set by keyboard arrows or tab keys;
+            // -1 means no gallery item can be selected/de-selected triggered by spacebar
             this.currentIndex = -1;
+            this.currentTabIndex = -1;
             this.results = null;
             this.height = "100%";
             this.width = "100%";
@@ -754,7 +805,10 @@ var WEF;
             // Gallery keyboard handlers
             this.leftKeyHandler = null;
             this.rightKeyHandler = null;
+            this.upKeyHandler = null;
+            this.downKeyHandler = null;
             this.keyHandlers = null;
+            this.keyCodePressed = -1;
             this.menuHandler = null;
             this.modalDialog = null;
             this.storeTab = null;
@@ -766,59 +820,116 @@ var WEF;
             this.envSetting = {};
             this.isUploadFileDevCatalogEnabled = false;
             this.isAppCommandEnabled = false;
-            this.moveLeft = function () {
-                _this.currentIndex--;
-                if (_this.currentIndex >= 0) {
-                    _this.selectGalleryItems(_this.currentIndex);
+            this.moveLeft = function (event, eventTarget) {
+                // Handle keyevent when Tabpanel item has focus
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "TabATag")) {
+                    var targetTabIndex = _this.currentTabIndex - 2; // Skip over text separator '|'
+                    if (targetTabIndex < 0) {
+                        targetTabIndex = _this.tabs.childNodes.length - 1; // Loop
+                    }
+                    if (targetTabIndex != _this.currentTabIndex) {
+                        var targetTab = _this.tabs.childNodes[targetTabIndex];
+                        _this.toggleTabSelection(targetTab, null /*calback*/);
+                    }
                 }
                 else {
-                    _this.currentIndex = 0;
+                    // Handle keyevent when gallery list item has focus
+                    _this.currentIndex--;
+                    if (_this.currentIndex >= 0) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex = 0;
+                    }
                 }
             };
-            this.moveRight = function (numOfItems) {
-                _this.currentIndex++;
-                if (_this.currentIndex < numOfItems) {
-                    _this.selectGalleryItems(_this.currentIndex);
+            this.moveRight = function (event, eventTarget, numOfItems) {
+                // Handle keyevent when Tabpanel item has focus
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "TabATag")) {
+                    var targetTabIndex = _this.currentTabIndex + 2; // Skip over text separator '|'
+                    if (targetTabIndex > _this.tabs.childNodes.length - 1) {
+                        targetTabIndex = 0; // Loop
+                    }
+                    if (targetTabIndex != _this.currentTabIndex) {
+                        var targetTab = _this.tabs.childNodes[targetTabIndex];
+                        _this.toggleTabSelection(targetTab, null /*calback*/);
+                    }
                 }
                 else {
-                    _this.currentIndex = numOfItems - 1;
+                    // Handle keyevent when gallery list item has focus
+                    _this.currentIndex++;
+                    if (_this.currentIndex < numOfItems) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex = numOfItems - 1;
+                    }
                 }
             };
-            this.upKeyHandler = function () {
-                _this.currentIndex -= _this.itemsPerRow;
-                if (_this.currentIndex >= 0) {
-                    _this.selectGalleryItems(_this.currentIndex);
-                }
-                else {
-                    _this.currentIndex += _this.itemsPerRow;
-                }
-            };
-            this.downKeyHandler = function (numOfItems) {
-                if (_this.currentIndex >= 0) {
-                    _this.currentIndex += _this.itemsPerRow;
-                }
-                else {
-                    _this.currentIndex = 0;
-                }
-                if (_this.currentIndex < numOfItems) {
-                    _this.selectGalleryItems(_this.currentIndex);
-                }
-                else {
+            this.moveUp = function (event, eventTarget) {
+                // Handle keyevent only for gallery list item
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "Moe") || WEF.WefGalleryHelper.hasClass(eventTarget, "MoeInner")) {
                     _this.currentIndex -= _this.itemsPerRow;
+                    if (_this.currentIndex >= 0) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex += _this.itemsPerRow;
+                    }
+                }
+            };
+            this.moveDown = function (event, eventTarget, numOfItems) {
+                // Handle keyevent only for gallery list item
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "Moe") || WEF.WefGalleryHelper.hasClass(eventTarget, "MoeInner")) {
+                    if (_this.currentIndex >= 0) {
+                        _this.currentIndex += _this.itemsPerRow;
+                    }
+                    else {
+                        _this.currentIndex = 0;
+                    }
+                    if (_this.currentIndex < numOfItems) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex -= _this.itemsPerRow;
+                    }
                 }
             };
             this.tabKeyHandler = function (event, element) {
+                // Select first gallery list item if none is selected on tab from tab panel item
+                if (!event.shiftKey && (element == _this.tabs.childNodes[_this.currentTabIndex] || element == _this.tabs.childNodes[_this.currentTabIndex].firstChild) && event.preventDefault && _this.currentIndex < 0 && _this.galleryItems && _this.galleryItems.length > 0) {
+                    _this.currentIndex = 0;
+                    _this.selectGalleryItems(_this.currentIndex, false);
+                    event.preventDefault();
+                }
                 // OM 1113515: a TAB-loop is created here to prevent tab exiting the insertion dialog.
                 // If BUG 438605 is resolved, we don't need this process any more.
-                if (!event.shiftKey && element.getAttribute("id") == "BtnCancel" && event.preventDefault && _this.firstTabATag) {
-                    _this.firstTabATag.focus();
+                // Put focus on selected tab panel item when focus is on refresh link and vice-versa when shift-tab is used
+                if (!event.shiftKey && element.getAttribute("id") == "RefreshInner" && event.preventDefault && _this.tabs && _this.currentTabIndex >= 0 && _this.currentTabIndex < _this.tabs.childNodes.length) {
+                    _this.tabs.childNodes[_this.currentTabIndex].firstChild.focus();
+                    event.preventDefault();
+                }
+                if (event.shiftKey && _this.tabs && (element == _this.tabs.childNodes[_this.currentTabIndex] || element == _this.tabs.childNodes[_this.currentTabIndex].firstChild) && event.preventDefault && _this.refreshATag) {
+                    _this.refreshATag.focus();
                     event.preventDefault();
                 }
             };
             /**
              * Handle key down events.
              */
-            this.galleryKeyHandler = function (e) {
+            this.galleryKeyDownHandler = function (e) {
                 var numOfItems = 0;
                 if (_this.results) {
                     numOfItems = _this.results.length;
@@ -828,7 +939,9 @@ var WEF;
                 // Give other handlers a chance to handle the keystroke before defaulting to generic handler
                 for (var i = 0; i < _this.keyHandlers.length; i++) {
                     var keyHandler = _this.keyHandlers[i];
-                    if (keyHandler.handleKey(e)) {
+                    if (keyHandler.handleKeyDown(e)) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         return;
                     }
                 }
@@ -838,7 +951,11 @@ var WEF;
                         _this.tabKeyHandler(e, eventTarget);
                         break;
                     case 13:
-                        _this.executeButtonCommand(eventTarget);
+                        // Keep the target element of key down event, then when key up event is triggered,
+                        // use this kept target element to decide whether to execute key up handlers.
+                        // Besides that, prevent browser's default action for this enter key down event.
+                        _this.enterKeyTarget = eventTarget;
+                        e.preventDefault();
                         break;
                     case 27:
                         _this.cancelDialog();
@@ -849,19 +966,41 @@ var WEF;
                         }
                         return;
                     case 37:
-                        _this.leftKeyHandler(numOfItems);
+                        _this.leftKeyHandler(e, eventTarget, numOfItems);
                         break;
                     case 38:
-                        _this.upKeyHandler();
+                        _this.upKeyHandler(e, eventTarget);
                         break;
                     case 39:
-                        _this.rightKeyHandler(numOfItems);
+                        _this.rightKeyHandler(e, eventTarget, numOfItems);
                         break;
                     case 40:
-                        _this.downKeyHandler(numOfItems);
+                        _this.downKeyHandler(e, eventTarget, numOfItems);
                         break;
                     default:
                         return;
+                }
+            };
+            /**
+             * Handle key up events.
+             */
+            this.galleryKeyUpHandler = function (e) {
+                if (!e)
+                    e = event;
+                // Give other handlers a chance to handle the keystroke before defaulting to generic handler
+                for (var i = 0; i < _this.keyHandlers.length; i++) {
+                    var keyHandler = _this.keyHandlers[i];
+                    if (keyHandler.handleKeyUp(e)) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        return;
+                    }
+                }
+                var eventTarget = e.srcElement ? e.srcElement : e.target; // e.srcElement is for IE 8
+                switch (e.keyCode) {
+                    case 13:
+                        _this.executeButtonCommand(eventTarget, e);
+                        break;
                 }
             };
             /**
@@ -877,7 +1016,7 @@ var WEF;
                     _this.height = winHeight;
                     _this.width = winWidth;
                     _this.setGalleryHeight();
-                    _this.delayFunction(_this.loadVisibleImages);
+                    _this.delayLoadVisibleImages();
                     // Adjust maxWidth of buttons
                     var newMaxWidth, widthIncreaseRatio = (_this.width) / WEF.UI.DefaultGalleryWidth;
                     newMaxWidth = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.DefaultDialogBtnMaxWidth) * widthIncreaseRatio;
@@ -920,6 +1059,10 @@ var WEF;
                         var itemsPerRow = _this.getItemsPerRow();
                         if (itemsPerRow > 0) {
                             var offset = _this.galleryItems[0].galleryItem.offsetHeight;
+                            if (_this.currentIndex < itemsPerRow && _this.keyCodePressed == 40 /* down arrow pressed */) {
+                                _this.gallery.scrollTop = 0; // down arrow is used to access the gallery items, set the scrollTop to 0 if it is row 0 to avoid scroll to the next row
+                                _this.keyCodePressed = -1;
+                            }
                             var displayTop = gallery.scrollTop + offset;
                             var displayBottom = displayTop + (gallery.clientHeight * 2);
                             var item;
@@ -945,10 +1088,19 @@ var WEF;
                                 }
                             }
                         }
+                        _this.delaying = false;
+                        _this.gallery.setAttribute("aria-busy", "false");
                     }
+                    // if gallery.children.length==0, wait for some more time.
                     if (_this.delaying) {
                         setTimeout(_this.loadVisibleImages, 3000);
                         _this.delaying = false;
+                    }
+                    else {
+                        while (_this.delayCallbacks.length > 0) {
+                            var callback = _this.delayCallbacks.pop();
+                            callback();
+                        }
                     }
                 }
             };
@@ -972,6 +1124,8 @@ var WEF;
                 this.leftKeyHandler = this.moveRight;
                 this.rightKeyHandler = this.moveLeft;
             }
+            this.upKeyHandler = this.moveUp;
+            this.downKeyHandler = this.moveDown;
             this.clientFacadeCommon = clientFacadeCommon;
             // Inject the envrionment settings
             this.envSetting = this.clientFacadeCommon.getEnvSetting();
@@ -1027,6 +1181,7 @@ var WEF;
                 this.btnDone.style.display = "none";
                 this.selectedDescriptionReadMoreLink.style.display = "none";
                 this.permissionTextAndLink.style.display = "none";
+                this.disableNarratorOnControl(this.permissionTextTR);
             }
             else if (buttonGroup == WEF.ActionButtonGroups.ThisDocument) {
                 this.btnAction.style.display = "none";
@@ -1122,8 +1277,12 @@ var WEF;
         /**
          * Handle enter key events
          */
-        WefGalleryPage.prototype.executeButtonCommand = function (element) {
-            if (WEF.WefGalleryHelper.hasClass(element, "MoeInner")) {
+        WefGalleryPage.prototype.executeButtonCommand = function (element, event) {
+            this.menuHandler.hideMenu(true);
+            if (element != this.enterKeyTarget) {
+                return;
+            }
+            if (WEF.WefGalleryHelper.hasClass(element, "MoeInner") || WEF.WefGalleryHelper.hasClass(element, "Moe")) {
                 // insert the MOE when a MOE item is selected.
                 this.insertSelectedItem();
             }
@@ -1160,6 +1319,15 @@ var WEF;
                 // Signin link
                 this.invokeSignIn();
             }
+            else if (element.getAttribute("id") == "rateReviewLink") {
+                if (this.results != null && this.results.length > 0) {
+                    WEF.IMPage.invokeWindowOpen(this.results[0].rateReviewUrl);
+                }
+            }
+            else if (WEF.WefGalleryHelper.hasClass(element, "OptionsButton")) {
+                // Gallery item option button
+                element.click();
+            }
         };
         WefGalleryPage.prototype.restoreFooterLink = function () {
             WEF.WefGalleryHelper.clearElementInnerHTML('SelectedItemTitle');
@@ -1186,11 +1354,26 @@ var WEF;
                 child = this.tabs.childNodes[i];
                 if (child.attributes && WEF.WefGalleryHelper.hasClass(child, "TextNav")) {
                     WEF.WefGalleryHelper.removeClass(child.firstChild, "TabSelected");
+                    // Make Tab panel item non-tabbable
+                    child.setAttribute("tabIndex", "-1");
+                    child.firstChild.setAttribute("aria-selected", "false");
+                    child.firstChild.removeAttribute("aria-controls");
                     tabId = child.getAttribute("id");
                     if (tabId == selectedTabId) {
+                        // Make selected tab panel item part of tab-loop
+                        this.currentTabIndex = i;
+                        child.setAttribute("tabIndex", "0");
+                        if (child.firstChild != null) {
+                            child.firstChild.focus();
+                        }
                         WEF.WefGalleryHelper.addClass(child.firstChild, "TabSelected");
+                        child.firstChild.setAttribute("aria-selected", "true");
+                        child.firstChild.setAttribute("aria-controls", "GalleryContainer");
                         var storeId = child.getAttribute("data-storeId");
                         var storeType = parseInt(child.getAttribute("data-storeType"));
+                        if (this.currentStoreId != storeId) {
+                            this.currentIndex = -1; // reset the index when switch tabs
+                        }
                         this.currentStoreId = storeId;
                         this.currentStoreType = storeType;
                         this.saveStoreId(this.currentStoreId);
@@ -1206,6 +1389,8 @@ var WEF;
                             var pageUrl = child.getAttribute("data-PageUrl");
                             this.showContentPage(pageUrl);
                         }
+                        // Update the tooltip of  Refresh button with the tab name, e.g. Refresh 'My orgagnization'/ Refresh 'My AddIns'
+                        this.refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip.replace("{0}", child.firstChild.textContent));
                     }
                 }
             }
@@ -1290,6 +1475,7 @@ var WEF;
                     }
                 }
             }
+            this.tabs.setAttribute("role", "tablist");
             // Clean up tabs
             while (this.tabs.hasChildNodes()) {
                 this.tabs.removeChild(this.tabs.firstChild);
@@ -1328,6 +1514,8 @@ var WEF;
                     if (tempStoreId === this.currentStoreId) {
                         selectedTab = createdTab;
                         WEF.WefGalleryHelper.addClass(selectedTab.firstChild, "TabSelected");
+                        selectedTab.firstChild.setAttribute("aria-selected", "true");
+                        selectedTab.firstChild.setAttribute("aria-controls", "GalleryContainer");
                     }
                     if (tempStoreType == WEF.StoreTypeEnum.Recommendation) {
                         this.storeTab = createdTab;
@@ -1336,12 +1524,26 @@ var WEF;
             }
             this.setOptionBarElementMaxSize(this.tabTitles);
             // Set current selected tab
+            var selectedTabTitle = null;
             if (this.tabs.childNodes.length > 0) {
                 if (selectedTab) {
                     WEF.WefGalleryHelper.addClass(selectedTab.childNodes[0], "selected");
+                    selectedTab.childNodes[0].focus();
+                    selectedTabTitle = selectedTab.childNodes[0].textContent;
                 }
                 else if (this.tabs.childNodes[0].childNodes.length > 0) {
                     WEF.WefGalleryHelper.addClass(this.tabs.childNodes[0].childNodes[0], "selected");
+                    selectedTabTitle = this.tabs.childNodes[0].childNodes[0].textContent;
+                }
+            }
+            // Make selected tab panel item part of tab-loop
+            var child = null;
+            for (var i = 0; i < this.tabs.childNodes.length; i++) {
+                child = this.tabs.childNodes[i];
+                if (child.getAttribute("data-storeId") === this.currentStoreId) {
+                    this.currentTabIndex = i;
+                    child.setAttribute("tabIndex", "0");
+                    break;
                 }
             }
             if (this.isUploadFileDevCatalogEnabled) {
@@ -1352,6 +1554,7 @@ var WEF;
             }
             this.manageATag.setAttribute("tabIndex", "0");
             this.manageATag.setAttribute("title", Strings.wefgallery.L_WefDialog_ManageButton_Tooltip);
+            this.manageATag.setAttribute("role", "link");
             this.uploadATag.setAttribute("tabIndex", "0");
             this.uploadATag.setAttribute("title", Strings.wefgallery.L_AddinCommands_UploadMyAddin_Txt);
             // hook up refresh button.
@@ -1360,20 +1563,24 @@ var WEF;
                 _this.restoreFooterLink();
                 _this.showContent(true);
             };
-            var refreshATag = document.getElementById('RefreshInner');
-            refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip);
-            refreshATag.onclick = function WEF_WefGalleryPage_initializeGalleryUI_refreshATag$onclick() { refreshCurrentTab(); };
-            refreshATag.setAttribute("tabIndex", "0");
+            this.refreshATag = document.getElementById('RefreshInner');
+            this.refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip.replace("{0}", selectedTabTitle));
+            this.refreshATag.onclick = function WEF_WefGalleryPage_initializeGalleryUI_refreshATag$onclick() { refreshCurrentTab(); };
+            this.refreshATag.setAttribute("tabIndex", "0");
+            this.refreshATag.setAttribute("role", "link");
             var footerLinkATag = document.getElementById('FooterLinkATag');
             footerLinkATag.setAttribute("tabIndex", "0");
             footerLinkATag.setAttribute("title", Strings.wefgallery.L_Footer_Link_Text_Tooltip);
+            footerLinkATag.setAttribute("role", "link");
             this.documentAppsMsg.setAttribute("title", Strings.wefgallery.L_TrustUx_AppsMessage);
             // TODO: The localization tag was added after the localization deadline. We can remove this after SP1. The localized htm page will contain the localized string.
             this.documentAppsMsg.firstChild.innerText = Strings.wefgallery.L_TrustUx_AppsMessage;
             this.readMoreATag.setAttribute("tabIndex", "0");
             this.readMoreATag.setAttribute("title", Strings.wefgallery.L_TrustUx_ReadMoreLink_Txt_Tooltip);
+            this.readMoreATag.setAttribute("role", "link");
             this.permissionATag.setAttribute("tabIndex", "0");
             this.permissionATag.setAttribute("title", Strings.wefgallery.L_Permission_Link_Txt_Tooltip);
+            this.permissionATag.setAttribute("role", "link");
             this.permissionTextAndLink.setAttribute("title", Strings.wefgallery.L_Permission_Link_Txt_Tooltip);
             this.btnAction.setAttribute("tabIndex", "0");
             // When app command is enabled, the text in action button is different.
@@ -1392,7 +1599,7 @@ var WEF;
             this.btnDone.setAttribute("tabIndex", "0");
             this.btnDone.setAttribute("title", Strings.wefgallery.L_Done_Button_Txt_Tooltip);
             // Initialize Hero message and button
-            this.noAppsMessage.setAttribute("title", Strings.wefgallery.L_OfficeStore_Button_Tooltip);
+            this.noAppsMessage.setAttribute("title", Strings.wefgallery.L_OfficeStore_Button_Tooltip.replace("{0}", this.officeStoreBtn.value));
             this.noAppsMessage.style.marginTop = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.HeroMessageMarginTop) + "px";
             this.noAppsMessageTitle.innerHTML = Strings.wefgallery.L_NoAppsMessageTitle;
             this.noAppsMessageText.innerHTML = Strings.wefgallery.L_NoAppsMessageText;
@@ -1426,6 +1633,15 @@ var WEF;
             }
         };
         /**
+         * No narrator announcement on presentation only control (non-functional control such as separator |)
+         * @param ctl
+         */
+        WefGalleryPage.prototype.disableNarratorOnControl = function (ctl) {
+            ctl.setAttribute("role", "presentation");
+            ctl.setAttribute("aria-hidden", "true");
+            ctl.setAttribute("tabindex", "-1");
+        };
+        /**
          * Create a Tab Div with the specified tabName, storeId, storeType, pageUrl
          */
         WefGalleryPage.prototype.createTab = function (tabsDiv, tabOrder, tabName, storeId, storeType) {
@@ -1435,6 +1651,7 @@ var WEF;
                 var separatorDiv = document.createElement('div');
                 WEF.WefGalleryHelper.addClass(separatorDiv, "separator");
                 separatorDiv.innerHTML = "|";
+                this.disableNarratorOnControl(separatorDiv);
                 tabsDiv.appendChild(separatorDiv);
             }
             var pageUrl = WEF.PageStoreId.Recommendation === storeId ? this.getFeaturedPageUrl() : null;
@@ -1447,19 +1664,26 @@ var WEF;
             WEF.WefGalleryHelper.setHtmlEncodedText(aTag, tabName);
             var tooltip = this.getTabTooltip(storeType);
             aTag.setAttribute("title", tooltip);
-            aTag.setAttribute("tabIndex", "0");
+            aTag.setAttribute("tabIndex", "-1");
+            aTag.setAttribute("role", "tab");
             tabDiv.appendChild(aTag);
             if (tabOrder == 1) {
                 aTag.focus();
                 this.firstTabATag = aTag;
             }
             tabDiv.setAttribute("id", tabName);
+            tabDiv.setAttribute("tabIndex", "-1");
             tabDiv.setAttribute("data-storeId", storeId);
             tabDiv.setAttribute("data-storeType", storeType.toString());
+            tabDiv.setAttribute("role", "presentation");
             if (pageUrl) {
                 tabDiv.setAttribute("data-pageUrl", pageUrl);
             }
             tabDiv.onclick = function WEF_WefGalleryPage_createTab_tabDiv$onclick() { me.toggleTabSelection(this, null /*callback*/); };
+            // Always put focus on link to make tab and link behave as single control
+            tabDiv.onfocus = function WEF_WefGalleryPage_createTab_tabDiv$onfocus() {
+                aTag.focus();
+            };
             return tabDiv;
         };
         /**
@@ -1467,7 +1691,7 @@ var WEF;
          */
         WefGalleryPage.prototype.galleryScrollHandler = function () {
             this.menuHandler.hideMenu(true);
-            this.delayFunction(this.loadVisibleImages);
+            this.delayLoadVisibleImages();
         };
         /**
          * Store the size of some elements when they are visible right after the page is loaded.
@@ -1603,7 +1827,7 @@ var WEF;
             while (this.gallery.hasChildNodes()) {
                 this.gallery.removeChild(this.gallery.firstChild);
             }
-            this.header.style.height = WEF.WefGalleryHelper.getDPIYScaledNumber(WEF.UI.DefaultHeaderHeight) + "px"; // 52px is the default height of header. This will make sure notification is not shown.
+            this.header.style.height = WEF.WefGalleryHelper.getDPIYScaledNumber(WEF.UI.DefaultHeaderHeight) + "px"; // 62px is the default height of header. This will make sure notification is not shown.
             this.setGalleryHeight();
             this.trustPageSessionTime = 0;
         };
@@ -1626,7 +1850,7 @@ var WEF;
                 this.galleryItems[i].displayAgave(this.gallery);
             }
             // Start loading images.
-            this.delayFunction(this.loadVisibleImages);
+            this.delayLoadVisibleImages();
         };
         /**
          * Check whether there is any add-ins marked with "has loading error".
@@ -1645,11 +1869,14 @@ var WEF;
          * Scrolling and Resizing. The delayFunction must either reset the delay timer or execute
          * the method and set this.delaying to false.
          */
-        WefGalleryPage.prototype.delayFunction = function (delayFunction) {
+        WefGalleryPage.prototype.delayLoadVisibleImages = function (onLoadImagesComplete) {
+            if (onLoadImagesComplete != null) {
+                this.delayCallbacks.push(onLoadImagesComplete);
+            }
             if (!this.delayTime || this.delaying == false || ((new Date().getTime() - this.delayTime) > 1000)) {
                 this.delayTime = new Date().getTime();
                 this.delaying = true;
-                setTimeout(delayFunction, this.delayLoad);
+                setTimeout(this.loadVisibleImages, this.delayLoad);
             }
             else {
                 this.delayTime = new Date().getTime();
@@ -1730,6 +1957,7 @@ var WEF;
                         }
                         spinWheelDiv = null;
                     }
+                    _this.gallery.setAttribute("aria-busy", "false");
                     if (frame.contentWindow) {
                         frame.contentWindow.focus();
                     }
@@ -1763,6 +1991,15 @@ var WEF;
                     for (var i = index; i < len; i++) {
                         this.galleryItems[i].setIndex(i);
                     }
+                    // after remove an item, set foucs on the next item 
+                    if (this.galleryItems.length >= 1) {
+                        var indexToFocus = index;
+                        //if item deleted is the last item, set focus on the first item 
+                        if (index >= this.galleryItems.length) {
+                            indexToFocus = 0;
+                        }
+                        this.selectGalleryItems(indexToFocus, true);
+                    }
                 }
                 this.currentIndex = -1;
                 this.deSelectBtnAction();
@@ -1782,14 +2019,16 @@ var WEF;
             for (var i = 0; i < len; i++) {
                 var item = this.galleryItems[i];
                 if (index == i) {
+                    this.currentIndex = index;
                     // Deselect the current selected item.
                     if (WEF.WefGalleryHelper.hasClass(item.galleryItem, "selected")) {
                         if (forceSelected == false) {
                             WEF.WefGalleryHelper.removeClass(item.galleryItem, "selected");
+                            item.galleryItem.removeAttribute("aria-selected");
+                            // Remove unselected gallery list item from tab-loop
+                            item.galleryItem.setAttribute("tabIndex", "-1");
+                            this.currentIndex = -1;
                             this.deSelectBtnAction();
-                        }
-                        else {
-                            this.currentIndex = index;
                         }
                     }
                     else {
@@ -1803,11 +2042,10 @@ var WEF;
                             WEF.WefGalleryHelper.removeClass(this.btnAction, 'disabled');
                             this.btnAction.removeAttribute('disabled');
                         }
-                        this.currentIndex = index;
-                        if (item.galleryItem.children.length > 0) {
-                            item.galleryItem.children[0].focus();
-                            item.galleryItem.children[0].setAttribute("aria-selected", "true");
-                        }
+                        // Make selected gallery list item part of tab-loop
+                        item.galleryItem.setAttribute("tabIndex", "0");
+                        item.galleryItem.focus();
+                        item.galleryItem.setAttribute("aria-selected", "true");
                         this.setSelectedItemWidth();
                         if (item.appOptions) {
                             item.appOptions.showOptionsButton();
@@ -1828,9 +2066,9 @@ var WEF;
         WefGalleryPage.prototype.unselectGalleryItems = function (item) {
             if (item && item.galleryItem) {
                 WEF.WefGalleryHelper.removeClass(item.galleryItem, "selected");
-                if (item.galleryItem.children.length > 0) {
-                    item.galleryItem.children[0].removeAttribute("aria-selected");
-                }
+                item.galleryItem.removeAttribute("aria-selected");
+                // Remove unselected gallery list item from tab-loop
+                item.galleryItem.setAttribute("tabIndex", "-1");
                 if (item.appOptions && item.galleryItem.querySelector(":hover") == null) {
                     item.appOptions.hideOptionsButton();
                 }
@@ -1845,6 +2083,7 @@ var WEF;
                 // Show no apps message and the button for Office Store link.
                 this.noAppsMessage.style.display = 'block';
                 this.gallery.appendChild(this.noAppsMessage);
+                this.officeStoreBtn.focus();
                 // Hide footer and Manage My App.  
                 this.footer.style.visibility = 'hidden';
                 this.showHideRightMenuButtons(false, true);
@@ -1863,6 +2102,7 @@ var WEF;
                         this.errorMessage.innerHTML = messageStr + " <a id='linkId'>" + linkedMessageStr + "</a>";
                         link = document.getElementById("linkId");
                         link.setAttribute("tabIndex", "0");
+                        link.setAttribute("role", "link");
                         link.onclick = function () {
                             linkedCallback();
                         };
@@ -1914,6 +2154,7 @@ var WEF;
             if (this.gallery && this.gallery.firstChild && WEF.WefGalleryHelper.hasClass(this.gallery.firstChild, "SpinWheel")) {
                 this.gallery.removeChild(this.gallery.firstChild);
             }
+            this.gallery.setAttribute("aria-busy", "false");
             // Show Error message or Show Error message, plus a Linked button with event handler
             if (arguments.length < 4) {
                 this.showErrorInternal(messageStr);
@@ -1976,6 +2217,8 @@ var WEF;
             var _this = this;
             // Intialize this.gallery
             this.galleryContainer = document.getElementById('GalleryContainer');
+            this.galleryContainer.setAttribute("role", "tabpanel");
+            this.mainPage = document.getElementById('MainPage');
             this.gallery = document.getElementById('InsertGallery');
             this.header = document.getElementById("Header");
             this.tabs = document.getElementById("Tabs");
@@ -1986,6 +2229,7 @@ var WEF;
             this.selectedDescriptionText = document.getElementById('SelectedDescriptionText');
             this.selectedDescriptionReadMoreLink = document.getElementById('SelectedDescriptionReadMoreLink');
             this.permissionTextAndLink = document.getElementById('PermissionTextAndLink');
+            this.permissionTextTR = document.getElementById('PermissionTextTR');
             this.readMoreATag = document.getElementById('ReadMoreLink');
             this.permissionATag = document.getElementById('PermissionLink');
             this.documentAppsMsg = document.getElementById('DocumentAppsMessageId');
@@ -1995,14 +2239,20 @@ var WEF;
             this.btnTrustAll = document.getElementById('BtnTrustAll');
             this.btnDone = document.getElementById('BtnDone');
             this.notification = document.getElementById("Notification");
+            this.notification.setAttribute("role", "alert"); // This makes narrator to announce it when this control changes from invisible to visible.
             this.errorMessage = document.getElementById('ErrorMessage');
+            this.errorMessage.setAttribute("role", "alert");
             this.notificationDismiss = document.getElementById('NotificationDismiss');
             this.notificationDismissImg = document.getElementById('DismissImg');
             this.menuRight = document.getElementById('MenuRight');
             this.noAppsMessage = document.getElementById('NoAppsMessage');
+            this.noAppsMessage.setAttribute("role", "alert");
             this.noAppsMessageTitle = document.getElementById('NoAppsMessageTitle');
+            this.noAppsMessageTitle.setAttribute("role", "alert");
             this.noAppsMessageText = document.getElementById('NoAppsMessageText');
+            this.noAppsMessageText.setAttribute("role", "alert");
             this.officeStoreBtn = document.getElementById('BtnStore');
+            this.officeStoreBtn.title = Strings.wefgallery.L_OfficeStore_Button_NoAddIns_Tooltip; // tooltip for narrator to announce
             this.manageATag = document.getElementById('ManageInner');
             this.uploadATag = document.getElementById('UploadMenuInner');
             this.uploadMenuDiv = document.getElementById('UploadMenu');
@@ -2045,13 +2295,18 @@ var WEF;
             this.footerLink.onclick = function () { _this.gotoStore(); };
             this.manageATag.onclick = function () { _this.launchAppManagePage(); };
             this.showActionButtons(WEF.ActionButtonGroups.None);
-            this.modalDialog = new WEF.AppManagement.ModalDialog();
+            this.modalDialog = new WEF.AppManagement.ModalDialog(this.mainPage);
             this.menuHandler = new WEF.AppManagement.MenuHandler(this.galleryContainer, this.modalDialog);
             // UI that implement HandleKey
             this.keyHandlers = [this.menuHandler, this.modalDialog];
             // Handle key stroke
             window.document.onkeydown = function (e) {
-                _this.galleryKeyHandler(e);
+                _this.keyCodePressed = e.keyCode;
+                _this.galleryKeyDownHandler(e);
+            };
+            window.document.onkeyup = function (e) {
+                _this.keyCodePressed = e.keyCode;
+                _this.galleryKeyUpHandler(e);
             };
             window.onresize = this.resizeHandler;
             this.uiState.Ready = true;
@@ -2111,12 +2366,16 @@ var WEF;
          * Class for showing confirmation message in the insertion dialog
          */
         var ModalDialog = (function () {
-            function ModalDialog() {
+            function ModalDialog(modalDisabledDiv) {
+                this.modalDisabledDiv = null;
                 this.overlayDiv = null;
                 this.dialogDiv = null;
                 this.buttonDiv = null;
                 this.confirmMessageDiv = null;
                 this.buttonElements = [];
+                this.enterKeyTarget = null;
+                this.dialogId = "appManagementModalDialog";
+                this.modalDisabledDiv = modalDisabledDiv;
                 this.overlayDiv = document.createElement("div");
                 WEF.WefGalleryHelper.addClass(this.overlayDiv, "Overlay");
                 document.body.appendChild(this.overlayDiv);
@@ -2135,18 +2394,42 @@ var WEF;
             /**
              * Blocks default key handler while confirmation dialog is opened
              */
-            ModalDialog.prototype.handleKey = function (ev) {
+            ModalDialog.prototype.handleKeyDown = function (ev) {
                 if (!this.isDialogVisible()) {
                     return false;
                 }
                 // handle all keys by default
-                var handled = true;
+                var handled = false;
                 switch (ev.keyCode) {
                     case 9:
                         this.onTab(ev);
+                        handled = true;
+                        break;
+                    case 13:
+                        handled = this.onEnterKeyDown(ev);
                         break;
                     case 27:
                         this.hideDialog();
+                        handled = true;
+                        break;
+                }
+                return handled;
+            };
+            /**
+             * Blocks default key handler while confirmation dialog is opened
+             */
+            ModalDialog.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                if (!this.isDialogVisible()) {
+                    return handled;
+                }
+                switch (ev.keyCode) {
+                    case 13:
+                        var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                        if (eventTarget == this.enterKeyTarget) {
+                            this.enterKeyTarget.click();
+                            handled = true;
+                        }
                         break;
                 }
                 return handled;
@@ -2159,6 +2442,7 @@ var WEF;
                     return;
                 }
                 var tabElements = this.getTabbableElements();
+                var reFocused = false;
                 for (var i = 0; i < tabElements.length; i++) {
                     var element = tabElements[i];
                     var previousTabValue = element.getAttribute("data-previous-tab");
@@ -2173,10 +2457,16 @@ var WEF;
                     }
                     if (previousDisabledValue !== null) {
                         element.disabled = (previousDisabledValue.toLowerCase() == "true");
+                        // Find the first not disabled element to set new focus.
+                        if (!reFocused && !element.disabled) {
+                            reFocused = true;
+                            element.focus();
+                        }
                     }
                 }
                 this.dialogDiv.style.display = "none";
                 this.overlayDiv.style.display = "none";
+                this.modalDisabledDiv.removeAttribute("aria-hidden");
             };
             /**
              * Shows the confirmation dialog, with message and buttons specified
@@ -2197,6 +2487,7 @@ var WEF;
                         // It is best to set disabled on input that cannot be clicked or tabbed to for assistive technology
                         element.disabled = true;
                     }
+                    this.modalDisabledDiv.setAttribute("aria-hidden", "true");
                 }
                 this.dialogDiv.style.display = "block";
                 this.overlayDiv.style.display = "block";
@@ -2273,7 +2564,24 @@ var WEF;
                         this.buttonElements[currentIndex + 1].focus();
                     }
                 }
-                ev.preventDefault();
+            };
+            /*
+             * enter key is pressed within the modal dialog
+             */
+            ModalDialog.prototype.onEnterKeyDown = function (ev) {
+                var handled = false;
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                if (eventTarget == null) {
+                    return handled;
+                }
+                for (var i = 0; i < this.buttonElements.length; i++) {
+                    if (this.buttonElements[i] == eventTarget) {
+                        this.enterKeyTarget = this.buttonElements[i];
+                        handled = true;
+                        break;
+                    }
+                }
+                return handled;
             };
             return ModalDialog;
         })();
@@ -2293,6 +2601,8 @@ var WEF;
                 this.currentResult = null;
                 /** The modal dialog shown for confirming Agave removal. */
                 this.removalConfirmationDialog = null;
+                this.enterKeyTarget = null;
+                this.dialogId = "appManagementMenuDialog";
                 this.menuDiv = document.createElement("ul");
                 this.menuDiv.setAttribute("role", "menu");
                 this.menuDiv.setAttribute("tabindex", "-1");
@@ -2316,23 +2626,12 @@ var WEF;
                 for (var i = 0; i < this.menuItems.length; i++) {
                     addFocusListener(i);
                 }
-                var focusInMenuCheck = function (event) {
-                    // Verify focus is in the menu still or else hide the menu
-                    var hideMenu = false;
-                    // Related target is the element about to receive focus.  Some browsers do not support this.
-                    if (event.relatedTarget !== undefined) {
-                        if (_this.menuDiv.contains(event.relatedTarget) == false) {
-                            hideMenu = true;
-                        }
-                    }
-                    else if (!_this.menuDiv.querySelector(":focus")) {
-                        hideMenu = true;
-                    }
-                    if (hideMenu) {
+                var clickInMenuCheck = function (event) {
+                    if (_this.menuDiv.contains(event.target) == false) {
                         _this.hideMenu(true);
                     }
                 };
-                WEF.WefGalleryHelper.addEventListener(this.menuDiv, "focusout", focusInMenuCheck);
+                WEF.WefGalleryHelper.addEventListener(document, "click", clickInMenuCheck);
             }
             /**
              * Factory method for app options button
@@ -2343,13 +2642,16 @@ var WEF;
             /**
              * Certain keys now have different behavior while options menu is being displayed, and should not use default behavior in the wef gallery
              */
-            MenuHandler.prototype.handleKey = function (ev) {
+            MenuHandler.prototype.handleKeyDown = function (ev) {
                 // Only handle keys when the menu is visible
                 if (this.isMenuVisible() == false) {
                     return false;
                 }
                 var handled = false;
                 switch (ev.keyCode) {
+                    case 13:
+                        handled = this.onEnterKeyDown(ev);
+                        break;
                     case 27:
                         this.hideMenu(true);
                         handled = true;
@@ -2373,6 +2675,26 @@ var WEF;
                 return handled;
             };
             /**
+             * Certain keys now have different behavior while options menu is being displayed, and should not use default behavior in the wef gallery
+             */
+            MenuHandler.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                // Only handle keys when the menu is visible
+                if (this.isMenuVisible() == false) {
+                    return handled;
+                }
+                switch (ev.keyCode) {
+                    case 13:
+                        var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                        if (eventTarget == this.enterKeyTarget) {
+                            this.enterKeyTarget.click();
+                            handled = true;
+                        }
+                        break;
+                }
+                return handled;
+            };
+            /**
              * Hides the menu
              */
             MenuHandler.prototype.hideMenu = function (logData) {
@@ -2381,6 +2703,16 @@ var WEF;
                     // Log everytime menu is opened unless told otherwise
                     if (logData) {
                         this.logData(this.currentResult, AppManagementAction.Cancel, 0);
+                    }
+                    if (this.removalConfirmationDialog != null) {
+                        var tabElements = this.removalConfirmationDialog.getTabbableElements();
+                        for (var i = 0; i < tabElements.length; i++) {
+                            var element = tabElements[i];
+                            if (!element.disabled) {
+                                element.focus();
+                                break;
+                            }
+                        }
                     }
                 }
             };
@@ -2425,6 +2757,24 @@ var WEF;
                     _this.clearMenuSelection();
                     _this.menuDiv.focus();
                 }, 0);
+            };
+            /*
+             * enter key is pressed within the menu dialog
+             */
+            MenuHandler.prototype.onEnterKeyDown = function (ev) {
+                var handled = false;
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                if (eventTarget == null) {
+                    return handled;
+                }
+                for (var i = 0; i < this.menuItems.length; i++) {
+                    if (this.menuItems[i].element == eventTarget) {
+                        this.enterKeyTarget = this.menuItems[i].element;
+                        handled = true;
+                        break;
+                    }
+                }
+                return handled;
             };
             /**
              * Computes the correct position to display the menu
@@ -2616,6 +2966,7 @@ var WEF;
                 this.disabled = false;
                 this.element = null;
                 var li = document.createElement("li");
+                li.setAttribute("role", "presentation");
                 this.element = document.createElement("button");
                 WEF.WefGalleryHelper.setHtmlEncodedText(this.element, text);
                 this.element.setAttribute("title", title);
@@ -2689,9 +3040,12 @@ var WEF;
                 var optionsButton = null;
                 // Only create the options menu if OMEX, and the host application can show the menu (not n-1 case or unsupported host)
                 if (WEF.IMPage.currentStoreType === WEF.StoreTypeEnum.MarketPlace && WEF.IMPage.canShowAppManagementMenu()) {
-                    optionsButton = document.createElement("button");
+                    optionsButton = document.createElement("input");
                     WEF.WefGalleryHelper.addClass(optionsButton, "OptionsButton");
                     optionsButton.setAttribute("type", "button");
+                    optionsButton.setAttribute("role", "button");
+                    optionsButton.setAttribute("value", "\u22EF");
+                    optionsButton.setAttribute("aria-label", Strings.wefgallery.L_OptionsMenu_Tooltip);
                     optionsButton.setAttribute("title", Strings.wefgallery.L_OptionsMenu_Tooltip);
                     optionsButton.setAttribute("tabindex", "0");
                     optionsButton.style.width = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.MenuButtonSide) + "px";
@@ -3043,6 +3397,7 @@ var WEF;
             catch (ex) {
                 this.showError(Strings.wefgallery.L_GetEntitilementsGeneralError);
             }
+            this.gallery.setAttribute("aria-busy", "false");
         };
         return WefGalleryPage_Native;
     })(WEF.WefGalleryPage);
@@ -3286,8 +3641,9 @@ var WEF;
         /**
          * Handle enter key events
          */
-        WefGalleryPage_RichClient.prototype.executeButtonCommand = function (element) {
-            _super.prototype.executeButtonCommand.call(this, element);
+        WefGalleryPage_RichClient.prototype.executeButtonCommand = function (element, event) {
+            if (event === void 0) { event = null; }
+            _super.prototype.executeButtonCommand.call(this, element, event);
             // Handle the key event only available in rich client
             if (element.getAttribute("id") == "BtnTrustAll") {
                 this.trustAllAgaves();

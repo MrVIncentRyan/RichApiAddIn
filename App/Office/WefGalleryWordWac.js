@@ -1,8 +1,9 @@
 /* Office web application gallery insertion dialog JavaScript file */
-/* Version: 16.0.6807.3002 */
+/* Version: 16.0.7504.3000 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
+
 
 /*
 	Your use of this file is governed by the Microsoft Services Agreement http://go.microsoft.com/fwlink/?LinkId=266419.
@@ -23,7 +24,8 @@ var OfficeExt;
                 Sys.StringBuilder && typeof (Sys.StringBuilder) === "function" &&
                 Type.registerNamespace && typeof (Type.registerNamespace) === "function" &&
                 Type.registerClass && typeof (Type.registerClass) === "function" &&
-                typeof (Function._validateParams) === "function") {
+                typeof (Function._validateParams) === "function" &&
+                Sys.Serialization && Sys.Serialization.JavaScriptSerializer && typeof (Sys.Serialization.JavaScriptSerializer.serialize) === "function") {
                 return true;
             }
             else {
@@ -146,6 +148,17 @@ var OfficeExt;
     })();
     OfficeExt.SafeStorage = SafeStorage;
 })(OfficeExt || (OfficeExt = {}));
+OSF.XdmFieldName = {
+    ConversationUrl: "ConversationUrl",
+    AppId: "AppId"
+};
+OSF.WindowNameItemKeys = {
+    BaseFrameName: "baseFrameName",
+    HostInfo: "hostInfo",
+    XdmInfo: "xdmInfo",
+    SerializerVersion: "serializerVersion",
+    AppContext: "appContext"
+};
 OSF.OUtil = (function () {
     var _uniqueId = -1;
     var _xdmInfoKey = '&_xdm_Info=';
@@ -153,6 +166,8 @@ OSF.OUtil = (function () {
     var _xdmSessionKeyPrefix = '_xdm_';
     var _serializerVersionKeyPrefix = '_serializer_version=';
     var _fragmentSeparator = '#';
+    var _fragmentInfoDelimiter = '&';
+    var _classN = "class";
     var _loadedScripts = {};
     var _defaultScriptLoadingTimeout = 30000;
     var _safeSessionStorage = null;
@@ -175,6 +190,36 @@ OSF.OUtil = (function () {
             _safeSessionStorage = new OfficeExt.SafeStorage(sessionStorage);
         }
         return _safeSessionStorage;
+    }
+    ;
+    function _reOrderTabbableElements(elements) {
+        var bucket0 = [];
+        var bucketPositive = [];
+        var i;
+        var len = elements.length;
+        var ele;
+        for (i = 0; i < len; i++) {
+            ele = elements[i];
+            if (ele.tabIndex) {
+                if (ele.tabIndex > 0) {
+                    bucketPositive.push(ele);
+                }
+                else if (ele.tabIndex === 0) {
+                    bucket0.push(ele);
+                }
+            }
+            else {
+                bucket0.push(ele);
+            }
+        }
+        bucketPositive = bucketPositive.sort(function (left, right) {
+            var diff = left.tabIndex - right.tabIndex;
+            if (diff === 0) {
+                diff = bucketPositive.indexOf(left) - bucketPositive.indexOf(right);
+            }
+            return diff;
+        });
+        return [].concat(bucketPositive, bucket0);
     }
     ;
     return {
@@ -317,39 +362,87 @@ OSF.OUtil = (function () {
         generateConversationId: function OSF_OUtil$generateConversationId() {
             return [_random(), _random(), (new Date()).getTime().toString()].join('_');
         },
-        getFrameNameAndConversationId: function OSF_OUtil$getFrameNameAndConversationId(cacheKey, frame) {
-            var frameName = _xdmSessionKeyPrefix + cacheKey + this.generateConversationId();
-            frame.setAttribute("name", frameName);
-            return this.generateConversationId();
+        getFrameName: function OSF_OUtil$getFrameName(cacheKey) {
+            return _xdmSessionKeyPrefix + cacheKey + this.generateConversationId();
         },
         addXdmInfoAsHash: function OSF_OUtil$addXdmInfoAsHash(url, xdmInfoValue) {
-            return OSF.OUtil.addInfoAsHash(url, _xdmInfoKey, xdmInfoValue);
+            return OSF.OUtil.addInfoAsHash(url, _xdmInfoKey, xdmInfoValue, false);
         },
         addSerializerVersionAsHash: function OSF_OUtil$addSerializerVersionAsHash(url, serializerVersion) {
-            return OSF.OUtil.addInfoAsHash(url, _serializerVersionKey, serializerVersion);
+            return OSF.OUtil.addInfoAsHash(url, _serializerVersionKey, serializerVersion, true);
         },
-        addInfoAsHash: function OSF_OUtil$addInfoAsHash(url, keyName, infoValue) {
+        addInfoAsHash: function OSF_OUtil$addInfoAsHash(url, keyName, infoValue, encodeInfo) {
             url = url.trim() || '';
             var urlParts = url.split(_fragmentSeparator);
             var urlWithoutFragment = urlParts.shift();
             var fragment = urlParts.join(_fragmentSeparator);
-            return [urlWithoutFragment, _fragmentSeparator, fragment, keyName, infoValue].join('');
+            var newFragment;
+            if (encodeInfo) {
+                newFragment = [keyName, encodeURIComponent(infoValue), fragment].join('');
+            }
+            else {
+                newFragment = [fragment, keyName, infoValue].join('');
+            }
+            return [urlWithoutFragment, _fragmentSeparator, newFragment].join('');
+        },
+        parseHostInfoFromWindowName: function OSF_OUtil$parseHostInfoFromWindowName(skipSessionStorage, windowName) {
+            return OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.HostInfo);
         },
         parseXdmInfo: function OSF_OUtil$parseXdmInfo(skipSessionStorage) {
-            return OSF.OUtil.parseXdmInfoWithGivenFragment(skipSessionStorage, window.location.hash);
+            var xdmInfoValue = OSF.OUtil.parseXdmInfoWithGivenFragment(skipSessionStorage, window.location.hash);
+            if (!xdmInfoValue) {
+                xdmInfoValue = OSF.OUtil.parseXdmInfoFromWindowName(skipSessionStorage, window.name);
+            }
+            return xdmInfoValue;
+        },
+        parseXdmInfoFromWindowName: function OSF_OUtil$parseXdmInfoFromWindowName(skipSessionStorage, windowName) {
+            return OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.XdmInfo);
         },
         parseXdmInfoWithGivenFragment: function OSF_OUtil$parseXdmInfoWithGivenFragment(skipSessionStorage, fragment) {
-            return OSF.OUtil.parseInfoWithGivenFragment(_xdmInfoKey, _xdmSessionKeyPrefix, skipSessionStorage, fragment);
+            return OSF.OUtil.parseInfoWithGivenFragment(_xdmInfoKey, _xdmSessionKeyPrefix, false, skipSessionStorage, fragment);
         },
         parseSerializerVersion: function OSF_OUtil$parseSerializerVersion(skipSessionStorage) {
-            return OSF.OUtil.parseSerializerVersionWithGivenFragment(skipSessionStorage, window.location.hash);
+            var serializerVersion = OSF.OUtil.parseSerializerVersionWithGivenFragment(skipSessionStorage, window.location.hash);
+            if (isNaN(serializerVersion)) {
+                serializerVersion = OSF.OUtil.parseSerializerVersionFromWindowName(skipSessionStorage, window.name);
+            }
+            return serializerVersion;
+        },
+        parseSerializerVersionFromWindowName: function OSF_OUtil$parseSerializerVersionFromWindowName(skipSessionStorage, windowName) {
+            return parseInt(OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.SerializerVersion));
         },
         parseSerializerVersionWithGivenFragment: function OSF_OUtil$parseSerializerVersionWithGivenFragment(skipSessionStorage, fragment) {
-            return parseInt(OSF.OUtil.parseInfoWithGivenFragment(_serializerVersionKey, _serializerVersionKeyPrefix, skipSessionStorage, fragment));
+            return parseInt(OSF.OUtil.parseInfoWithGivenFragment(_serializerVersionKey, _serializerVersionKeyPrefix, true, skipSessionStorage, fragment));
         },
-        parseInfoWithGivenFragment: function OSF_OUtil$parseInfoWithGivenFragment(infoKey, infoKeyPrefix, skipSessionStorage, fragment) {
+        parseInfoFromWindowName: function OSF_OUtil$parseInfoFromWindowName(skipSessionStorage, windowName, infoKey) {
+            try {
+                var windowNameObj = JSON.parse(windowName);
+                var infoValue = windowNameObj != null ? windowNameObj[infoKey] : null;
+                var osfSessionStorage = _getSessionStorage();
+                if (!skipSessionStorage && osfSessionStorage && windowNameObj != null) {
+                    var sessionKey = windowNameObj[OSF.WindowNameItemKeys.BaseFrameName] + infoKey;
+                    if (infoValue) {
+                        osfSessionStorage.setItem(sessionKey, infoValue);
+                    }
+                    else {
+                        infoValue = osfSessionStorage.getItem(sessionKey);
+                    }
+                }
+                return infoValue;
+            }
+            catch (Exception) {
+                return null;
+            }
+        },
+        parseInfoWithGivenFragment: function OSF_OUtil$parseInfoWithGivenFragment(infoKey, infoKeyPrefix, decodeInfo, skipSessionStorage, fragment) {
             var fragmentParts = fragment.split(infoKey);
-            var xdmInfoValue = fragmentParts.length > 1 ? fragmentParts[fragmentParts.length - 1] : null;
+            var infoValue = fragmentParts.length > 1 ? fragmentParts[fragmentParts.length - 1] : null;
+            if (decodeInfo && infoValue != null) {
+                if (infoValue.indexOf(_fragmentInfoDelimiter) >= 0) {
+                    infoValue = infoValue.split(_fragmentInfoDelimiter)[0];
+                }
+                infoValue = decodeURIComponent(infoValue);
+            }
             var osfSessionStorage = _getSessionStorage();
             if (!skipSessionStorage && osfSessionStorage) {
                 var sessionKeyStart = window.name.indexOf(infoKeyPrefix);
@@ -359,15 +452,15 @@ OSF.OUtil = (function () {
                         sessionKeyEnd = window.name.length;
                     }
                     var sessionKey = window.name.substring(sessionKeyStart, sessionKeyEnd);
-                    if (xdmInfoValue) {
-                        osfSessionStorage.setItem(sessionKey, xdmInfoValue);
+                    if (infoValue) {
+                        osfSessionStorage.setItem(sessionKey, infoValue);
                     }
                     else {
-                        xdmInfoValue = osfSessionStorage.getItem(sessionKey);
+                        infoValue = osfSessionStorage.getItem(sessionKey);
                     }
                 }
             }
-            return xdmInfoValue;
+            return infoValue;
         },
         getConversationId: function OSF_OUtil$getConversationId() {
             var searchString = window.location.search;
@@ -389,18 +482,28 @@ OSF.OUtil = (function () {
             if (typeof items[1] == "undefined") {
                 items = strInfo.split("|");
             }
+            if (typeof items[1] == "undefined") {
+                items = strInfo.split("%7C");
+            }
             return items;
         },
-        getConversationUrl: function OSF_OUtil$getConversationUrl() {
-            var conversationUrl = '';
-            var xdmInfoValue = OSF.OUtil.parseXdmInfo(true);
+        getXdmFieldValue: function OSF_OUtil$getXdmFieldValue(xdmFieldName, skipSessionStorage) {
+            var fieldValue = '';
+            var xdmInfoValue = OSF.OUtil.parseXdmInfo(skipSessionStorage);
             if (xdmInfoValue) {
                 var items = OSF.OUtil.getInfoItems(xdmInfoValue);
                 if (items != undefined && items.length >= 3) {
-                    conversationUrl = items[2];
+                    switch (xdmFieldName) {
+                        case OSF.XdmFieldName.ConversationUrl:
+                            fieldValue = items[2];
+                            break;
+                        case OSF.XdmFieldName.AppId:
+                            fieldValue = items[1];
+                            break;
+                    }
                 }
             }
-            return conversationUrl;
+            return fieldValue;
         },
         validateParamObject: function OSF_OUtil$validateParamObject(params, expectedProperties, callback) {
             var e = Function._validateParams(arguments, [{ name: "params", type: Object, mayBeNull: false },
@@ -679,6 +782,18 @@ OSF.OUtil = (function () {
         isiOS: function OSF_Outil$isiOS() {
             return (window.navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
         },
+        isChrome: function OSF_Outil$isChrome() {
+            return (window.navigator.userAgent.indexOf("Chrome") > 0) && !OSF.OUtil.isEdge();
+        },
+        isEdge: function OSF_Outil$isEdge() {
+            return window.navigator.userAgent.indexOf("Edge") > 0;
+        },
+        isIE: function OSF_Outil$isIE() {
+            return window.navigator.userAgent.indexOf("Trident") > 0;
+        },
+        isFirefox: function OSF_Outil$isFirefox() {
+            return window.navigator.userAgent.indexOf("Firefox") > 0;
+        },
         shallowCopy: function OSF_Outil$shallowCopy(sourceObj) {
             var copyObj = sourceObj.constructor();
             for (var property in sourceObj) {
@@ -687,16 +802,6 @@ OSF.OUtil = (function () {
                 }
             }
             return copyObj;
-        },
-        serializeOMEXResponseErrorMessage: function OSF_Outil$serializeObjectToString(response) {
-            if (typeof (JSON) !== "undefined") {
-                try {
-                    return JSON.stringify(response);
-                }
-                catch (ex) {
-                }
-            }
-            return "";
         },
         createObject: function OSF_Outil$createObject(properties) {
             var obj = null;
@@ -708,6 +813,125 @@ OSF.OUtil = (function () {
                 }
             }
             return obj;
+        },
+        addClass: function OSF_OUtil$addClass(elmt, val) {
+            if (!OSF.OUtil.hasClass(elmt, val)) {
+                var className = elmt.getAttribute(_classN);
+                if (className) {
+                    elmt.setAttribute(_classN, className + " " + val);
+                }
+                else {
+                    elmt.setAttribute(_classN, val);
+                }
+            }
+        },
+        hasClass: function OSF_OUtil$hasClass(elmt, clsName) {
+            var className = elmt.getAttribute(_classN);
+            return className && className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)'));
+        },
+        focusToFirstTabbable: function OSF_OUtil$focusToFirstTabbable(all, backward) {
+            var next;
+            var focused = false;
+            var candidate;
+            var setFlag = function (e) {
+                focused = true;
+            };
+            var findNextPos = function (allLen, currPos, backward) {
+                if (currPos < 0 || currPos > allLen) {
+                    return -1;
+                }
+                else if (currPos === 0 && backward) {
+                    return -1;
+                }
+                else if (currPos === allLen - 1 && !backward) {
+                    return -1;
+                }
+                if (backward) {
+                    return currPos - 1;
+                }
+                else {
+                    return currPos + 1;
+                }
+            };
+            all = _reOrderTabbableElements(all);
+            next = backward ? all.length - 1 : 0;
+            if (all.length === 0) {
+                return null;
+            }
+            while (!focused && next >= 0 && next < all.length) {
+                candidate = all[next];
+                window.focus();
+                candidate.addEventListener('focus', setFlag);
+                candidate.focus();
+                candidate.removeEventListener('focus', setFlag);
+                next = findNextPos(all.length, next, backward);
+                if (!focused && candidate === document.activeElement) {
+                    focused = true;
+                }
+            }
+            if (focused) {
+                return candidate;
+            }
+            else {
+                return null;
+            }
+        },
+        focusToNextTabbable: function OSF_OUtil$focusToNextTabbable(all, curr, shift) {
+            var currPos;
+            var next;
+            var focused = false;
+            var candidate;
+            var setFlag = function (e) {
+                focused = true;
+            };
+            var findCurrPos = function (all, curr) {
+                var i = 0;
+                for (; i < all.length; i++) {
+                    if (all[i] === curr) {
+                        return i;
+                    }
+                }
+                return -1;
+            };
+            var findNextPos = function (allLen, currPos, shift) {
+                if (currPos < 0 || currPos > allLen) {
+                    return -1;
+                }
+                else if (currPos === 0 && shift) {
+                    return -1;
+                }
+                else if (currPos === allLen - 1 && !shift) {
+                    return -1;
+                }
+                if (shift) {
+                    return currPos - 1;
+                }
+                else {
+                    return currPos + 1;
+                }
+            };
+            all = _reOrderTabbableElements(all);
+            currPos = findCurrPos(all, curr);
+            next = findNextPos(all.length, currPos, shift);
+            if (next < 0) {
+                return null;
+            }
+            while (!focused && next >= 0 && next < all.length) {
+                candidate = all[next];
+                candidate.addEventListener('focus', setFlag);
+                candidate.focus();
+                candidate.removeEventListener('focus', setFlag);
+                next = findNextPos(all.length, next, shift);
+                if (!focused && candidate === document.activeElement) {
+                    focused = true;
+                }
+            }
+            if (focused) {
+                return candidate;
+            }
+            else {
+                return null;
+            }
         }
     };
 })();
@@ -747,12 +971,11 @@ var OfficeExt;
             if (instance instanceof type)
                 return true;
             var instanceType = instance.constructor;
-            if (!instanceType || (typeof (instanceType) !== "function") || instanceType.__typeName === 'Object') {
+            if (!instanceType || (typeof (instanceType) !== "function") || !instanceType.__typeName || instanceType.__typeName === 'Object') {
                 instanceType = Object;
             }
             return !!(instanceType === type) ||
-                (instanceType.inheritsFrom && instanceType.inheritsFrom(type)) ||
-                (instanceType.implementsInterface && instanceType.implementsInterface(type));
+                (instanceType.__typeName && type.__typeName && instanceType.__typeName === type.__typeName);
         };
         return MsAjaxTypeHelper;
     })();
@@ -881,6 +1104,23 @@ var OfficeExt;
     })();
     OfficeExt.MsAjaxDebug = MsAjaxDebug;
     if (!OsfMsAjaxFactory.isMsAjaxLoaded()) {
+        var registerTypeInternal = function registerTypeInternal(type, name, isClass) {
+            if (type.__typeName === undefined) {
+                type.__typeName = name;
+            }
+            if (type.__class === undefined) {
+                type.__class = isClass;
+            }
+        };
+        registerTypeInternal(Function, "Function", true);
+        registerTypeInternal(Error, "Error", true);
+        registerTypeInternal(Object, "Object", true);
+        registerTypeInternal(String, "String", true);
+        registerTypeInternal(Boolean, "Boolean", true);
+        registerTypeInternal(Date, "Date", true);
+        registerTypeInternal(Number, "Number", true);
+        registerTypeInternal(RegExp, "RegExp", true);
+        registerTypeInternal(Array, "Array", true);
         if (!Function.createCallback) {
             Function.createCallback = function Function$createCallback(method, context) {
                 var e = Function._validateParams(arguments, [
@@ -1375,6 +1615,14 @@ OSF.SerializerVersion = {
     MsAjax: 0,
     Browser: 1
 };
+var OfficeExt;
+(function (OfficeExt) {
+    function appSpecificCheckOriginFunction(url, eventObj, messageObj, checkOriginFunction) {
+        return true;
+    }
+    ;
+    OfficeExt.appSpecificCheckOrigin = appSpecificCheckOriginFunction;
+})(OfficeExt || (OfficeExt = {}));
 (function (window) {
     "use strict";
     var stringRegEx = new RegExp('"(\\\\.|[^"\\\\])*"', 'g'), trueFalseNullRegEx = new RegExp('\\b(true|false|null)\\b', 'g'), numbersRegEx = new RegExp('-?(0|([1-9]\\d*))(\\.\\d+)?([eE][+-]?\\d+)?', 'g'), badBracketsRegEx = new RegExp('[^{:,\\[\\s](?=\\s*\\[)'), badRemainderRegEx = new RegExp('[^\\s\\[\\]{}:,]'), jsonErrorMsg = "Cannot deserialize. The data does not correspond to valid JSON.";
@@ -1597,6 +1845,15 @@ Microsoft.Office.Common.ServiceEndPoint.prototype = {
     },
     getPolicyManager: function Microsoft_Office_Common_ServiceEndPoint$getPolicyManager() {
         return this._policyManager;
+    },
+    dispose: function Microsoft_Office_Common_ServiceEndPoint$dispose() {
+        this._methodObjectList = null;
+        this._eventHandlerProxyList = null;
+        this._Id = null;
+        this._conversations = null;
+        this._policyManager = null;
+        this._appDomains = null;
+        this._onHandleRequestError = null;
     }
 };
 Microsoft.Office.Common.ClientEndPoint = function Microsoft_Office_Common_ClientEndPoint(conversationId, targetWindow, targetUrl, serializerVersion) {
@@ -1608,8 +1865,15 @@ Microsoft.Office.Common.ClientEndPoint = function Microsoft_Office_Common_Client
     ]);
     if (e)
         throw e;
-    if (!targetWindow.postMessage) {
-        throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+    try {
+        if (!targetWindow.postMessage) {
+            throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+        }
+    }
+    catch (ex) {
+        if (!Object.prototype.hasOwnProperty.call(targetWindow, "postMessage")) {
+            throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+        }
     }
     this._conversationId = conversationId;
     this._targetWindow = targetWindow;
@@ -1743,7 +2007,6 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
         var clientEndPoint = _clientEndPoints[conversationId];
         if (!clientEndPoint) {
             OsfMsAjaxFactory.msAjaxDebug.trace("Unknown conversation Id.");
-            throw OsfMsAjaxFactory.msAjaxError.argument("conversationId");
         }
         return clientEndPoint;
     }
@@ -1959,6 +2222,9 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
             }
             else if (messageObject._messageType === Microsoft.Office.Common.MessageType.response) {
                 var clientEndPoint = _lookupClientEndPoint(messageObject._conversationId);
+                if (!clientEndPoint) {
+                    return;
+                }
                 clientEndPoint._serializerVersion = serializerVersion;
                 ;
                 if (!_checkOrigin(clientEndPoint._targetUrl, e.origin)) {
@@ -2035,6 +2301,17 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
             if (e)
                 throw e;
             delete _clientEndPoints[conversationId];
+        },
+        deleteServiceEndPoint: function Microsoft_Office_Common_XdmCommunicationManager$deleteServiceEndPoint(serviceEndPointId) {
+            var e = Function._validateParams(arguments, [
+                { name: "serviceEndPointId", type: String, mayBeNull: false }
+            ]);
+            if (e)
+                throw e;
+            delete _serviceEndPoints[serviceEndPointId];
+        },
+        checkUrlWithAppDomains: function Microsoft_Office_Common_XdmCommunicationManager$_checkUrlWithAppDomains(appDomains, origin) {
+            return _checkOriginWithAppDomains(appDomains, origin);
         },
         _setMethodTimeout: function Microsoft_Office_Common_XdmCommunicationManager$_setMethodTimeout(methodTimeout) {
             var e = Function._validateParams(arguments, [
@@ -2194,7 +2471,10 @@ Microsoft.Office.Common.InvokeCompleteCallback = function Microsoft_Office_Commo
     Microsoft.Office.Common.InvokeCompleteCallback.uber.constructor.call(this, requesterWindow, requesterUrl, actionName, conversationId, correlationId, Microsoft.Office.Common.ResponseType.forCalling, serializerVersion);
     this._postCallbackHandler = postCallbackHandler;
     var me = this;
-    this._send = function (result) {
+    this._send = function (result, responseCode) {
+        if (responseCode != undefined) {
+            me._invokeResultCode = responseCode;
+        }
         try {
             var response = new Microsoft.Office.Common.Response(me._actionName, me._conversationId, me._correlationId, me._invokeResultCode, me._responseType, result);
             var envelopedResult = Microsoft.Office.Common.MessagePackager.envelope(response, serializerVersion);
@@ -2550,7 +2830,7 @@ var WEF;
         UI.DefaultGalleryWidth = 695;
         UI.DefaultTabMaxWidth = 113;
         UI.DefaultDialogBtnMaxWidth = 150;
-        UI.DefaultHeaderHeight = 52;
+        UI.DefaultHeaderHeight = 62;
         UI.DefaultNotificationHeight = 30;
         UI.DefaultSelectedItemHeight = 42;
         UI.DefaultSelectedDescriptionTextMaxWidth = 380;
@@ -2744,6 +3024,7 @@ var WEF;
             spinWheelDiv.style.width = "100%";
             spinWheelDiv.style.height = "100%";
             gallery.appendChild(spinWheelDiv);
+            gallery.setAttribute("aria-busy", "true");
             return spinWheelDiv;
         }
         WefGalleryHelper.addSpinWheel = addSpinWheel;
@@ -2876,6 +3157,7 @@ var WEF;
             this.result = result;
             this.index = index;
             this.galleryItem = null;
+            this.moeInnerDiv = null;
             this.focusOnCallBack = focusOnCallBack;
             this.appOptions = null;
             this.itemCreated = false;
@@ -2885,27 +3167,44 @@ var WEF;
             documentFragment.appendChild(moeDiv);
             WEF.WefGalleryHelper.addClass(moeDiv, "Moe");
             moeDiv.setAttribute("data-ri", this.index.toString());
+            moeDiv.setAttribute("role", "option");
+            var moeInnerDiv = document.createElement("div");
+            moeDiv.appendChild(moeInnerDiv);
+            WEF.WefGalleryHelper.addClass(moeInnerDiv, "MoeInner");
+            WEF.WefGalleryHelper.dpiScale(moeInnerDiv);
+            moeInnerDiv.setAttribute("title", this.result.description);
+            moeInnerDiv.setAttribute("tabindex", "-1");
+            moeInnerDiv.setAttribute("data-inner-moe", this.index.toString());
+            this.moeInnerDiv = moeInnerDiv;
             WEF.WefGalleryHelper.dpiScale(moeDiv);
             WEF.WefGalleryHelper.dpiScaleMarginLeft(moeDiv);
+            moeDiv.onfocus = function WEF_GalleryItem_displayAgave$onfocus() {
+                moeDiv.setAttribute("aria-selected", "true");
+            };
+            moeDiv.onblur = function WEF_GalleryItem_displayAgave$onblur() {
+                moeDiv.setAttribute("aria-selected", "false");
+            };
             moeDiv.oncontextmenu = function WEF_GalleryItem_displayAgave$oncontextmenu() {
                 return false;
             };
             this.galleryItem = moeDiv;
         };
+        GalleryItem.prototype.ShowRateReviewAtGalleryItem = function () {
+            return false;
+        };
         GalleryItem.prototype.updateImage = function (insertHandler) {
             var _this = this;
-            if (!this.galleryItem) {
+            if (!this.galleryItem || !this.moeInnerDiv) {
                 return;
             }
-            var moeDiv = this.galleryItem;
             if (!this.itemCreated) {
-                moeDiv.onclick = function () {
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "click", function () {
                     WEF.IMPage.selectGalleryItems(_this.index);
-                };
-                moeDiv.ondblclick = function () {
+                });
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "dblclick", function () {
                     insertHandler(_this);
-                };
-                moeDiv.onmousedown = function (e) {
+                });
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mousedown", function (e) {
                     if (!e)
                         e = event;
                     if (e.which === 3 || e.button === 2) {
@@ -2913,29 +3212,23 @@ var WEF;
                             _this.appOptions.popupMenu();
                         }
                     }
-                };
-                moeDiv.onmouseover = function () {
+                });
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mouseover", function () {
                     WEF.WefGalleryHelper.addClass(_this.galleryItem, "mouseover");
                     _this.appOptions.showOptionsButton();
-                };
-                moeDiv.onmouseout = function () {
+                });
+                WEF.WefGalleryHelper.addEventListener(this.moeInnerDiv, "mouseout", function () {
                     WEF.WefGalleryHelper.removeClass(_this.galleryItem, "mouseover");
                     if (!WEF.WefGalleryHelper.hasClass(_this.galleryItem, "selected")) {
                         _this.appOptions.hideOptionsButton();
                     }
-                };
+                });
                 var agaveIconUrl = this.result.iconUrl;
-                var moeInnerDiv = document.createElement("div");
-                moeDiv.appendChild(moeInnerDiv);
-                WEF.WefGalleryHelper.addClass(moeInnerDiv, "MoeInner");
-                WEF.WefGalleryHelper.dpiScale(moeInnerDiv);
-                moeInnerDiv.setAttribute("title", this.result.description);
-                moeInnerDiv.setAttribute("tabindex", "-1");
                 var tnDiv = document.createElement("div");
-                moeInnerDiv.appendChild(tnDiv);
+                this.moeInnerDiv.appendChild(tnDiv);
                 WEF.WefGalleryHelper.addClass(tnDiv, "Tn");
                 var detailsDiv = document.createElement("div");
-                moeInnerDiv.appendChild(detailsDiv);
+                this.moeInnerDiv.appendChild(detailsDiv);
                 WEF.WefGalleryHelper.addClass(detailsDiv, "Details");
                 WEF.WefGalleryHelper.dpiScale(detailsDiv);
                 WEF.WefGalleryHelper.createHtmlEncodedTextNode(detailsDiv, "Title", this.result.displayName);
@@ -2948,6 +3241,20 @@ var WEF;
                 }
                 else {
                     WEF.WefGalleryHelper.createHtmlEncodedTextNode(detailsDiv, "Description", this.result.providerName);
+                }
+                if (this.ShowRateReviewAtGalleryItem()) {
+                    var rateDiv = document.createElement("div");
+                    detailsDiv.appendChild(rateDiv);
+                    var rateLink = document.createElement("a");
+                    rateDiv.appendChild(rateLink);
+                    rateLink.setAttribute("tabindex", "0");
+                    rateLink.setAttribute("id", "rateReviewLink");
+                    rateLink.text = Strings.wefgallery.L_OptionsMenu_RateReview_Txt;
+                    WEF.WefGalleryHelper.addEventListener(rateLink, "click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        WEF.IMPage.invokeWindowOpen(_this.result.rateReviewUrl);
+                    });
                 }
                 var img = document.createElement("img");
                 tnDiv.appendChild(img);
@@ -2976,12 +3283,23 @@ var WEF;
                 img.onerror = iconErrorHandler;
                 img.onabort = iconErrorHandler;
                 img.setAttribute("src", agaveIconUrl);
-                moeInnerDiv.setAttribute("aria-label", this.result.displayName);
-                moeInnerDiv.setAttribute("role", "Option");
                 this.appOptions = WEF.IMPage.menuHandler.createAppOptions(this.result);
                 var optionsButton = this.appOptions.createOptionsButton(this.index, tnDiv, img);
                 if (optionsButton) {
-                    moeInnerDiv.appendChild(optionsButton);
+                    this.moeInnerDiv.appendChild(optionsButton);
+                }
+                var arialLabelDiv = this.galleryItem;
+                if (window.navigator.userAgent.indexOf("AppleWebKit") > 0) {
+                    arialLabelDiv = this.moeInnerDiv;
+                }
+                if (optionsButton) {
+                    arialLabelDiv.setAttribute("aria-label", Strings.wefgallery.L_GalleryItem_Name_InsertAndOptions_Txt.replace("{0}", this.result.displayName));
+                }
+                else if (WEF.IMPage.currentStoreType === WEF.StoreTypeEnum.ThisDocument) {
+                    arialLabelDiv.setAttribute("aria-label", this.result.displayName);
+                }
+                else {
+                    arialLabelDiv.setAttribute("aria-label", Strings.wefgallery.L_GalleryItem_Name_InsertOnly_Txt.replace("{0}", this.result.displayName));
                 }
                 if (this.result.hasLoadingError) {
                     var icon = document.createElement("img");
@@ -3026,6 +3344,7 @@ var WEF;
             this.delaying = false;
             this.delayLoad = 200;
             this.delayTime = null;
+            this.delayCallbacks = [];
             this.btnAction = null;
             this.btnCancel = null;
             this.btnDone = null;
@@ -3035,6 +3354,7 @@ var WEF;
             this.errorMessage = null;
             this.footer = null;
             this.footerLink = null;
+            this.mainPage = null;
             this.gallery = null;
             this.galleryContainer = null;
             this.header = null;
@@ -3051,6 +3371,7 @@ var WEF;
             this.officeStoreBtn = null;
             this.permissionATag = null;
             this.permissionTextAndLink = null;
+            this.permissionTextTR = null;
             this.readMoreATag = null;
             this.selectedDescriptionReadMoreLink = null;
             this.selectedDescriptionText = null;
@@ -3058,21 +3379,27 @@ var WEF;
             this.tabs = null;
             this.uploadMenuDiv = null;
             this.refreshMenuDiv = null;
+            this.refreshATag = HTMLAnchorElement = null;
             this.manageMenuDiv = null;
             this.menuRightSeparatorDiv = null;
             this.tabTitles = [];
+            this.enterKeyTarget = null;
             this.menuSeparatorWidth = null;
             this.menuRightMaxPossibleWidth = null;
             this.galleryItems = null;
             this.uiState = { "Ready": false, "StoreIdBeforeReady": "", "ErrorBeforeReady": "", "ErrorLinkTextBeforeReady": "", "ErrorLinkHandlerBeforeReady": null };
             this.currentIndex = -1;
+            this.currentTabIndex = -1;
             this.results = null;
             this.height = "100%";
             this.width = "100%";
             this.itemsPerRow = null;
             this.leftKeyHandler = null;
             this.rightKeyHandler = null;
+            this.upKeyHandler = null;
+            this.downKeyHandler = null;
             this.keyHandlers = null;
+            this.keyCodePressed = -1;
             this.menuHandler = null;
             this.modalDialog = null;
             this.storeTab = null;
@@ -3082,54 +3409,103 @@ var WEF;
             this.envSetting = {};
             this.isUploadFileDevCatalogEnabled = false;
             this.isAppCommandEnabled = false;
-            this.moveLeft = function () {
-                _this.currentIndex--;
-                if (_this.currentIndex >= 0) {
-                    _this.selectGalleryItems(_this.currentIndex);
+            this.moveLeft = function (event, eventTarget) {
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "TabATag")) {
+                    var targetTabIndex = _this.currentTabIndex - 2;
+                    if (targetTabIndex < 0) {
+                        targetTabIndex = _this.tabs.childNodes.length - 1;
+                    }
+                    if (targetTabIndex != _this.currentTabIndex) {
+                        var targetTab = _this.tabs.childNodes[targetTabIndex];
+                        _this.toggleTabSelection(targetTab, null);
+                    }
                 }
                 else {
-                    _this.currentIndex = 0;
+                    _this.currentIndex--;
+                    if (_this.currentIndex >= 0) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex = 0;
+                    }
                 }
             };
-            this.moveRight = function (numOfItems) {
-                _this.currentIndex++;
-                if (_this.currentIndex < numOfItems) {
-                    _this.selectGalleryItems(_this.currentIndex);
+            this.moveRight = function (event, eventTarget, numOfItems) {
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "TabATag")) {
+                    var targetTabIndex = _this.currentTabIndex + 2;
+                    if (targetTabIndex > _this.tabs.childNodes.length - 1) {
+                        targetTabIndex = 0;
+                    }
+                    if (targetTabIndex != _this.currentTabIndex) {
+                        var targetTab = _this.tabs.childNodes[targetTabIndex];
+                        _this.toggleTabSelection(targetTab, null);
+                    }
                 }
                 else {
-                    _this.currentIndex = numOfItems - 1;
+                    _this.currentIndex++;
+                    if (_this.currentIndex < numOfItems) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex = numOfItems - 1;
+                    }
                 }
             };
-            this.upKeyHandler = function () {
-                _this.currentIndex -= _this.itemsPerRow;
-                if (_this.currentIndex >= 0) {
-                    _this.selectGalleryItems(_this.currentIndex);
-                }
-                else {
-                    _this.currentIndex += _this.itemsPerRow;
-                }
-            };
-            this.downKeyHandler = function (numOfItems) {
-                if (_this.currentIndex >= 0) {
-                    _this.currentIndex += _this.itemsPerRow;
-                }
-                else {
-                    _this.currentIndex = 0;
-                }
-                if (_this.currentIndex < numOfItems) {
-                    _this.selectGalleryItems(_this.currentIndex);
-                }
-                else {
+            this.moveUp = function (event, eventTarget) {
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "Moe") || WEF.WefGalleryHelper.hasClass(eventTarget, "MoeInner")) {
                     _this.currentIndex -= _this.itemsPerRow;
+                    if (_this.currentIndex >= 0) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex += _this.itemsPerRow;
+                    }
+                }
+            };
+            this.moveDown = function (event, eventTarget, numOfItems) {
+                if (WEF.WefGalleryHelper.hasClass(eventTarget, "Moe") || WEF.WefGalleryHelper.hasClass(eventTarget, "MoeInner")) {
+                    if (_this.currentIndex >= 0) {
+                        _this.currentIndex += _this.itemsPerRow;
+                    }
+                    else {
+                        _this.currentIndex = 0;
+                    }
+                    if (_this.currentIndex < numOfItems) {
+                        _this.selectGalleryItems(_this.currentIndex);
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                    }
+                    else {
+                        _this.currentIndex -= _this.itemsPerRow;
+                    }
                 }
             };
             this.tabKeyHandler = function (event, element) {
-                if (!event.shiftKey && element.getAttribute("id") == "BtnCancel" && event.preventDefault && _this.firstTabATag) {
-                    _this.firstTabATag.focus();
+                if (!event.shiftKey && (element == _this.tabs.childNodes[_this.currentTabIndex] || element == _this.tabs.childNodes[_this.currentTabIndex].firstChild) && event.preventDefault && _this.currentIndex < 0 && _this.galleryItems && _this.galleryItems.length > 0) {
+                    _this.currentIndex = 0;
+                    _this.selectGalleryItems(_this.currentIndex, false);
+                    event.preventDefault();
+                }
+                if (!event.shiftKey && element.getAttribute("id") == "RefreshInner" && event.preventDefault && _this.tabs && _this.currentTabIndex >= 0 && _this.currentTabIndex < _this.tabs.childNodes.length) {
+                    _this.tabs.childNodes[_this.currentTabIndex].firstChild.focus();
+                    event.preventDefault();
+                }
+                if (event.shiftKey && _this.tabs && (element == _this.tabs.childNodes[_this.currentTabIndex] || element == _this.tabs.childNodes[_this.currentTabIndex].firstChild) && event.preventDefault && _this.refreshATag) {
+                    _this.refreshATag.focus();
                     event.preventDefault();
                 }
             };
-            this.galleryKeyHandler = function (e) {
+            this.galleryKeyDownHandler = function (e) {
                 var numOfItems = 0;
                 if (_this.results) {
                     numOfItems = _this.results.length;
@@ -3138,7 +3514,9 @@ var WEF;
                     e = event;
                 for (var i = 0; i < _this.keyHandlers.length; i++) {
                     var keyHandler = _this.keyHandlers[i];
-                    if (keyHandler.handleKey(e)) {
+                    if (keyHandler.handleKeyDown(e)) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         return;
                     }
                 }
@@ -3148,7 +3526,8 @@ var WEF;
                         _this.tabKeyHandler(e, eventTarget);
                         break;
                     case 13:
-                        _this.executeButtonCommand(eventTarget);
+                        _this.enterKeyTarget = eventTarget;
+                        e.preventDefault();
                         break;
                     case 27:
                         _this.cancelDialog();
@@ -3159,19 +3538,37 @@ var WEF;
                         }
                         return;
                     case 37:
-                        _this.leftKeyHandler(numOfItems);
+                        _this.leftKeyHandler(e, eventTarget, numOfItems);
                         break;
                     case 38:
-                        _this.upKeyHandler();
+                        _this.upKeyHandler(e, eventTarget);
                         break;
                     case 39:
-                        _this.rightKeyHandler(numOfItems);
+                        _this.rightKeyHandler(e, eventTarget, numOfItems);
                         break;
                     case 40:
-                        _this.downKeyHandler(numOfItems);
+                        _this.downKeyHandler(e, eventTarget, numOfItems);
                         break;
                     default:
                         return;
+                }
+            };
+            this.galleryKeyUpHandler = function (e) {
+                if (!e)
+                    e = event;
+                for (var i = 0; i < _this.keyHandlers.length; i++) {
+                    var keyHandler = _this.keyHandlers[i];
+                    if (keyHandler.handleKeyUp(e)) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        return;
+                    }
+                }
+                var eventTarget = e.srcElement ? e.srcElement : e.target;
+                switch (e.keyCode) {
+                    case 13:
+                        _this.executeButtonCommand(eventTarget, e);
+                        break;
                 }
             };
             this.resizeHandler = function () {
@@ -3182,7 +3579,7 @@ var WEF;
                     _this.height = winHeight;
                     _this.width = winWidth;
                     _this.setGalleryHeight();
-                    _this.delayFunction(_this.loadVisibleImages);
+                    _this.delayLoadVisibleImages();
                     var newMaxWidth, widthIncreaseRatio = (_this.width) / WEF.UI.DefaultGalleryWidth;
                     newMaxWidth = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.DefaultDialogBtnMaxWidth) * widthIncreaseRatio;
                     _this.btnAction.style.maxWidth = newMaxWidth + "px";
@@ -3219,6 +3616,10 @@ var WEF;
                         var itemsPerRow = _this.getItemsPerRow();
                         if (itemsPerRow > 0) {
                             var offset = _this.galleryItems[0].galleryItem.offsetHeight;
+                            if (_this.currentIndex < itemsPerRow && _this.keyCodePressed == 40) {
+                                _this.gallery.scrollTop = 0;
+                                _this.keyCodePressed = -1;
+                            }
                             var displayTop = gallery.scrollTop + offset;
                             var displayBottom = displayTop + (gallery.clientHeight * 2);
                             var item;
@@ -3244,10 +3645,18 @@ var WEF;
                                 }
                             }
                         }
+                        _this.delaying = false;
+                        _this.gallery.setAttribute("aria-busy", "false");
                     }
                     if (_this.delaying) {
                         setTimeout(_this.loadVisibleImages, 3000);
                         _this.delaying = false;
+                    }
+                    else {
+                        while (_this.delayCallbacks.length > 0) {
+                            var callback = _this.delayCallbacks.pop();
+                            callback();
+                        }
                     }
                 }
             };
@@ -3268,6 +3677,8 @@ var WEF;
                 this.leftKeyHandler = this.moveRight;
                 this.rightKeyHandler = this.moveLeft;
             }
+            this.upKeyHandler = this.moveUp;
+            this.downKeyHandler = this.moveDown;
             this.clientFacadeCommon = clientFacadeCommon;
             this.envSetting = this.clientFacadeCommon.getEnvSetting();
             this.isAppCommandEnabled = this.envSetting["IsAppCommandEnabled"] === true;
@@ -3313,6 +3724,7 @@ var WEF;
                 this.btnDone.style.display = "none";
                 this.selectedDescriptionReadMoreLink.style.display = "none";
                 this.permissionTextAndLink.style.display = "none";
+                this.disableNarratorOnControl(this.permissionTextTR);
             }
             else if (buttonGroup == WEF.ActionButtonGroups.ThisDocument) {
                 this.btnAction.style.display = "none";
@@ -3390,8 +3802,12 @@ var WEF;
             }
             return this.appManagePageUrl;
         };
-        WefGalleryPage.prototype.executeButtonCommand = function (element) {
-            if (WEF.WefGalleryHelper.hasClass(element, "MoeInner")) {
+        WefGalleryPage.prototype.executeButtonCommand = function (element, event) {
+            this.menuHandler.hideMenu(true);
+            if (element != this.enterKeyTarget) {
+                return;
+            }
+            if (WEF.WefGalleryHelper.hasClass(element, "MoeInner") || WEF.WefGalleryHelper.hasClass(element, "Moe")) {
                 this.insertSelectedItem();
             }
             else if (WEF.WefGalleryHelper.hasClass(element, "TabATag")) {
@@ -3421,6 +3837,14 @@ var WEF;
             else if (element.getAttribute("id") == "linkId") {
                 this.invokeSignIn();
             }
+            else if (element.getAttribute("id") == "rateReviewLink") {
+                if (this.results != null && this.results.length > 0) {
+                    WEF.IMPage.invokeWindowOpen(this.results[0].rateReviewUrl);
+                }
+            }
+            else if (WEF.WefGalleryHelper.hasClass(element, "OptionsButton")) {
+                element.click();
+            }
         };
         WefGalleryPage.prototype.restoreFooterLink = function () {
             WEF.WefGalleryHelper.clearElementInnerHTML('SelectedItemTitle');
@@ -3444,11 +3868,24 @@ var WEF;
                 child = this.tabs.childNodes[i];
                 if (child.attributes && WEF.WefGalleryHelper.hasClass(child, "TextNav")) {
                     WEF.WefGalleryHelper.removeClass(child.firstChild, "TabSelected");
+                    child.setAttribute("tabIndex", "-1");
+                    child.firstChild.setAttribute("aria-selected", "false");
+                    child.firstChild.removeAttribute("aria-controls");
                     tabId = child.getAttribute("id");
                     if (tabId == selectedTabId) {
+                        this.currentTabIndex = i;
+                        child.setAttribute("tabIndex", "0");
+                        if (child.firstChild != null) {
+                            child.firstChild.focus();
+                        }
                         WEF.WefGalleryHelper.addClass(child.firstChild, "TabSelected");
+                        child.firstChild.setAttribute("aria-selected", "true");
+                        child.firstChild.setAttribute("aria-controls", "GalleryContainer");
                         var storeId = child.getAttribute("data-storeId");
                         var storeType = parseInt(child.getAttribute("data-storeType"));
+                        if (this.currentStoreId != storeId) {
+                            this.currentIndex = -1;
+                        }
                         this.currentStoreId = storeId;
                         this.currentStoreType = storeType;
                         this.saveStoreId(this.currentStoreId);
@@ -3462,6 +3899,7 @@ var WEF;
                             var pageUrl = child.getAttribute("data-PageUrl");
                             this.showContentPage(pageUrl);
                         }
+                        this.refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip.replace("{0}", child.firstChild.textContent));
                     }
                 }
             }
@@ -3536,6 +3974,7 @@ var WEF;
                     }
                 }
             }
+            this.tabs.setAttribute("role", "tablist");
             while (this.tabs.hasChildNodes()) {
                 this.tabs.removeChild(this.tabs.firstChild);
             }
@@ -3568,6 +4007,8 @@ var WEF;
                     if (tempStoreId === this.currentStoreId) {
                         selectedTab = createdTab;
                         WEF.WefGalleryHelper.addClass(selectedTab.firstChild, "TabSelected");
+                        selectedTab.firstChild.setAttribute("aria-selected", "true");
+                        selectedTab.firstChild.setAttribute("aria-controls", "GalleryContainer");
                     }
                     if (tempStoreType == WEF.StoreTypeEnum.Recommendation) {
                         this.storeTab = createdTab;
@@ -3575,12 +4016,25 @@ var WEF;
                 }
             }
             this.setOptionBarElementMaxSize(this.tabTitles);
+            var selectedTabTitle = null;
             if (this.tabs.childNodes.length > 0) {
                 if (selectedTab) {
                     WEF.WefGalleryHelper.addClass(selectedTab.childNodes[0], "selected");
+                    selectedTab.childNodes[0].focus();
+                    selectedTabTitle = selectedTab.childNodes[0].textContent;
                 }
                 else if (this.tabs.childNodes[0].childNodes.length > 0) {
                     WEF.WefGalleryHelper.addClass(this.tabs.childNodes[0].childNodes[0], "selected");
+                    selectedTabTitle = this.tabs.childNodes[0].childNodes[0].textContent;
+                }
+            }
+            var child = null;
+            for (var i = 0; i < this.tabs.childNodes.length; i++) {
+                child = this.tabs.childNodes[i];
+                if (child.getAttribute("data-storeId") === this.currentStoreId) {
+                    this.currentTabIndex = i;
+                    child.setAttribute("tabIndex", "0");
+                    break;
                 }
             }
             if (this.isUploadFileDevCatalogEnabled) {
@@ -3591,6 +4045,7 @@ var WEF;
             }
             this.manageATag.setAttribute("tabIndex", "0");
             this.manageATag.setAttribute("title", Strings.wefgallery.L_WefDialog_ManageButton_Tooltip);
+            this.manageATag.setAttribute("role", "link");
             this.uploadATag.setAttribute("tabIndex", "0");
             this.uploadATag.setAttribute("title", Strings.wefgallery.L_AddinCommands_UploadMyAddin_Txt);
             var refreshCurrentTab = function () {
@@ -3598,19 +4053,23 @@ var WEF;
                 _this.restoreFooterLink();
                 _this.showContent(true);
             };
-            var refreshATag = document.getElementById('RefreshInner');
-            refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip);
-            refreshATag.onclick = function WEF_WefGalleryPage_initializeGalleryUI_refreshATag$onclick() { refreshCurrentTab(); };
-            refreshATag.setAttribute("tabIndex", "0");
+            this.refreshATag = document.getElementById('RefreshInner');
+            this.refreshATag.setAttribute("title", Strings.wefgallery.L_WefDialog_RefreshButton_Tooltip.replace("{0}", selectedTabTitle));
+            this.refreshATag.onclick = function WEF_WefGalleryPage_initializeGalleryUI_refreshATag$onclick() { refreshCurrentTab(); };
+            this.refreshATag.setAttribute("tabIndex", "0");
+            this.refreshATag.setAttribute("role", "link");
             var footerLinkATag = document.getElementById('FooterLinkATag');
             footerLinkATag.setAttribute("tabIndex", "0");
             footerLinkATag.setAttribute("title", Strings.wefgallery.L_Footer_Link_Text_Tooltip);
+            footerLinkATag.setAttribute("role", "link");
             this.documentAppsMsg.setAttribute("title", Strings.wefgallery.L_TrustUx_AppsMessage);
             this.documentAppsMsg.firstChild.innerText = Strings.wefgallery.L_TrustUx_AppsMessage;
             this.readMoreATag.setAttribute("tabIndex", "0");
             this.readMoreATag.setAttribute("title", Strings.wefgallery.L_TrustUx_ReadMoreLink_Txt_Tooltip);
+            this.readMoreATag.setAttribute("role", "link");
             this.permissionATag.setAttribute("tabIndex", "0");
             this.permissionATag.setAttribute("title", Strings.wefgallery.L_Permission_Link_Txt_Tooltip);
+            this.permissionATag.setAttribute("role", "link");
             this.permissionTextAndLink.setAttribute("title", Strings.wefgallery.L_Permission_Link_Txt_Tooltip);
             this.btnAction.setAttribute("tabIndex", "0");
             if (this.isAppCommandEnabled) {
@@ -3626,7 +4085,7 @@ var WEF;
             this.btnTrustAll.setAttribute("title", Strings.wefgallery.L_TrustAll_Button_Txt_Tooltip);
             this.btnDone.setAttribute("tabIndex", "0");
             this.btnDone.setAttribute("title", Strings.wefgallery.L_Done_Button_Txt_Tooltip);
-            this.noAppsMessage.setAttribute("title", Strings.wefgallery.L_OfficeStore_Button_Tooltip);
+            this.noAppsMessage.setAttribute("title", Strings.wefgallery.L_OfficeStore_Button_Tooltip.replace("{0}", this.officeStoreBtn.value));
             this.noAppsMessage.style.marginTop = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.HeroMessageMarginTop) + "px";
             this.noAppsMessageTitle.innerHTML = Strings.wefgallery.L_NoAppsMessageTitle;
             this.noAppsMessageText.innerHTML = Strings.wefgallery.L_NoAppsMessageText;
@@ -3652,12 +4111,18 @@ var WEF;
             catch (e) {
             }
         };
+        WefGalleryPage.prototype.disableNarratorOnControl = function (ctl) {
+            ctl.setAttribute("role", "presentation");
+            ctl.setAttribute("aria-hidden", "true");
+            ctl.setAttribute("tabindex", "-1");
+        };
         WefGalleryPage.prototype.createTab = function (tabsDiv, tabOrder, tabName, storeId, storeType) {
             var me = this;
             if (tabsDiv.childNodes.length != 0) {
                 var separatorDiv = document.createElement('div');
                 WEF.WefGalleryHelper.addClass(separatorDiv, "separator");
                 separatorDiv.innerHTML = "|";
+                this.disableNarratorOnControl(separatorDiv);
                 tabsDiv.appendChild(separatorDiv);
             }
             var pageUrl = WEF.PageStoreId.Recommendation === storeId ? this.getFeaturedPageUrl() : null;
@@ -3669,24 +4134,30 @@ var WEF;
             WEF.WefGalleryHelper.setHtmlEncodedText(aTag, tabName);
             var tooltip = this.getTabTooltip(storeType);
             aTag.setAttribute("title", tooltip);
-            aTag.setAttribute("tabIndex", "0");
+            aTag.setAttribute("tabIndex", "-1");
+            aTag.setAttribute("role", "tab");
             tabDiv.appendChild(aTag);
             if (tabOrder == 1) {
                 aTag.focus();
                 this.firstTabATag = aTag;
             }
             tabDiv.setAttribute("id", tabName);
+            tabDiv.setAttribute("tabIndex", "-1");
             tabDiv.setAttribute("data-storeId", storeId);
             tabDiv.setAttribute("data-storeType", storeType.toString());
+            tabDiv.setAttribute("role", "presentation");
             if (pageUrl) {
                 tabDiv.setAttribute("data-pageUrl", pageUrl);
             }
             tabDiv.onclick = function WEF_WefGalleryPage_createTab_tabDiv$onclick() { me.toggleTabSelection(this, null); };
+            tabDiv.onfocus = function WEF_WefGalleryPage_createTab_tabDiv$onfocus() {
+                aTag.focus();
+            };
             return tabDiv;
         };
         WefGalleryPage.prototype.galleryScrollHandler = function () {
             this.menuHandler.hideMenu(true);
-            this.delayFunction(this.loadVisibleImages);
+            this.delayLoadVisibleImages();
         };
         WefGalleryPage.prototype.storeStaticElementRealSize = function () {
             this.menuSeparatorWidth = WEF.UI.DefaultSeparatorWidth;
@@ -3794,7 +4265,7 @@ var WEF;
                 this.galleryItems[i] = new WEF.GalleryItem(results[i], i);
                 this.galleryItems[i].displayAgave(this.gallery);
             }
-            this.delayFunction(this.loadVisibleImages);
+            this.delayLoadVisibleImages();
         };
         WefGalleryPage.prototype.processAddinLoadingErrors = function (results) {
             for (var i = 0; i < results.length; i++) {
@@ -3804,11 +4275,14 @@ var WEF;
                 }
             }
         };
-        WefGalleryPage.prototype.delayFunction = function (delayFunction) {
+        WefGalleryPage.prototype.delayLoadVisibleImages = function (onLoadImagesComplete) {
+            if (onLoadImagesComplete != null) {
+                this.delayCallbacks.push(onLoadImagesComplete);
+            }
             if (!this.delayTime || this.delaying == false || ((new Date().getTime() - this.delayTime) > 1000)) {
                 this.delayTime = new Date().getTime();
                 this.delaying = true;
-                setTimeout(delayFunction, this.delayLoad);
+                setTimeout(this.loadVisibleImages, this.delayLoad);
             }
             else {
                 this.delayTime = new Date().getTime();
@@ -3878,6 +4352,7 @@ var WEF;
                         }
                         spinWheelDiv = null;
                     }
+                    _this.gallery.setAttribute("aria-busy", "false");
                     if (frame.contentWindow) {
                         frame.contentWindow.focus();
                     }
@@ -3906,6 +4381,13 @@ var WEF;
                     for (var i = index; i < len; i++) {
                         this.galleryItems[i].setIndex(i);
                     }
+                    if (this.galleryItems.length >= 1) {
+                        var indexToFocus = index;
+                        if (index >= this.galleryItems.length) {
+                            indexToFocus = 0;
+                        }
+                        this.selectGalleryItems(indexToFocus, true);
+                    }
                 }
                 this.currentIndex = -1;
                 this.deSelectBtnAction();
@@ -3919,13 +4401,14 @@ var WEF;
             for (var i = 0; i < len; i++) {
                 var item = this.galleryItems[i];
                 if (index == i) {
+                    this.currentIndex = index;
                     if (WEF.WefGalleryHelper.hasClass(item.galleryItem, "selected")) {
                         if (forceSelected == false) {
                             WEF.WefGalleryHelper.removeClass(item.galleryItem, "selected");
+                            item.galleryItem.removeAttribute("aria-selected");
+                            item.galleryItem.setAttribute("tabIndex", "-1");
+                            this.currentIndex = -1;
                             this.deSelectBtnAction();
-                        }
-                        else {
-                            this.currentIndex = index;
                         }
                     }
                     else {
@@ -3938,11 +4421,9 @@ var WEF;
                             WEF.WefGalleryHelper.removeClass(this.btnAction, 'disabled');
                             this.btnAction.removeAttribute('disabled');
                         }
-                        this.currentIndex = index;
-                        if (item.galleryItem.children.length > 0) {
-                            item.galleryItem.children[0].focus();
-                            item.galleryItem.children[0].setAttribute("aria-selected", "true");
-                        }
+                        item.galleryItem.setAttribute("tabIndex", "0");
+                        item.galleryItem.focus();
+                        item.galleryItem.setAttribute("aria-selected", "true");
                         this.setSelectedItemWidth();
                         if (item.appOptions) {
                             item.appOptions.showOptionsButton();
@@ -3958,9 +4439,8 @@ var WEF;
         WefGalleryPage.prototype.unselectGalleryItems = function (item) {
             if (item && item.galleryItem) {
                 WEF.WefGalleryHelper.removeClass(item.galleryItem, "selected");
-                if (item.galleryItem.children.length > 0) {
-                    item.galleryItem.children[0].removeAttribute("aria-selected");
-                }
+                item.galleryItem.removeAttribute("aria-selected");
+                item.galleryItem.setAttribute("tabIndex", "-1");
                 if (item.appOptions && item.galleryItem.querySelector(":hover") == null) {
                     item.appOptions.hideOptionsButton();
                 }
@@ -3971,6 +4451,7 @@ var WEF;
             if (this.currentStoreType === WEF.StoreTypeEnum.MarketPlace) {
                 this.noAppsMessage.style.display = 'block';
                 this.gallery.appendChild(this.noAppsMessage);
+                this.officeStoreBtn.focus();
                 this.footer.style.visibility = 'hidden';
                 this.showHideRightMenuButtons(false, true);
             }
@@ -3988,6 +4469,7 @@ var WEF;
                         this.errorMessage.innerHTML = messageStr + " <a id='linkId'>" + linkedMessageStr + "</a>";
                         link = document.getElementById("linkId");
                         link.setAttribute("tabIndex", "0");
+                        link.setAttribute("role", "link");
                         link.onclick = function () {
                             linkedCallback();
                         };
@@ -4033,6 +4515,7 @@ var WEF;
             if (this.gallery && this.gallery.firstChild && WEF.WefGalleryHelper.hasClass(this.gallery.firstChild, "SpinWheel")) {
                 this.gallery.removeChild(this.gallery.firstChild);
             }
+            this.gallery.setAttribute("aria-busy", "false");
             if (arguments.length < 4) {
                 this.showErrorInternal(messageStr);
             }
@@ -4071,6 +4554,8 @@ var WEF;
         WefGalleryPage.prototype.wefGalleryAppOnLoad = function () {
             var _this = this;
             this.galleryContainer = document.getElementById('GalleryContainer');
+            this.galleryContainer.setAttribute("role", "tabpanel");
+            this.mainPage = document.getElementById('MainPage');
             this.gallery = document.getElementById('InsertGallery');
             this.header = document.getElementById("Header");
             this.tabs = document.getElementById("Tabs");
@@ -4081,6 +4566,7 @@ var WEF;
             this.selectedDescriptionText = document.getElementById('SelectedDescriptionText');
             this.selectedDescriptionReadMoreLink = document.getElementById('SelectedDescriptionReadMoreLink');
             this.permissionTextAndLink = document.getElementById('PermissionTextAndLink');
+            this.permissionTextTR = document.getElementById('PermissionTextTR');
             this.readMoreATag = document.getElementById('ReadMoreLink');
             this.permissionATag = document.getElementById('PermissionLink');
             this.documentAppsMsg = document.getElementById('DocumentAppsMessageId');
@@ -4090,14 +4576,20 @@ var WEF;
             this.btnTrustAll = document.getElementById('BtnTrustAll');
             this.btnDone = document.getElementById('BtnDone');
             this.notification = document.getElementById("Notification");
+            this.notification.setAttribute("role", "alert");
             this.errorMessage = document.getElementById('ErrorMessage');
+            this.errorMessage.setAttribute("role", "alert");
             this.notificationDismiss = document.getElementById('NotificationDismiss');
             this.notificationDismissImg = document.getElementById('DismissImg');
             this.menuRight = document.getElementById('MenuRight');
             this.noAppsMessage = document.getElementById('NoAppsMessage');
+            this.noAppsMessage.setAttribute("role", "alert");
             this.noAppsMessageTitle = document.getElementById('NoAppsMessageTitle');
+            this.noAppsMessageTitle.setAttribute("role", "alert");
             this.noAppsMessageText = document.getElementById('NoAppsMessageText');
+            this.noAppsMessageText.setAttribute("role", "alert");
             this.officeStoreBtn = document.getElementById('BtnStore');
+            this.officeStoreBtn.title = Strings.wefgallery.L_OfficeStore_Button_NoAddIns_Tooltip;
             this.manageATag = document.getElementById('ManageInner');
             this.uploadATag = document.getElementById('UploadMenuInner');
             this.uploadMenuDiv = document.getElementById('UploadMenu');
@@ -4136,11 +4628,16 @@ var WEF;
             this.footerLink.onclick = function () { _this.gotoStore(); };
             this.manageATag.onclick = function () { _this.launchAppManagePage(); };
             this.showActionButtons(WEF.ActionButtonGroups.None);
-            this.modalDialog = new WEF.AppManagement.ModalDialog();
+            this.modalDialog = new WEF.AppManagement.ModalDialog(this.mainPage);
             this.menuHandler = new WEF.AppManagement.MenuHandler(this.galleryContainer, this.modalDialog);
             this.keyHandlers = [this.menuHandler, this.modalDialog];
             window.document.onkeydown = function (e) {
-                _this.galleryKeyHandler(e);
+                _this.keyCodePressed = e.keyCode;
+                _this.galleryKeyDownHandler(e);
+            };
+            window.document.onkeyup = function (e) {
+                _this.keyCodePressed = e.keyCode;
+                _this.galleryKeyUpHandler(e);
             };
             window.onresize = this.resizeHandler;
             this.uiState.Ready = true;
@@ -4180,12 +4677,16 @@ var WEF;
             MenuDirection[MenuDirection["Right"] = 3] = "Right";
         })(MenuDirection || (MenuDirection = {}));
         var ModalDialog = (function () {
-            function ModalDialog() {
+            function ModalDialog(modalDisabledDiv) {
+                this.modalDisabledDiv = null;
                 this.overlayDiv = null;
                 this.dialogDiv = null;
                 this.buttonDiv = null;
                 this.confirmMessageDiv = null;
                 this.buttonElements = [];
+                this.enterKeyTarget = null;
+                this.dialogId = "appManagementModalDialog";
+                this.modalDisabledDiv = modalDisabledDiv;
                 this.overlayDiv = document.createElement("div");
                 WEF.WefGalleryHelper.addClass(this.overlayDiv, "Overlay");
                 document.body.appendChild(this.overlayDiv);
@@ -4201,17 +4702,38 @@ var WEF;
                 this.dialogDiv.appendChild(this.buttonDiv);
                 this.dialogDiv.style.width = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.ConfirmDialogWidth) + "px";
             }
-            ModalDialog.prototype.handleKey = function (ev) {
+            ModalDialog.prototype.handleKeyDown = function (ev) {
                 if (!this.isDialogVisible()) {
                     return false;
                 }
-                var handled = true;
+                var handled = false;
                 switch (ev.keyCode) {
                     case 9:
                         this.onTab(ev);
+                        handled = true;
+                        break;
+                    case 13:
+                        handled = this.onEnterKeyDown(ev);
                         break;
                     case 27:
                         this.hideDialog();
+                        handled = true;
+                        break;
+                }
+                return handled;
+            };
+            ModalDialog.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                if (!this.isDialogVisible()) {
+                    return handled;
+                }
+                switch (ev.keyCode) {
+                    case 13:
+                        var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                        if (eventTarget == this.enterKeyTarget) {
+                            this.enterKeyTarget.click();
+                            handled = true;
+                        }
                         break;
                 }
                 return handled;
@@ -4221,6 +4743,7 @@ var WEF;
                     return;
                 }
                 var tabElements = this.getTabbableElements();
+                var reFocused = false;
                 for (var i = 0; i < tabElements.length; i++) {
                     var element = tabElements[i];
                     var previousTabValue = element.getAttribute("data-previous-tab");
@@ -4233,10 +4756,15 @@ var WEF;
                     }
                     if (previousDisabledValue !== null) {
                         element.disabled = (previousDisabledValue.toLowerCase() == "true");
+                        if (!reFocused && !element.disabled) {
+                            reFocused = true;
+                            element.focus();
+                        }
                     }
                 }
                 this.dialogDiv.style.display = "none";
                 this.overlayDiv.style.display = "none";
+                this.modalDisabledDiv.removeAttribute("aria-hidden");
             };
             ModalDialog.prototype.showDialog = function (message, buttonsCreationInfo) {
                 if (!this.isDialogVisible()) {
@@ -4252,6 +4780,7 @@ var WEF;
                         element.setAttribute("tabindex", "-1");
                         element.disabled = true;
                     }
+                    this.modalDisabledDiv.setAttribute("aria-hidden", "true");
                 }
                 this.dialogDiv.style.display = "block";
                 this.overlayDiv.style.display = "block";
@@ -4315,7 +4844,21 @@ var WEF;
                         this.buttonElements[currentIndex + 1].focus();
                     }
                 }
-                ev.preventDefault();
+            };
+            ModalDialog.prototype.onEnterKeyDown = function (ev) {
+                var handled = false;
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                if (eventTarget == null) {
+                    return handled;
+                }
+                for (var i = 0; i < this.buttonElements.length; i++) {
+                    if (this.buttonElements[i] == eventTarget) {
+                        this.enterKeyTarget = this.buttonElements[i];
+                        handled = true;
+                        break;
+                    }
+                }
+                return handled;
             };
             return ModalDialog;
         })();
@@ -4331,6 +4874,8 @@ var WEF;
                 this.currentMenuItemIndex = 0;
                 this.currentResult = null;
                 this.removalConfirmationDialog = null;
+                this.enterKeyTarget = null;
+                this.dialogId = "appManagementMenuDialog";
                 this.menuDiv = document.createElement("ul");
                 this.menuDiv.setAttribute("role", "menu");
                 this.menuDiv.setAttribute("tabindex", "-1");
@@ -4352,31 +4897,25 @@ var WEF;
                 for (var i = 0; i < this.menuItems.length; i++) {
                     addFocusListener(i);
                 }
-                var focusInMenuCheck = function (event) {
-                    var hideMenu = false;
-                    if (event.relatedTarget !== undefined) {
-                        if (_this.menuDiv.contains(event.relatedTarget) == false) {
-                            hideMenu = true;
-                        }
-                    }
-                    else if (!_this.menuDiv.querySelector(":focus")) {
-                        hideMenu = true;
-                    }
-                    if (hideMenu) {
+                var clickInMenuCheck = function (event) {
+                    if (_this.menuDiv.contains(event.target) == false) {
                         _this.hideMenu(true);
                     }
                 };
-                WEF.WefGalleryHelper.addEventListener(this.menuDiv, "focusout", focusInMenuCheck);
+                WEF.WefGalleryHelper.addEventListener(document, "click", clickInMenuCheck);
             }
             MenuHandler.prototype.createAppOptions = function (result) {
                 return new AppOptions(result, this);
             };
-            MenuHandler.prototype.handleKey = function (ev) {
+            MenuHandler.prototype.handleKeyDown = function (ev) {
                 if (this.isMenuVisible() == false) {
                     return false;
                 }
                 var handled = false;
                 switch (ev.keyCode) {
+                    case 13:
+                        handled = this.onEnterKeyDown(ev);
+                        break;
                     case 27:
                         this.hideMenu(true);
                         handled = true;
@@ -4399,11 +4938,37 @@ var WEF;
                 }
                 return handled;
             };
+            MenuHandler.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                if (this.isMenuVisible() == false) {
+                    return handled;
+                }
+                switch (ev.keyCode) {
+                    case 13:
+                        var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                        if (eventTarget == this.enterKeyTarget) {
+                            this.enterKeyTarget.click();
+                            handled = true;
+                        }
+                        break;
+                }
+                return handled;
+            };
             MenuHandler.prototype.hideMenu = function (logData) {
                 if (this.isMenuVisible()) {
                     this.menuDiv.style.display = "none";
                     if (logData) {
                         this.logData(this.currentResult, AppManagementAction.Cancel, 0);
+                    }
+                    if (this.removalConfirmationDialog != null) {
+                        var tabElements = this.removalConfirmationDialog.getTabbableElements();
+                        for (var i = 0; i < tabElements.length; i++) {
+                            var element = tabElements[i];
+                            if (!element.disabled) {
+                                element.focus();
+                                break;
+                            }
+                        }
                     }
                 }
             };
@@ -4437,6 +5002,21 @@ var WEF;
                     _this.clearMenuSelection();
                     _this.menuDiv.focus();
                 }, 0);
+            };
+            MenuHandler.prototype.onEnterKeyDown = function (ev) {
+                var handled = false;
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                if (eventTarget == null) {
+                    return handled;
+                }
+                for (var i = 0; i < this.menuItems.length; i++) {
+                    if (this.menuItems[i].element == eventTarget) {
+                        this.enterKeyTarget = this.menuItems[i].element;
+                        handled = true;
+                        break;
+                    }
+                }
+                return handled;
             };
             MenuHandler.prototype.positionMenu = function (optionsButton) {
                 this.menuDiv.style.display = "block";
@@ -4590,6 +5170,7 @@ var WEF;
                 this.disabled = false;
                 this.element = null;
                 var li = document.createElement("li");
+                li.setAttribute("role", "presentation");
                 this.element = document.createElement("button");
                 WEF.WefGalleryHelper.setHtmlEncodedText(this.element, text);
                 this.element.setAttribute("title", title);
@@ -4646,9 +5227,12 @@ var WEF;
                 var _this = this;
                 var optionsButton = null;
                 if (WEF.IMPage.currentStoreType === WEF.StoreTypeEnum.MarketPlace && WEF.IMPage.canShowAppManagementMenu()) {
-                    optionsButton = document.createElement("button");
+                    optionsButton = document.createElement("input");
                     WEF.WefGalleryHelper.addClass(optionsButton, "OptionsButton");
                     optionsButton.setAttribute("type", "button");
+                    optionsButton.setAttribute("role", "button");
+                    optionsButton.setAttribute("value", "\u22EF");
+                    optionsButton.setAttribute("aria-label", Strings.wefgallery.L_OptionsMenu_Tooltip);
                     optionsButton.setAttribute("title", Strings.wefgallery.L_OptionsMenu_Tooltip);
                     optionsButton.setAttribute("tabindex", "0");
                     optionsButton.style.width = WEF.WefGalleryHelper.getDPIXScaledNumber(WEF.UI.MenuButtonSide) + "px";
@@ -4695,6 +5279,7 @@ var WEF;
     (function (FilePickerDialogUIHelper) {
         var ModalDialog = (function () {
             function ModalDialog(clientFacade) {
+                this.dialogId = "uploadFileModalDialog";
                 this.overlayDiv = null;
                 this.dialogDiv = null;
                 this.title = null;
@@ -4708,6 +5293,7 @@ var WEF;
                 this.buttonElements = [];
                 this.reader = new FileReader();
                 this.selectedManifestFile = null;
+                this.enterKeyTarget = null;
                 this.clientFacade = clientFacade;
                 this.overlayDiv = document.createElement("div");
                 WEF.WefGalleryHelper.addClass(this.overlayDiv, "Overlay");
@@ -4721,11 +5307,12 @@ var WEF;
             }
             ModalDialog.prototype.init = function () {
                 var _this = this;
-                this.title = document.createElement("p");
+                this.title = document.createElement("label");
                 this.title.textContent = Strings.wefgallery.L_AddinCommands_UploadAddin_Txt;
                 this.title.id = "UploadFileDialogTitle";
                 this.dialogDiv.appendChild(this.title);
-                this.developerTestText = document.createElement("p");
+                this.dialogDiv.setAttribute("aria-labelledby", this.title.id);
+                this.developerTestText = document.createElement("label");
                 this.developerTestText.textContent = Strings.wefgallery.L_AddinCommands_DeveloperFeature_Txt;
                 this.developerTestText.id = "DeveloperTestPurpose";
                 this.dialogDiv.appendChild(this.developerTestText);
@@ -4739,6 +5326,8 @@ var WEF;
                 this.fileBrowseInput = document.createElement("input");
                 this.fileBrowseInput.setAttribute("type", "file");
                 this.fileBrowseInput.setAttribute("accept", "text/xml,application/xml");
+                this.fileBrowseInput.setAttribute("tabindex", "-1");
+                this.fileBrowseInput.setAttribute("aria-hidden", "true");
                 this.fileBrowseInput.id = "BrowserFile";
                 this.fileBrowseInput.onchange = function () {
                     _this.selectedManifestFile = _this.getSelectFile();
@@ -4759,6 +5348,7 @@ var WEF;
                 this.browseButton.setAttribute("type", "button");
                 this.browseButton.setAttribute("value", Strings.wefgallery.L_Browse_Button_Txt);
                 this.browseButton.setAttribute("title", Strings.wefgallery.L_Browse_Button_Txt);
+                this.browseButton.setAttribute("aria-describedby", this.developerTestText.id);
                 this.browseButton.id = "BrowseButton";
                 this.browseButton.onclick = function () {
                     _this.fileBrowseInput.click();
@@ -4768,25 +5358,63 @@ var WEF;
                 this.buttonDiv.id = "UploadDialogConfirmButtons";
                 this.dialogDiv.appendChild(this.buttonDiv);
             };
-            ModalDialog.prototype.handleKey = function (ev) {
+            ModalDialog.prototype.handleKeyDown = function (ev) {
+                var handled = false;
                 if (!this.isDialogVisible()) {
-                    return false;
+                    return handled;
                 }
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
                 switch (ev.keyCode) {
                     case 9:
                         this.onTab(ev);
+                        handled = true;
+                        break;
+                    case 13:
+                        var eventTarget_1 = ev.srcElement ? ev.srcElement : ev.target;
+                        this.enterKeyTarget = eventTarget_1;
+                        handled = true;
                         break;
                     case 27:
                         this.hideDialog();
+                        handled = true;
                         break;
                 }
-                return true;
+                return handled;
+            };
+            ModalDialog.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                if (!this.isDialogVisible()) {
+                    return handled;
+                }
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                switch (ev.keyCode) {
+                    case 13:
+                        if (eventTarget == this.enterKeyTarget) {
+                            switch (eventTarget.getAttribute("id")) {
+                                case this.browseButton.id:
+                                    if (this.fileBrowseInput) {
+                                        this.fileBrowseInput.click();
+                                    }
+                                    break;
+                                case ModalDialog.DialogCancelButtonId:
+                                    this.cancelUploadDialog();
+                                    break;
+                                case ModalDialog.DialogInstallButtonId:
+                                    this.submitUploadDialog();
+                                    break;
+                            }
+                        }
+                        handled = true;
+                        break;
+                }
+                return handled;
             };
             ModalDialog.prototype.hideDialog = function () {
                 if (!this.isDialogVisible()) {
                     return;
                 }
                 var tabElements = this.getTabbableElements();
+                var reFocused = false;
                 for (var i = 0; i < tabElements.length; i++) {
                     var element = tabElements[i];
                     var previousTabValue = element.getAttribute("data-previous-tab");
@@ -4799,6 +5427,10 @@ var WEF;
                     }
                     if (previousDisabledValue !== null) {
                         element.disabled = (previousDisabledValue.toLowerCase() == "true");
+                        if (!reFocused && !element.disabled) {
+                            reFocused = true;
+                            element.focus();
+                        }
                     }
                 }
                 document.body.removeChild(this.dialogDiv);
@@ -4841,6 +5473,9 @@ var WEF;
                     }
                 }
                 this.buttonElements[0].disabled = true;
+                if (this.browseButton) {
+                    this.browseButton.focus();
+                }
                 this.positionDialog();
             };
             ModalDialog.prototype.positionDialog = function () {
@@ -4853,6 +5488,15 @@ var WEF;
                 uploadDialog.style.top = top + "px";
                 uploadDialog.style.left = left + "px";
             };
+            ModalDialog.prototype.submitUploadDialog = function () {
+                this.logUploadFileDevCatelogAction(OSF.UploadFileDevCatelogAction.Install, 0);
+                this.installApp();
+                this.hideDialog();
+            };
+            ModalDialog.prototype.cancelUploadDialog = function () {
+                this.logUploadFileDevCatelogAction(OSF.UploadFileDevCatelogAction.Cancel, 0);
+                this.hideDialog();
+            };
             ModalDialog.prototype.getTabbableElements = function () {
                 return document.querySelectorAll("input,a,button,[tabindex]");
             };
@@ -4861,28 +5505,26 @@ var WEF;
             };
             ModalDialog.prototype.onTab = function (ev) {
                 var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
-                var buttonIndexAttribute = parseInt(eventTarget.getAttribute("data-buttonIndex"));
-                var currentIndex = 0;
-                if (isFinite(buttonIndexAttribute)) {
-                    currentIndex = buttonIndexAttribute;
+                var buttonList = this.dialogDiv.querySelectorAll("input:not([tabindex='-1'])");
+                var tabElementsCount = buttonList.length;
+                for (var i = 0; i < tabElementsCount; i++) {
+                    if (buttonList[i] == eventTarget) {
+                        for (var offset = 1; offset < tabElementsCount; offset++) {
+                            var element;
+                            if (ev.shiftKey) {
+                                element = buttonList[(i + tabElementsCount - offset) % tabElementsCount];
+                            }
+                            else {
+                                element = buttonList[(i + offset) % tabElementsCount];
+                            }
+                            if (!element.disabled) {
+                                element.focus();
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
-                if (ev.shiftKey) {
-                    if (currentIndex <= 0) {
-                        this.buttonElements[this.buttonElements.length - 1].focus();
-                    }
-                    else {
-                        this.buttonElements[currentIndex - 1].focus();
-                    }
-                }
-                else {
-                    if (currentIndex >= this.buttonElements.length - 1) {
-                        this.buttonElements[0].focus();
-                    }
-                    else {
-                        this.buttonElements[currentIndex + 1].focus();
-                    }
-                }
-                ev.preventDefault();
             };
             ModalDialog.prototype.getSelectFile = function () {
                 var _this = this;
@@ -4921,6 +5563,8 @@ var WEF;
                 };
                 this.clientFacade.logTelemetryData(params, function () { });
             };
+            ModalDialog.DialogCancelButtonId = "DialogCancel";
+            ModalDialog.DialogInstallButtonId = "DialogInstall";
             return ModalDialog;
         })();
         FilePickerDialogUIHelper.ModalDialog = ModalDialog;
@@ -4932,7 +5576,9 @@ var WEF;
                 this.uploadAddin = null;
                 this.menuItems = null;
                 this.currentMenuItemIndex = 0;
+                this.enterKeyTarget = null;
                 this.uploadDialog = null;
+                this.dialogId = "uploadFileMenuDialog";
                 this.menuDiv = document.createElement("ul");
                 this.menuDiv.setAttribute("role", "menu");
                 this.menuDiv.setAttribute("tabindex", "-1");
@@ -4972,20 +5618,51 @@ var WEF;
                 this.menuDiv.id = "ManageAddinMenu";
                 WEF.WefGalleryHelper.addClass(this.menuDiv, "HostSpecificBorderColor");
             }
-            MenuHandler.prototype.handleKey = function (ev) {
+            MenuHandler.prototype.handleKeyDown = function (ev) {
                 if (this.isMenuVisible() == false) {
                     return false;
                 }
                 var handled = false;
-                if (ev.keyCode == 27) {
-                    this.hideMenu();
-                    handled = true;
+                switch (ev.keyCode) {
+                    case 13:
+                        handled = this.onEnterKeyDown(ev);
+                        break;
+                    case 27:
+                        this.hideMenu();
+                        handled = true;
+                        break;
+                }
+                return handled;
+            };
+            MenuHandler.prototype.handleKeyUp = function (ev) {
+                var handled = false;
+                if (this.isMenuVisible() == false) {
+                    return handled;
+                }
+                switch (ev.keyCode) {
+                    case 13:
+                        var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                        if (eventTarget == this.enterKeyTarget) {
+                            this.enterKeyTarget.click();
+                            handled = true;
+                        }
+                        break;
                 }
                 return handled;
             };
             MenuHandler.prototype.hideMenu = function () {
                 if (this.isMenuVisible()) {
                     this.menuDiv.style.display = "none";
+                    if (this.uploadDialog != null) {
+                        var tabElements = this.uploadDialog.getTabbableElements();
+                        for (var i = 0; i < tabElements.length; i++) {
+                            var element = tabElements[i];
+                            if (!element.disabled) {
+                                element.focus();
+                                break;
+                            }
+                        }
+                    }
                 }
             };
             MenuHandler.prototype.isMenuVisible = function () {
@@ -5000,26 +5677,24 @@ var WEF;
                 }, 0);
             };
             MenuHandler.prototype.showUploadAddinDialog = function () {
+                var _this = this;
                 var dialog = this.uploadDialog;
                 dialog.logUploadFileDevCatelogAction(OSF.UploadFileDevCatelogAction.OpenUploadFileDialog, 0);
                 var buttons = [];
                 buttons.push({
-                    id: "DialogInstall",
+                    id: ModalDialog.DialogInstallButtonId,
                     text: Strings.wefgallery.L_Upload_Button_Txt,
-                    hasFocus: true,
+                    hasFocus: false,
                     onclick: function () {
-                        dialog.logUploadFileDevCatelogAction(OSF.UploadFileDevCatelogAction.Install, 0);
-                        dialog.installApp();
-                        dialog.hideDialog();
+                        _this.uploadDialog.submitUploadDialog();
                     }
                 });
                 buttons.push({
-                    id: "DialogCancel",
+                    id: ModalDialog.DialogCancelButtonId,
                     text: Strings.wefgallery.L_Confirmation_Cancel_Button_Txt,
                     hasFocus: false,
                     onclick: function () {
-                        dialog.logUploadFileDevCatelogAction(OSF.UploadFileDevCatelogAction.Cancel, 0);
-                        dialog.hideDialog();
+                        _this.uploadDialog.cancelUploadDialog();
                     }
                 });
                 dialog.showDialog(buttons);
@@ -5040,6 +5715,21 @@ var WEF;
                     this.menuItems[this.currentMenuItemIndex].setSelected(false);
                     this.currentMenuItemIndex = -1;
                 }
+            };
+            MenuHandler.prototype.onEnterKeyDown = function (ev) {
+                var handled = false;
+                var eventTarget = ev.srcElement ? ev.srcElement : ev.target;
+                if (eventTarget == null) {
+                    return handled;
+                }
+                for (var i = 0; i < this.menuItems.length; i++) {
+                    if (this.menuItems[i].element == eventTarget) {
+                        this.enterKeyTarget = this.menuItems[i].element;
+                        handled = true;
+                        break;
+                    }
+                }
+                return handled;
             };
             return MenuHandler;
         })();
@@ -5171,6 +5861,13 @@ var WEF;
             };
             this.webAppState.clientEndPoint.invoke("ContextActivationManager_logTelemetryDataForInsertDialog", function () { }, params);
         };
+        ClientFacade_Wac.prototype.logCorrelation = function (correlationId, message) {
+            var params = {
+                "correlationId": correlationId,
+                "messageInfo": message
+            };
+            this.webAppState.clientEndPoint.invoke("ContextActivationManager_logCorrelation", function () { }, params);
+        };
         ClientFacade_Wac.prototype.getEntitlements = function (storeId, storeType, refresh, onGetEntitlements) {
             var _this = this;
             var onRetrieveEntitlementsCompleted = function (status, response) {
@@ -5185,13 +5882,15 @@ var WEF;
                             0: Strings.wefgallery.L_MarketPlaceTabTxt,
                             1: Strings.wefgallery.L_CatalogTabTxt,
                             4: Strings.wefgallery.L_FileShareTabTxt,
-                            6: Strings.wefgallery.L_RecommendationTabTxt
+                            6: Strings.wefgallery.L_RecommendationTabTxt,
+                            10: Strings.wefgallery.L_ExchangeCCTabTxt
                         };
                         if (document.cookie.indexOf('OneDriveCatalog=true') != -1) {
                             WEF.storeTypes[9] = Strings.wefgallery.L_OneDriveTabTxt;
                         }
                         WEF.IMPage.initializeGalleryUI(_this.providers, false);
                         WEF.IMPage.showContent(false);
+                        _this.logCorrelation(_this.contextMgrCorrelation, "My Apps tab is removed.");
                         return;
                     }
                     else if (response.errorCode == WEF.InvokeResultCode.E_CATALOG_NO_APPS) {
@@ -5381,9 +6080,6 @@ var WEF;
                 _this.clientFacade.insertAgave(params);
             };
             this.showEntitlements = function (storeId, refresh, onShowEntitlementsComplete) {
-                if (refresh) {
-                    _this.clientFacade.refreshAddinCommands(_this.currentStoreType);
-                }
                 if (_this.currentStoreType == WEF.StoreTypeEnum.MarketPlace) {
                     _this.showHideRightMenuButtons(_this.footer.style.visibility != 'hidden', true);
                     _this.showActionButtons(WEF.ActionButtonGroups.InsertCancel);
@@ -5445,11 +6141,15 @@ var WEF;
                             }
                             entitlements.sort(WEF.AgaveInfo.cmpDisplayName);
                         }
+                        if (refresh) {
+                            _this.clientFacade.refreshAddinCommands(_this.currentStoreType);
+                        }
                         if (entitlements.length == 0) {
                             if (_this.currentStoreType == WEF.StoreTypeEnum.MarketPlace) {
                                 if (hres == WEF.InvokeResultCode.S_OK) {
                                     _this.noAppsMessage.style.display = 'block';
                                     _this.gallery.appendChild(_this.noAppsMessage);
+                                    _this.officeStoreBtn.focus();
                                     _this.footer.style.visibility = 'hidden';
                                     _this.showHideRightMenuButtons(false, true);
                                 }
@@ -5468,6 +6168,7 @@ var WEF;
                         if (onShowEntitlementsComplete) {
                             onShowEntitlementsComplete();
                         }
+                        _this.gallery.setAttribute("aria-busy", "false");
                     };
                     _this.clientFacade.getEntitlements(storeId, _this.currentStoreType, refresh, onGetEntitlements);
                 }
@@ -5579,15 +6280,27 @@ var WEF;
             if (this.isUploadFileDevCatalogEnabled) {
                 var uploadDialog = new WEF.FilePickerDialogUIHelper.ModalDialog(this.clientFacade);
                 var manageAddinMenuHandler = new WEF.FilePickerDialogUIHelper.MenuHandler(this.galleryContainer, uploadDialog);
+                this.registerHandlers(uploadDialog);
+                this.registerHandlers(manageAddinMenuHandler);
                 manageAddinMenuHandler.showUploadAddinDialog();
                 this.galleryContainer.removeChild(manageAddinMenuHandler.menuDiv);
             }
+        };
+        WefGalleryPage_Wac.prototype.registerHandlers = function (myHandler) {
+            for (var i = 0; i < this.keyHandlers.length; i++) {
+                if (myHandler.dialogId == (this.keyHandlers)[i].dialogId) {
+                    this.keyHandlers.splice(i, 1);
+                    break;
+                }
+            }
+            this.keyHandlers.push(myHandler);
         };
         WefGalleryPage_Wac.prototype.launchAppManagePage = function () {
             var _this = this;
             if (this.isUploadFileDevCatalogEnabled) {
                 var uploadDialog = new WEF.FilePickerDialogUIHelper.ModalDialog(this.clientFacade);
                 var manageAddinMenuHandler = new WEF.FilePickerDialogUIHelper.MenuHandler(this.galleryContainer, uploadDialog);
+                this.registerHandlers(manageAddinMenuHandler);
                 manageAddinMenuHandler.myAccount.setOnClick(function () {
                     manageAddinMenuHandler.hideMenu();
                     WEF.WefGalleryHelper.saveRefreshRequired(true);
@@ -5596,6 +6309,7 @@ var WEF;
                 });
                 manageAddinMenuHandler.uploadAddin.setOnClick(function () {
                     manageAddinMenuHandler.hideMenu();
+                    _this.registerHandlers(uploadDialog);
                     manageAddinMenuHandler.showUploadAddinDialog();
                     _this.galleryContainer.removeChild(manageAddinMenuHandler.menuDiv);
                 });
@@ -5606,10 +6320,14 @@ var WEF;
                 this.clientFacade.invokeWindowOpen(this.getAppManagePageUrl());
             }
         };
-        WefGalleryPage_Wac.prototype.executeButtonCommand = function (element) {
-            _super.prototype.executeButtonCommand.call(this, element);
+        WefGalleryPage_Wac.prototype.executeButtonCommand = function (element, event) {
+            if (event === void 0) { event = null; }
+            _super.prototype.executeButtonCommand.call(this, element, event);
             if (element.getAttribute("id") == "UploadMenuInner") {
                 this.launchUploadAddinDialog();
+                if (event != null) {
+                    event.preventDefault();
+                }
             }
         };
         WefGalleryPage_Wac.prototype.wefGalleryAppOnLoad = function () {
@@ -5644,11 +6362,13 @@ var WEF;
                         if (WEF.WefGalleryHelper.hasClass(_this.tabs.childNodes[i], "TextNav")) {
                             tabATag = _this.tabs.childNodes[i].firstChild;
                             WEF.WefGalleryHelper.removeClass(tabATag, "TabSelected");
+                            tabATag.setAttribute("aria-selected", "false");
                             WEF.WefGalleryHelper.removeClass(tabATag, "selected");
                         }
                     }
                     tabATag = _this.storeTab.firstChild;
                     WEF.WefGalleryHelper.addClass(tabATag, "TabSelected");
+                    tabATag.setAttribute("aria-selelcted", "true");
                     WEF.WefGalleryHelper.addClass(tabATag, "selected");
                 }
             };

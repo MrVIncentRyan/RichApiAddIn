@@ -3,22 +3,25 @@ var OfficeExt;
     var AddinCommandsManifestManagerImpl = (function () {
         function AddinCommandsManifestManagerImpl() {
         }
-        AddinCommandsManifestManagerImpl.createManifestForAddinAction = function (addinManifest, sourceLocation) {
+        AddinCommandsManifestManagerImpl.createManifestForAddinAction = function (addinManifest, sourceLocation, title, manifestId) {
             var settings = new OSF.Manifest.ExtensionSettings();
             var formFactor = OSF.FormFactor.Default;
+            var displayNames = {};
+            var uiLocale = addinManifest._UILocale.toLocaleLowerCase();
+            displayNames[uiLocale] = title;
             settings._defaultHeight = null;
             settings._defaultWidth = null;
             settings._sourceLocations = {};
-            settings._sourceLocations[addinManifest._UILocale] = sourceLocation;
+            settings._sourceLocations[uiLocale] = sourceLocation;
             var template = addinManifest;
             var manifest = new OSF.Manifest.Manifest(function (manifest) {
                 manifest._xmlProcessor = template._xmlProcessor;
-                manifest._displayNames = template._displayNames;
+                manifest._displayNames = title != null ? displayNames : template._displayNames;
                 manifest._iconUrls = template._iconUrls;
                 manifest._extensionSettings = { formFactor: settings };
                 manifest._highResolutionIconUrls = template._highResolutionIconUrls;
                 manifest._target = template._target;
-                manifest._id = template._id;
+                manifest._id = manifestId != null ? manifestId : template._id;
                 manifest._version = template._version;
                 manifest._providerName = template._providerName;
                 manifest._idIssuer = template._idIssuer;

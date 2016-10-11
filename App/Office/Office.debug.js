@@ -1,8 +1,9 @@
 /* Office JavaScript API library */
-/* Version: 16.0.6807.3002 */
+/* Version: 16.0.7504.3000 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
+
 
 /*
 	Your use of this file is governed by the Microsoft Services Agreement http://go.microsoft.com/fwlink/?LinkId=266419.
@@ -21,7 +22,8 @@ OSF.HostSpecificFileVersionMap = {
         "ios": "16.00",
         "mac": "16.00",
         "web": "16.00",
-        "win32": "16.01"
+        "win32": "16.01",
+        "winrt": "16.00"
     },
     "onenote": {
         "web": "16.00",
@@ -32,13 +34,14 @@ OSF.HostSpecificFileVersionMap = {
         "ios": "16.00",
         "mac": "16.00",
         "web": "16.01",
-        "win32": "16.00"
+        "win32": "16.02"
     },
     "powerpoint": {
         "ios": "16.00",
         "mac": "16.00",
         "web": "16.00",
-        "win32": "16.01"
+        "win32": "16.01",
+        "winrt": "16.00"
     },
     "project": {
         "win32": "16.00"
@@ -50,7 +53,8 @@ OSF.HostSpecificFileVersionMap = {
         "ios": "16.00",
         "mac": "16.00",
         "web": "16.00",
-        "win32": "16.01"
+        "win32": "16.01",
+        "winrt": "16.00"
     }
 };
 OSF.SupportedLocales = {
@@ -193,9 +197,49 @@ var ScriptLoading;
             this.loadedScriptByIds = {};
             this.scriptTelemetryBuffer = [];
             this.osfControlAppCorrelationId = "";
+            this.basePath = null;
+            this.constantNames = {
+                OfficeJS: "office.js",
+                OfficeDebugJS: "office.debug.js"
+            };
         }
         LoadScriptHelper.prototype.isScriptLoading = function (id) {
             return !!(this.loadedScriptByIds[id] && this.loadedScriptByIds[id].hasStarted);
+        };
+        LoadScriptHelper.prototype.getOfficeJsBasePath = function () {
+            if (this.basePath) {
+                return this.basePath;
+            }
+            else {
+                var getScriptBase = function (scriptSrc, scriptNameToCheck) {
+                    var scriptBase, indexOfJS, scriptSrcLowerCase;
+                    scriptSrcLowerCase = scriptSrc.toLowerCase();
+                    indexOfJS = scriptSrcLowerCase.indexOf(scriptNameToCheck);
+                    if (indexOfJS >= 0 && indexOfJS === (scriptSrc.length - scriptNameToCheck.length) && (indexOfJS === 0 || scriptSrc.charAt(indexOfJS - 1) === '/' || scriptSrc.charAt(indexOfJS - 1) === '\\')) {
+                        scriptBase = scriptSrc.substring(0, indexOfJS);
+                    }
+                    else if (indexOfJS >= 0
+                        && indexOfJS < (scriptSrc.length - scriptNameToCheck.length)
+                        && scriptSrc.charAt(indexOfJS + scriptNameToCheck.length) === '?'
+                        && (indexOfJS === 0 || scriptSrc.charAt(indexOfJS - 1) === '/' || scriptSrc.charAt(indexOfJS - 1) === '\\')) {
+                        scriptBase = scriptSrc.substring(0, indexOfJS);
+                    }
+                    return scriptBase;
+                };
+                var scripts = document.getElementsByTagName("script");
+                var scriptsCount = scripts.length;
+                var officeScripts = [this.constantNames.OfficeJS, this.constantNames.OfficeDebugJS];
+                var officeScriptsCount = officeScripts.length;
+                var i, j;
+                for (i = 0; !this.basePath && i < scriptsCount; i++) {
+                    if (scripts[i].src) {
+                        for (j = 0; !this.basePath && j < officeScriptsCount; j++) {
+                            this.basePath = getScriptBase(scripts[i].src, officeScripts[j]);
+                        }
+                    }
+                }
+                return this.basePath;
+            }
         };
         LoadScriptHelper.prototype.loadScript = function (url, scriptId, callback, highPriority, timeoutInMs) {
             this.loadScriptInternal(url, scriptId, callback, highPriority, timeoutInMs);
@@ -337,7 +381,7 @@ var ScriptLoading;
                         for (var i = 0; i < pendingCallbackCount; i++) {
                             var currentCallback = loadedScriptEntry.pendingCallbacks.shift();
                             if (currentCallback) {
-                                var result = currentCallback(false);
+                                var result = currentCallback(true);
                                 if (result === false) {
                                     break;
                                 }
@@ -413,7 +457,7 @@ var ScriptLoading;
     ScriptLoading.LoadScriptHelper = LoadScriptHelper;
 })(ScriptLoading || (ScriptLoading = {}));
 OSF.ConstantNames = {
-    FileVersion: "OAssemblyFileVer",
+    FileVersion: "16.0.7504.3000",
     OfficeJS: "office.js",
     OfficeDebugJS: "office.debug.js",
     DefaultLocale: "en-us",
@@ -434,6 +478,8 @@ OSF.InitializationHelper = function OSF_InitializationHelper(hostInfo, webAppSta
     this._context = context;
     this._settings = settings;
     this._hostFacade = hostFacade;
+};
+OSF.InitializationHelper.prototype.saveAndSetDialogInfo = function OSF_InitializationHelper$saveAndSetDialogInfo(hostInfoValue) {
 };
 OSF.InitializationHelper.prototype.getAppContext = function OSF_InitializationHelper$getAppContext(wnd, gotAppContext) {
 };
@@ -469,6 +515,7 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
     }
     var _windowLocationHash = window.location.hash;
     var _windowLocationSearch = window.location.search;
+    var _windowName = window.name;
     var getQueryStringValue = function OSF__OfficeAppFactory$getQueryStringValue(paramName) {
         var hostInfoValue;
         var searchString = window.location.search;
@@ -486,7 +533,39 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
         return hostInfoValue;
     };
     var _retrieveHostInfo = function OSF__OfficeAppFactory$_retrieveHostInfo() {
-        var hostInfoValue = getQueryStringValue("_host_Info");
+        var hostInfoParaName = "_host_Info";
+        var hostInfoValue = getQueryStringValue(hostInfoParaName);
+        if (!hostInfoValue) {
+            try {
+                var windowNameObj = JSON.parse(_windowName);
+                hostInfoValue = windowNameObj ? windowNameObj["hostInfo"] : null;
+            }
+            catch (Exception) {
+            }
+        }
+        if (!hostInfoValue) {
+            try {
+                var fallbackHostInfo = window.external.GetHostInfo();
+                if (fallbackHostInfo == "isDialog") {
+                    _hostInfo.isO15 = true;
+                    _hostInfo.isDialog = true;
+                }
+                else if (fallbackHostInfo.toLowerCase().indexOf("mac") !== -1 && fallbackHostInfo.toLowerCase().indexOf("outlook") !== -1) {
+                    _hostInfo.isO15 = true;
+                }
+                else {
+                    var hostInfoParts = fallbackHostInfo.split(hostInfoParaName + "=");
+                    if (hostInfoParts.length > 1) {
+                        hostInfoValue = hostInfoParts[1];
+                    }
+                    else {
+                        hostInfoValue = fallbackHostInfo;
+                    }
+                }
+            }
+            catch (Exception) {
+            }
+        }
         var getSessionStorage = function OSF__OfficeAppFactory$_retrieveHostInfo$getSessionStorage() {
             var osfSessionStorage = null;
             try {
@@ -548,29 +627,13 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
     };
     var initialize = function OSF__OfficeAppFactory$initialize() {
         _retrieveHostInfo();
-        _loadScriptHelper.setAppCorrelationId(_hostInfo.osfControlAppCorrelationId);
-        var getScriptBase = function OSF__OfficeAppFactory_initialize$getScriptBase(scriptSrc, scriptNameToCheck) {
-            var scriptBase, indexOfJS, scriptSrcLowerCase;
-            scriptSrcLowerCase = scriptSrc.toLowerCase();
-            indexOfJS = scriptSrcLowerCase.indexOf(scriptNameToCheck);
-            if (indexOfJS >= 0 && indexOfJS === (scriptSrc.length - scriptNameToCheck.length) && (indexOfJS === 0 || scriptSrc.charAt(indexOfJS - 1) === '/' || scriptSrc.charAt(indexOfJS - 1) === '\\')) {
-                scriptBase = scriptSrc.substring(0, indexOfJS);
-            }
-            return scriptBase;
-        };
-        var scripts = document.getElementsByTagName("script");
-        var scriptsCount = scripts.length;
-        var officeScripts = [OSF.ConstantNames.OfficeJS, OSF.ConstantNames.OfficeDebugJS];
-        var officeScriptsCount = officeScripts.length;
-        var i, j, basePath;
-        for (i = 0; !basePath && i < scriptsCount; i++) {
-            if (scripts[i].src) {
-                for (j = 0; !basePath && j < officeScriptsCount; j++) {
-                    basePath = getScriptBase(scripts[i].src, officeScripts[j]);
-                }
-            }
+        if (_hostInfo.hostPlatform == "web" && _hostInfo.isDialog && window == window.top && window.opener == null) {
+            window.open('', '_self', '');
+            window.close();
         }
-        var requiresMsAjax = true;
+        _loadScriptHelper.setAppCorrelationId(_hostInfo.osfControlAppCorrelationId);
+        var basePath = _loadScriptHelper.getOfficeJsBasePath();
+        var requiresMsAjax = false;
         if (!basePath)
             throw "Office Web Extension script library file name should be " + OSF.ConstantNames.OfficeJS + " or " + OSF.ConstantNames.OfficeDebugJS + ".";
         var isMicrosftAjaxLoaded = function OSF$isMicrosftAjaxLoaded() {
@@ -620,6 +683,9 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
         var onAppCodeAndMSAjaxReady = function OSF__OfficeAppFactory_initialize$onAppCodeAndMSAjaxReady(loadSuccess) {
             if (loadSuccess) {
                 _initializationHelper = new OSF.InitializationHelper(_hostInfo, _WebAppState, _context, _settings, _hostFacade);
+                if (_hostInfo.hostPlatform == "web" && _initializationHelper.saveAndSetDialogInfo) {
+                    _initializationHelper.saveAndSetDialogInfo(getQueryStringValue("_host_Info"));
+                }
                 _initializationHelper.setAgaveHostCommunication();
                 getAppContextAsync(_WebAppState.wnd, function (appContext) {
                     if (OSF.AppTelemetry && OSF.AppTelemetry.logAppCommonMessage) {
@@ -726,6 +792,7 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
         getClientEndPoint: function OSF__OfficeAppFactory$getClientEndPoint() { return _WebAppState.clientEndPoint; },
         getContext: function OSF__OfficeAppFactory$getContext() { return _context; },
         setContext: function OSF__OfficeAppFactory$setContext(context) { _context = context; },
+        getHostInfo: function OSF_OfficeAppFactory$getHostInfo() { return _hostInfo; },
         getHostFacade: function OSF__OfficeAppFactory$getHostFacade() { return _hostFacade; },
         setHostFacade: function setHostFacade(hostFacade) { _hostFacade = hostFacade; },
         getInitializationHelper: function OSF__OfficeAppFactory$getInitializationHelper() { return _initializationHelper; },
@@ -735,6 +802,7 @@ OSF._OfficeAppFactory = (function OSF__OfficeAppFactory() {
         getWebAppState: function OSF__OfficeAppFactory$getWebAppState() { return _WebAppState; },
         getWindowLocationHash: function OSF__OfficeAppFactory$getHash() { return _windowLocationHash; },
         getWindowLocationSearch: function OSF__OfficeAppFactory$getSearch() { return _windowLocationSearch; },
-        getLoadScriptHelper: function OSF__OfficeAppFactory$getLoadScriptHelper() { return _loadScriptHelper; }
+        getLoadScriptHelper: function OSF__OfficeAppFactory$getLoadScriptHelper() { return _loadScriptHelper; },
+        getWindowName: function OSF__OfficeAppFactory$getWindowName() { return _windowName; }
     };
 })();

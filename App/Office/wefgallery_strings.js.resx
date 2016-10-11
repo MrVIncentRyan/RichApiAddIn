@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- _lcid="1033" _version="16.0.6807.3002" _dal="1" -->
+<!-- _lcid="1033" _version="16.0.7504.3000" _dal="1" -->
 <!-- _LocalBinding -->
 <root>
   <!-- 
@@ -185,7 +185,7 @@
     
   </data>
   <data name="L_WefDialog_RefreshButton_Tooltip" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Refresh '{0}'</value>
     
   </data>
   <data name="L_CatalogTab_Tooltip" xml:space="preserve">
@@ -201,10 +201,16 @@
     <value>See featured add-ins that we think you may like, available from the Office Store.</value>
   </data>
   <data name="L_OfficeStore_Button_Tooltip" xml:space="preserve">
-    <value>Click here to visit the Office Store</value>
+    <value>Click '{0}' button below to visit the Office Store</value>
+    
+  </data>
+  <data name="L_OfficeStore_Button_NoAddIns_Tooltip" xml:space="preserve">
+    <value> You don't have any add-ins. Click here to visit the Office Store and get add-ins for your account.</value>
+    
   </data>
   <data name="L_NoAppsMessageText" xml:space="preserve">
-    <value>Add add-ins to your account at the Office Store.</value>
+    <value>Get add-ins for your account at the Office Store.</value>
+    
   </data>
   <data name="L_NoAppsMessageTitle" xml:space="preserve">
     <value>No Add-ins</value>
@@ -221,7 +227,7 @@
     
   </data>
   <data name="L_TrustAll_Button_Txt_Tooltip" xml:space="preserve">
-    <value>Trust All</value>
+    <value>Trust all Add-ins listed on this screen</value>
     
   </data>
   <data name="L_ThisDocumentTabGeneralInfo_Txt" xml:space="preserve">
@@ -294,6 +300,14 @@
   </data>
   <data name="L_OptionsMenu_Remove_Txt_Tooltip" xml:space="preserve">
     <value>Remove this add-in from this device.</value>
+    
+  </data>
+  <data name="L_GalleryItem_Name_InsertAndOptions_Txt" xml:space="preserve">
+    <value>{0}. Use arrow keys to navigate the items, press enter to use the selected add-in, press tab and then enter to see additional options for this add-in.</value>
+    
+  </data>
+  <data name="L_GalleryItem_Name_InsertOnly_Txt" xml:space="preserve">
+    <value>{0}. Use arrow keys to navigate the items, press enter to use the selected add-in.</value>
     
   </data>
   <data name="L_RemoveAppGeneralError" xml:space="preserve">
@@ -370,6 +384,10 @@
   </data>
   <data name="L_ExchangeCCTab_Tooltip" xml:space="preserve">
     <value>Insert add-ins that have been assigned to you.</value>
+    
+  </data>
+  <data name="L_Close_Button_Text_Tooltip" xml:space="preserve">
+    <value>Close</value>
     
   </data>
 </root>

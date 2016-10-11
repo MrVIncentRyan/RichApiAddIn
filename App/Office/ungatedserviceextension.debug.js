@@ -1,8 +1,9 @@
 /* Office runtime JavaScript library */
-/* Version: 16.0.6807.3002 */
+/* Version: 16.0.7504.3000 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
+
 
 /*
 	Your use of this file is governed by the Microsoft Services Agreement http://go.microsoft.com/fwlink/?LinkId=266419.
@@ -18,7 +19,8 @@ var OfficeExt;
                 Sys.StringBuilder && typeof (Sys.StringBuilder) === "function" &&
                 Type.registerNamespace && typeof (Type.registerNamespace) === "function" &&
                 Type.registerClass && typeof (Type.registerClass) === "function" &&
-                typeof (Function._validateParams) === "function") {
+                typeof (Function._validateParams) === "function" &&
+                Sys.Serialization && Sys.Serialization.JavaScriptSerializer && typeof (Sys.Serialization.JavaScriptSerializer.serialize) === "function") {
                 return true;
             }
             else {
@@ -141,6 +143,17 @@ var OfficeExt;
     })();
     OfficeExt.SafeStorage = SafeStorage;
 })(OfficeExt || (OfficeExt = {}));
+OSF.XdmFieldName = {
+    ConversationUrl: "ConversationUrl",
+    AppId: "AppId"
+};
+OSF.WindowNameItemKeys = {
+    BaseFrameName: "baseFrameName",
+    HostInfo: "hostInfo",
+    XdmInfo: "xdmInfo",
+    SerializerVersion: "serializerVersion",
+    AppContext: "appContext"
+};
 OSF.OUtil = (function () {
     var _uniqueId = -1;
     var _xdmInfoKey = '&_xdm_Info=';
@@ -148,6 +161,8 @@ OSF.OUtil = (function () {
     var _xdmSessionKeyPrefix = '_xdm_';
     var _serializerVersionKeyPrefix = '_serializer_version=';
     var _fragmentSeparator = '#';
+    var _fragmentInfoDelimiter = '&';
+    var _classN = "class";
     var _loadedScripts = {};
     var _defaultScriptLoadingTimeout = 30000;
     var _safeSessionStorage = null;
@@ -170,6 +185,36 @@ OSF.OUtil = (function () {
             _safeSessionStorage = new OfficeExt.SafeStorage(sessionStorage);
         }
         return _safeSessionStorage;
+    }
+    ;
+    function _reOrderTabbableElements(elements) {
+        var bucket0 = [];
+        var bucketPositive = [];
+        var i;
+        var len = elements.length;
+        var ele;
+        for (i = 0; i < len; i++) {
+            ele = elements[i];
+            if (ele.tabIndex) {
+                if (ele.tabIndex > 0) {
+                    bucketPositive.push(ele);
+                }
+                else if (ele.tabIndex === 0) {
+                    bucket0.push(ele);
+                }
+            }
+            else {
+                bucket0.push(ele);
+            }
+        }
+        bucketPositive = bucketPositive.sort(function (left, right) {
+            var diff = left.tabIndex - right.tabIndex;
+            if (diff === 0) {
+                diff = bucketPositive.indexOf(left) - bucketPositive.indexOf(right);
+            }
+            return diff;
+        });
+        return [].concat(bucketPositive, bucket0);
     }
     ;
     return {
@@ -312,39 +357,87 @@ OSF.OUtil = (function () {
         generateConversationId: function OSF_OUtil$generateConversationId() {
             return [_random(), _random(), (new Date()).getTime().toString()].join('_');
         },
-        getFrameNameAndConversationId: function OSF_OUtil$getFrameNameAndConversationId(cacheKey, frame) {
-            var frameName = _xdmSessionKeyPrefix + cacheKey + this.generateConversationId();
-            frame.setAttribute("name", frameName);
-            return this.generateConversationId();
+        getFrameName: function OSF_OUtil$getFrameName(cacheKey) {
+            return _xdmSessionKeyPrefix + cacheKey + this.generateConversationId();
         },
         addXdmInfoAsHash: function OSF_OUtil$addXdmInfoAsHash(url, xdmInfoValue) {
-            return OSF.OUtil.addInfoAsHash(url, _xdmInfoKey, xdmInfoValue);
+            return OSF.OUtil.addInfoAsHash(url, _xdmInfoKey, xdmInfoValue, false);
         },
         addSerializerVersionAsHash: function OSF_OUtil$addSerializerVersionAsHash(url, serializerVersion) {
-            return OSF.OUtil.addInfoAsHash(url, _serializerVersionKey, serializerVersion);
+            return OSF.OUtil.addInfoAsHash(url, _serializerVersionKey, serializerVersion, true);
         },
-        addInfoAsHash: function OSF_OUtil$addInfoAsHash(url, keyName, infoValue) {
+        addInfoAsHash: function OSF_OUtil$addInfoAsHash(url, keyName, infoValue, encodeInfo) {
             url = url.trim() || '';
             var urlParts = url.split(_fragmentSeparator);
             var urlWithoutFragment = urlParts.shift();
             var fragment = urlParts.join(_fragmentSeparator);
-            return [urlWithoutFragment, _fragmentSeparator, fragment, keyName, infoValue].join('');
+            var newFragment;
+            if (encodeInfo) {
+                newFragment = [keyName, encodeURIComponent(infoValue), fragment].join('');
+            }
+            else {
+                newFragment = [fragment, keyName, infoValue].join('');
+            }
+            return [urlWithoutFragment, _fragmentSeparator, newFragment].join('');
+        },
+        parseHostInfoFromWindowName: function OSF_OUtil$parseHostInfoFromWindowName(skipSessionStorage, windowName) {
+            return OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.HostInfo);
         },
         parseXdmInfo: function OSF_OUtil$parseXdmInfo(skipSessionStorage) {
-            return OSF.OUtil.parseXdmInfoWithGivenFragment(skipSessionStorage, window.location.hash);
+            var xdmInfoValue = OSF.OUtil.parseXdmInfoWithGivenFragment(skipSessionStorage, window.location.hash);
+            if (!xdmInfoValue) {
+                xdmInfoValue = OSF.OUtil.parseXdmInfoFromWindowName(skipSessionStorage, window.name);
+            }
+            return xdmInfoValue;
+        },
+        parseXdmInfoFromWindowName: function OSF_OUtil$parseXdmInfoFromWindowName(skipSessionStorage, windowName) {
+            return OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.XdmInfo);
         },
         parseXdmInfoWithGivenFragment: function OSF_OUtil$parseXdmInfoWithGivenFragment(skipSessionStorage, fragment) {
-            return OSF.OUtil.parseInfoWithGivenFragment(_xdmInfoKey, _xdmSessionKeyPrefix, skipSessionStorage, fragment);
+            return OSF.OUtil.parseInfoWithGivenFragment(_xdmInfoKey, _xdmSessionKeyPrefix, false, skipSessionStorage, fragment);
         },
         parseSerializerVersion: function OSF_OUtil$parseSerializerVersion(skipSessionStorage) {
-            return OSF.OUtil.parseSerializerVersionWithGivenFragment(skipSessionStorage, window.location.hash);
+            var serializerVersion = OSF.OUtil.parseSerializerVersionWithGivenFragment(skipSessionStorage, window.location.hash);
+            if (isNaN(serializerVersion)) {
+                serializerVersion = OSF.OUtil.parseSerializerVersionFromWindowName(skipSessionStorage, window.name);
+            }
+            return serializerVersion;
+        },
+        parseSerializerVersionFromWindowName: function OSF_OUtil$parseSerializerVersionFromWindowName(skipSessionStorage, windowName) {
+            return parseInt(OSF.OUtil.parseInfoFromWindowName(skipSessionStorage, windowName, OSF.WindowNameItemKeys.SerializerVersion));
         },
         parseSerializerVersionWithGivenFragment: function OSF_OUtil$parseSerializerVersionWithGivenFragment(skipSessionStorage, fragment) {
-            return parseInt(OSF.OUtil.parseInfoWithGivenFragment(_serializerVersionKey, _serializerVersionKeyPrefix, skipSessionStorage, fragment));
+            return parseInt(OSF.OUtil.parseInfoWithGivenFragment(_serializerVersionKey, _serializerVersionKeyPrefix, true, skipSessionStorage, fragment));
         },
-        parseInfoWithGivenFragment: function OSF_OUtil$parseInfoWithGivenFragment(infoKey, infoKeyPrefix, skipSessionStorage, fragment) {
+        parseInfoFromWindowName: function OSF_OUtil$parseInfoFromWindowName(skipSessionStorage, windowName, infoKey) {
+            try {
+                var windowNameObj = JSON.parse(windowName);
+                var infoValue = windowNameObj != null ? windowNameObj[infoKey] : null;
+                var osfSessionStorage = _getSessionStorage();
+                if (!skipSessionStorage && osfSessionStorage && windowNameObj != null) {
+                    var sessionKey = windowNameObj[OSF.WindowNameItemKeys.BaseFrameName] + infoKey;
+                    if (infoValue) {
+                        osfSessionStorage.setItem(sessionKey, infoValue);
+                    }
+                    else {
+                        infoValue = osfSessionStorage.getItem(sessionKey);
+                    }
+                }
+                return infoValue;
+            }
+            catch (Exception) {
+                return null;
+            }
+        },
+        parseInfoWithGivenFragment: function OSF_OUtil$parseInfoWithGivenFragment(infoKey, infoKeyPrefix, decodeInfo, skipSessionStorage, fragment) {
             var fragmentParts = fragment.split(infoKey);
-            var xdmInfoValue = fragmentParts.length > 1 ? fragmentParts[fragmentParts.length - 1] : null;
+            var infoValue = fragmentParts.length > 1 ? fragmentParts[fragmentParts.length - 1] : null;
+            if (decodeInfo && infoValue != null) {
+                if (infoValue.indexOf(_fragmentInfoDelimiter) >= 0) {
+                    infoValue = infoValue.split(_fragmentInfoDelimiter)[0];
+                }
+                infoValue = decodeURIComponent(infoValue);
+            }
             var osfSessionStorage = _getSessionStorage();
             if (!skipSessionStorage && osfSessionStorage) {
                 var sessionKeyStart = window.name.indexOf(infoKeyPrefix);
@@ -354,15 +447,15 @@ OSF.OUtil = (function () {
                         sessionKeyEnd = window.name.length;
                     }
                     var sessionKey = window.name.substring(sessionKeyStart, sessionKeyEnd);
-                    if (xdmInfoValue) {
-                        osfSessionStorage.setItem(sessionKey, xdmInfoValue);
+                    if (infoValue) {
+                        osfSessionStorage.setItem(sessionKey, infoValue);
                     }
                     else {
-                        xdmInfoValue = osfSessionStorage.getItem(sessionKey);
+                        infoValue = osfSessionStorage.getItem(sessionKey);
                     }
                 }
             }
-            return xdmInfoValue;
+            return infoValue;
         },
         getConversationId: function OSF_OUtil$getConversationId() {
             var searchString = window.location.search;
@@ -384,18 +477,28 @@ OSF.OUtil = (function () {
             if (typeof items[1] == "undefined") {
                 items = strInfo.split("|");
             }
+            if (typeof items[1] == "undefined") {
+                items = strInfo.split("%7C");
+            }
             return items;
         },
-        getConversationUrl: function OSF_OUtil$getConversationUrl() {
-            var conversationUrl = '';
-            var xdmInfoValue = OSF.OUtil.parseXdmInfo(true);
+        getXdmFieldValue: function OSF_OUtil$getXdmFieldValue(xdmFieldName, skipSessionStorage) {
+            var fieldValue = '';
+            var xdmInfoValue = OSF.OUtil.parseXdmInfo(skipSessionStorage);
             if (xdmInfoValue) {
                 var items = OSF.OUtil.getInfoItems(xdmInfoValue);
                 if (items != undefined && items.length >= 3) {
-                    conversationUrl = items[2];
+                    switch (xdmFieldName) {
+                        case OSF.XdmFieldName.ConversationUrl:
+                            fieldValue = items[2];
+                            break;
+                        case OSF.XdmFieldName.AppId:
+                            fieldValue = items[1];
+                            break;
+                    }
                 }
             }
-            return conversationUrl;
+            return fieldValue;
         },
         validateParamObject: function OSF_OUtil$validateParamObject(params, expectedProperties, callback) {
             var e = Function._validateParams(arguments, [{ name: "params", type: Object, mayBeNull: false },
@@ -674,6 +777,18 @@ OSF.OUtil = (function () {
         isiOS: function OSF_Outil$isiOS() {
             return (window.navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
         },
+        isChrome: function OSF_Outil$isChrome() {
+            return (window.navigator.userAgent.indexOf("Chrome") > 0) && !OSF.OUtil.isEdge();
+        },
+        isEdge: function OSF_Outil$isEdge() {
+            return window.navigator.userAgent.indexOf("Edge") > 0;
+        },
+        isIE: function OSF_Outil$isIE() {
+            return window.navigator.userAgent.indexOf("Trident") > 0;
+        },
+        isFirefox: function OSF_Outil$isFirefox() {
+            return window.navigator.userAgent.indexOf("Firefox") > 0;
+        },
         shallowCopy: function OSF_Outil$shallowCopy(sourceObj) {
             var copyObj = sourceObj.constructor();
             for (var property in sourceObj) {
@@ -682,16 +797,6 @@ OSF.OUtil = (function () {
                 }
             }
             return copyObj;
-        },
-        serializeOMEXResponseErrorMessage: function OSF_Outil$serializeObjectToString(response) {
-            if (typeof (JSON) !== "undefined") {
-                try {
-                    return JSON.stringify(response);
-                }
-                catch (ex) {
-                }
-            }
-            return "";
         },
         createObject: function OSF_Outil$createObject(properties) {
             var obj = null;
@@ -703,6 +808,125 @@ OSF.OUtil = (function () {
                 }
             }
             return obj;
+        },
+        addClass: function OSF_OUtil$addClass(elmt, val) {
+            if (!OSF.OUtil.hasClass(elmt, val)) {
+                var className = elmt.getAttribute(_classN);
+                if (className) {
+                    elmt.setAttribute(_classN, className + " " + val);
+                }
+                else {
+                    elmt.setAttribute(_classN, val);
+                }
+            }
+        },
+        hasClass: function OSF_OUtil$hasClass(elmt, clsName) {
+            var className = elmt.getAttribute(_classN);
+            return className && className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)'));
+        },
+        focusToFirstTabbable: function OSF_OUtil$focusToFirstTabbable(all, backward) {
+            var next;
+            var focused = false;
+            var candidate;
+            var setFlag = function (e) {
+                focused = true;
+            };
+            var findNextPos = function (allLen, currPos, backward) {
+                if (currPos < 0 || currPos > allLen) {
+                    return -1;
+                }
+                else if (currPos === 0 && backward) {
+                    return -1;
+                }
+                else if (currPos === allLen - 1 && !backward) {
+                    return -1;
+                }
+                if (backward) {
+                    return currPos - 1;
+                }
+                else {
+                    return currPos + 1;
+                }
+            };
+            all = _reOrderTabbableElements(all);
+            next = backward ? all.length - 1 : 0;
+            if (all.length === 0) {
+                return null;
+            }
+            while (!focused && next >= 0 && next < all.length) {
+                candidate = all[next];
+                window.focus();
+                candidate.addEventListener('focus', setFlag);
+                candidate.focus();
+                candidate.removeEventListener('focus', setFlag);
+                next = findNextPos(all.length, next, backward);
+                if (!focused && candidate === document.activeElement) {
+                    focused = true;
+                }
+            }
+            if (focused) {
+                return candidate;
+            }
+            else {
+                return null;
+            }
+        },
+        focusToNextTabbable: function OSF_OUtil$focusToNextTabbable(all, curr, shift) {
+            var currPos;
+            var next;
+            var focused = false;
+            var candidate;
+            var setFlag = function (e) {
+                focused = true;
+            };
+            var findCurrPos = function (all, curr) {
+                var i = 0;
+                for (; i < all.length; i++) {
+                    if (all[i] === curr) {
+                        return i;
+                    }
+                }
+                return -1;
+            };
+            var findNextPos = function (allLen, currPos, shift) {
+                if (currPos < 0 || currPos > allLen) {
+                    return -1;
+                }
+                else if (currPos === 0 && shift) {
+                    return -1;
+                }
+                else if (currPos === allLen - 1 && !shift) {
+                    return -1;
+                }
+                if (shift) {
+                    return currPos - 1;
+                }
+                else {
+                    return currPos + 1;
+                }
+            };
+            all = _reOrderTabbableElements(all);
+            currPos = findCurrPos(all, curr);
+            next = findNextPos(all.length, currPos, shift);
+            if (next < 0) {
+                return null;
+            }
+            while (!focused && next >= 0 && next < all.length) {
+                candidate = all[next];
+                candidate.addEventListener('focus', setFlag);
+                candidate.focus();
+                candidate.removeEventListener('focus', setFlag);
+                next = findNextPos(all.length, next, shift);
+                if (!focused && candidate === document.activeElement) {
+                    focused = true;
+                }
+            }
+            if (focused) {
+                return candidate;
+            }
+            else {
+                return null;
+            }
         }
     };
 })();
@@ -738,6 +962,14 @@ OSF.SerializerVersion = {
     MsAjax: 0,
     Browser: 1
 };
+var OfficeExt;
+(function (OfficeExt) {
+    function appSpecificCheckOriginFunction(url, eventObj, messageObj, checkOriginFunction) {
+        return true;
+    }
+    ;
+    OfficeExt.appSpecificCheckOrigin = appSpecificCheckOriginFunction;
+})(OfficeExt || (OfficeExt = {}));
 (function (window) {
     "use strict";
     var stringRegEx = new RegExp('"(\\\\.|[^"\\\\])*"', 'g'), trueFalseNullRegEx = new RegExp('\\b(true|false|null)\\b', 'g'), numbersRegEx = new RegExp('-?(0|([1-9]\\d*))(\\.\\d+)?([eE][+-]?\\d+)?', 'g'), badBracketsRegEx = new RegExp('[^{:,\\[\\s](?=\\s*\\[)'), badRemainderRegEx = new RegExp('[^\\s\\[\\]{}:,]'), jsonErrorMsg = "Cannot deserialize. The data does not correspond to valid JSON.";
@@ -960,6 +1192,15 @@ Microsoft.Office.Common.ServiceEndPoint.prototype = {
     },
     getPolicyManager: function Microsoft_Office_Common_ServiceEndPoint$getPolicyManager() {
         return this._policyManager;
+    },
+    dispose: function Microsoft_Office_Common_ServiceEndPoint$dispose() {
+        this._methodObjectList = null;
+        this._eventHandlerProxyList = null;
+        this._Id = null;
+        this._conversations = null;
+        this._policyManager = null;
+        this._appDomains = null;
+        this._onHandleRequestError = null;
     }
 };
 Microsoft.Office.Common.ClientEndPoint = function Microsoft_Office_Common_ClientEndPoint(conversationId, targetWindow, targetUrl, serializerVersion) {
@@ -971,8 +1212,15 @@ Microsoft.Office.Common.ClientEndPoint = function Microsoft_Office_Common_Client
     ]);
     if (e)
         throw e;
-    if (!targetWindow.postMessage) {
-        throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+    try {
+        if (!targetWindow.postMessage) {
+            throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+        }
+    }
+    catch (ex) {
+        if (!Object.prototype.hasOwnProperty.call(targetWindow, "postMessage")) {
+            throw OsfMsAjaxFactory.msAjaxError.argument("targetWindow");
+        }
     }
     this._conversationId = conversationId;
     this._targetWindow = targetWindow;
@@ -1106,7 +1354,6 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
         var clientEndPoint = _clientEndPoints[conversationId];
         if (!clientEndPoint) {
             OsfMsAjaxFactory.msAjaxDebug.trace("Unknown conversation Id.");
-            throw OsfMsAjaxFactory.msAjaxError.argument("conversationId");
         }
         return clientEndPoint;
     }
@@ -1322,6 +1569,9 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
             }
             else if (messageObject._messageType === Microsoft.Office.Common.MessageType.response) {
                 var clientEndPoint = _lookupClientEndPoint(messageObject._conversationId);
+                if (!clientEndPoint) {
+                    return;
+                }
                 clientEndPoint._serializerVersion = serializerVersion;
                 ;
                 if (!_checkOrigin(clientEndPoint._targetUrl, e.origin)) {
@@ -1398,6 +1648,17 @@ Microsoft.Office.Common.XdmCommunicationManager = (function () {
             if (e)
                 throw e;
             delete _clientEndPoints[conversationId];
+        },
+        deleteServiceEndPoint: function Microsoft_Office_Common_XdmCommunicationManager$deleteServiceEndPoint(serviceEndPointId) {
+            var e = Function._validateParams(arguments, [
+                { name: "serviceEndPointId", type: String, mayBeNull: false }
+            ]);
+            if (e)
+                throw e;
+            delete _serviceEndPoints[serviceEndPointId];
+        },
+        checkUrlWithAppDomains: function Microsoft_Office_Common_XdmCommunicationManager$_checkUrlWithAppDomains(appDomains, origin) {
+            return _checkOriginWithAppDomains(appDomains, origin);
         },
         _setMethodTimeout: function Microsoft_Office_Common_XdmCommunicationManager$_setMethodTimeout(methodTimeout) {
             var e = Function._validateParams(arguments, [
@@ -1557,7 +1818,10 @@ Microsoft.Office.Common.InvokeCompleteCallback = function Microsoft_Office_Commo
     Microsoft.Office.Common.InvokeCompleteCallback.uber.constructor.call(this, requesterWindow, requesterUrl, actionName, conversationId, correlationId, Microsoft.Office.Common.ResponseType.forCalling, serializerVersion);
     this._postCallbackHandler = postCallbackHandler;
     var me = this;
-    this._send = function (result) {
+    this._send = function (result, responseCode) {
+        if (responseCode != undefined) {
+            me._invokeResultCode = responseCode;
+        }
         try {
             var response = new Microsoft.Office.Common.Response(me._actionName, me._conversationId, me._correlationId, me._invokeResultCode, me._responseType, result);
             var envelopedResult = Microsoft.Office.Common.MessagePackager.envelope(response, serializerVersion);
@@ -1776,6 +2040,16 @@ OSF.Xpath3Provider.prototype = {
         var ns = this._namespaceMapping[prefix];
         return ns || this._defaultNamespace;
     },
+    addNamespaceMapping: function OSF_Xpath3Provider$addNamespaceMapping(namespacePrefix, namespaceUri) {
+        var ns = this._namespaceMapping[namespacePrefix];
+        if (ns) {
+            return false;
+        }
+        else {
+            this._namespaceMapping[namespacePrefix] = namespaceUri;
+            return true;
+        }
+    },
     selectSingleNode: function OSF_Xpath3Provider$selectSingleNode(name, contextNode) {
         var xpath = (contextNode ? "./" : "/") + name;
         contextNode = contextNode || this.getDocumentElement();
@@ -1790,6 +2064,18 @@ OSF.Xpath3Provider.prototype = {
     selectNodes: function OSF_Xpath3Provider$selectNodes(name, contextNode) {
         var xpath = (contextNode ? "./" : "/") + name;
         contextNode = contextNode || this.getDocumentElement();
+        var result = this._evaluator.evaluate(xpath, contextNode, this._resolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        var nodes = [];
+        if (result) {
+            var node = result.iterateNext();
+            while (node) {
+                nodes.push(node);
+                node = result.iterateNext();
+            }
+        }
+        return nodes;
+    },
+    selectNodesByXPath: function OSF_Xpath3Provider$selectNodesByXPath(xpath, contextNode) {
         var result = this._evaluator.evaluate(xpath, contextNode, this._resolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
         var nodes = [];
         if (result) {
@@ -1834,9 +2120,23 @@ OSF.IEXpathProvider.prototype = {
         contextNode = contextNode || this.getDocumentElement();
         return contextNode.selectSingleNode(xpath);
     },
+    addNamespaceMapping: function OSF_IEXpathProvider$addNamespaceMapping(namespacePrefix, namespaceUri) {
+        var existingNamespaces = this._xmldoc.getProperty("SelectionNamespaces");
+        var newNamespacePrefix = "xmlns:" + namespacePrefix + "=";
+        var newNamespaceMappingString = "xmlns:" + namespacePrefix + "=\"" + namespaceUri + "\"";
+        if (existingNamespaces.indexOf(newNamespacePrefix) != -1) {
+            return false;
+        }
+        existingNamespaces = existingNamespaces + " " + newNamespaceMappingString;
+        this._xmldoc.setProperty("SelectionNamespaces", existingNamespaces);
+        return true;
+    },
     selectNodes: function OSF_IEXpathProvider$selectNodes(name, contextNode) {
         var xpath = (contextNode ? "./" : "/") + name;
         contextNode = contextNode || this.getDocumentElement();
+        return contextNode.selectNodes(xpath);
+    },
+    selectNodesByXPath: function OSF_IEXpathProvider$selectNodesByXPath(xpath, contextNode) {
         return contextNode.selectNodes(xpath);
     },
     getDocumentElement: function OSF_IEXpathProvider$getDocumentElement() {
@@ -1871,6 +2171,16 @@ OSF.DomParserProvider = function OSF_DomParserProvider(xml, xmlNamespaces) {
     }
 };
 OSF.DomParserProvider.prototype = {
+    addNamespaceMapping: function OSF_DomParserProvider$addNamespaceMapping(namespacePrefix, namespaceUri) {
+        var ns = this._namespaceMapping[namespacePrefix];
+        if (ns) {
+            return false;
+        }
+        else {
+            this._namespaceMapping[namespacePrefix] = namespaceUri;
+            return true;
+        }
+    },
     selectSingleNode: function OSF_DomParserProvider$selectSingleNode(name, contextNode) {
         var selectedNode = contextNode || this._xmldoc;
         var nodes = this._selectNodes(name, selectedNode);
@@ -1881,6 +2191,9 @@ OSF.DomParserProvider.prototype = {
     selectNodes: function OSF_DomParserProvider$selectNodes(name, contextNode) {
         var selectedNode = contextNode || this._xmldoc;
         return this._selectNodes(name, selectedNode);
+    },
+    selectNodesByXPath: function OSF_DomParserProvider$selectNodesByXPath(xpath, contextNode) {
+        return null;
     },
     _selectNodes: function OSF_DomParserProvider$_selectNodes(name, contextNode) {
         var nodes = [];
@@ -1940,6 +2253,14 @@ OSF.XmlProcessor = function OSF_XmlProcessor(xml, xmlNamespaces) {
     }
 };
 OSF.XmlProcessor.prototype = {
+    addNamespaceMapping: function OSF_XmlProcessor$addNamespaceMapping(namespacePrefix, namespaceUri) {
+        var e = Function._validateParams(arguments, [{ name: "namespacePrefix", type: String, mayBeNull: false },
+            { name: "namespaceUri", type: String, mayBeNull: false }
+        ]);
+        if (e)
+            throw e;
+        return this._provider.addNamespaceMapping(namespacePrefix, namespaceUri);
+    },
     selectSingleNode: function OSF_XmlProcessor$selectSingleNode(name, contextNode) {
         var e = Function._validateParams(arguments, [{ name: "name", type: String, mayBeNull: false },
             { name: "contextNode", mayBeNull: true, optional: true }
@@ -1955,6 +2276,16 @@ OSF.XmlProcessor.prototype = {
         if (e)
             throw e;
         return this._provider.selectNodes(name, contextNode);
+    },
+    selectNodesByXPath: function OSF_XmlProcessor$selectNodesByXPath(xpath, contextNode) {
+        var e = Function._validateParams(arguments, [
+            { name: "xpath", type: String, mayBeNull: false },
+            { name: "contextNode", mayBeNull: true, optional: true }
+        ]);
+        if (e)
+            throw e;
+        contextNode = contextNode || this._provider.getDocumentElement();
+        return this._provider.selectNodesByXPath(xpath, contextNode);
     },
     getDocumentElement: function OSF_XmlProcessor$getDocumentElement() {
         return this._provider.getDocumentElement();
@@ -1974,6 +2305,47 @@ OSF.XmlProcessor.prototype = {
         }
         return nodeValue;
     },
+    getNodeText: function OSF_XmlProcessor$getNodeText(node) {
+        var e = Function._validateParams(arguments, [
+            { name: "node", type: Object, mayBeNull: false }
+        ]);
+        if (e)
+            throw e;
+        if (this.getNodeType(node) == 9) {
+            return this.getNodeText(this.getDocumentElement());
+        }
+        var nodeText;
+        if (node.text) {
+            nodeText = node.text;
+        }
+        else {
+            nodeText = node.textContent;
+        }
+        return nodeText;
+    },
+    setNodeText: function OSF_XmlProcessor$setNodeText(node, text) {
+        var e = Function._validateParams(arguments, [
+            { name: "node", type: Object, mayBeNull: false },
+            { name: "text", type: String, mayBeNull: false }
+        ]);
+        if (e)
+            throw e;
+        if (this.getNodeType(node) == 9) {
+            return false;
+        }
+        try {
+            if (node.text) {
+                node.text = text;
+            }
+            else {
+                node.textContent = text;
+            }
+        }
+        catch (ex) {
+            return false;
+        }
+        return true;
+    },
     getNodeXml: function OSF_XmlProcessor$getNodeXml(node) {
         var e = Function._validateParams(arguments, [
             { name: "node", type: Object, mayBeNull: false }
@@ -1986,8 +2358,31 @@ OSF.XmlProcessor.prototype = {
         }
         else {
             nodeXml = new XMLSerializer().serializeToString(node);
+            if (this.getNodeType(node) == 2) {
+                nodeXml = this.getNodeBaseName(node) + "=\"" + nodeXml + "\"";
+            }
         }
         return nodeXml;
+    },
+    setNodeXml: function OSF_XmlProcessor$setNodeXml(node, xml) {
+        var e = Function._validateParams(arguments, [
+            { name: "node", type: Object, mayBeNull: false },
+            { name: "xml", type: String, mayBeNull: false }
+        ]);
+        if (e)
+            throw e;
+        var processor = new OSF.XmlProcessor(xml, "");
+        if (!processor.isValidXml()) {
+            return null;
+        }
+        var newNode = processor.getDocumentElement();
+        try {
+            node.parentNode.replaceChild(newNode, node);
+        }
+        catch (ex) {
+            return null;
+        }
+        return newNode;
     },
     getNodeNamespaceURI: function OSF_XmlProcessor$getNodeNamespaceURI(node) {
         var e = Function._validateParams(arguments, [
@@ -2012,11 +2407,16 @@ OSF.XmlProcessor.prototype = {
         if (e)
             throw e;
         var nodeBaseName;
-        if (node.baseName) {
-            nodeBaseName = node.baseName;
+        if (node.nodeType && (node.nodeType == 1 || node.nodeType == 2)) {
+            if (node.baseName) {
+                nodeBaseName = node.baseName;
+            }
+            else {
+                nodeBaseName = node.localName;
+            }
         }
         else {
-            nodeBaseName = node.localName;
+            nodeBaseName = node.nodeName;
         }
         return nodeBaseName;
     },
@@ -2057,6 +2457,19 @@ OSF.XmlProcessor.prototype = {
                 }
             }
         }
+    },
+    isValidXml: function OSF_XmlProcessor$isValidXml() {
+        var documentElement = this.getDocumentElement();
+        if (documentElement == null) {
+            return false;
+        }
+        else if (this._provider._xmldoc.getElementsByTagName("parsererror").length > 0) {
+            var parser = new DOMParser();
+            var errorParse = parser.parseFromString('<', 'text/xml');
+            var parseErrorNS = errorParse.getElementsByTagName("parsererror")[0].namespaceURI;
+            return this._provider._xmldoc.getElementsByTagNameNS(parseErrorNS, 'parsererror').length <= 0;
+        }
+        return true;
     }
 };
 OSF.OmexProvider = (function () {
@@ -2198,7 +2611,7 @@ OSF.OmexProvider = (function () {
             if (context.officeVersion) {
                 webRequest.get_headers()[_officeVersionHeader] = context.officeVersion;
             }
-            if (context.correlationId) {
+            if (context.correlationId && url.indexOf('?') > -1) {
                 url += "&corr=" + context.correlationId;
             }
         }
@@ -2315,7 +2728,7 @@ OSF.OmexProvider = (function () {
                 _serviceEndPoint.registerMethod("OMEX_clearCacheAsync", this.clearCacheAsync, Microsoft.Office.Common.InvokeType.async, false);
                 _serviceEndPoint.registerMethod("OMEX_isProxyReady", _isProxyReady, Microsoft.Office.Common.InvokeType.async, false);
                 var conversationId = OSF.OUtil.getConversationId();
-                var conversationUrl = OSF.OUtil.getConversationUrl();
+                var conversationUrl = OSF.OUtil.getXdmFieldValue(OSF.XdmFieldName.ConversationUrl, true);
                 _serviceEndPoint.registerConversation(conversationId, conversationUrl, null, OSF.OUtil.parseSerializerVersion(true));
                 _hasBeenInitialized = true;
             }

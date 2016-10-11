@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- _lcid="1033" _version="16.0.6807.3002" _dal="1" -->
+<!-- _lcid="1033" _version="16.0.7504.3000" _dal="1" -->
 <!-- _LocalBinding -->
 <root>
   <!-- 
@@ -463,6 +463,20 @@
     <value>Custom XML Error.</value>
     
   </data>
+  <data name="L_CustomXmlExceedQuotaName" xml:space="preserve">
+    <value>Selection Limit Reached</value>
+  </data>
+  <data name="L_CustomXmlExceedQuotaMessage" xml:space="preserve">
+    <value>XPath limits selection to 1024 items.</value>
+    
+  </data>
+  <data name="L_CustomXmlOutOfDateName" xml:space="preserve">
+    <value>Data Not Current</value>
+  </data>
+  <data name="L_CustomXmlOutOfDateMessage" xml:space="preserve">
+    <value>The data is out of date. Retrieve the object again.</value>
+    
+  </data>
   <data name="L_CannotNavigateTo" xml:space="preserve">
     <value>The object is located in a place where navigation is not supported.</value>
     
@@ -576,6 +590,18 @@
     <value>The batch function passed to the ".run" method didn't return a promise. The function must return a promise, so that any automatically-tracked objects can be released at the completion of the batch operation. Typically, you return a promise by returning the response from "context.sync()".</value>
     
   </data>
+  <data name="L_CannotRegisterEvent" xml:space="preserve">
+    <value>The event handler cannot be registered.</value>
+    
+  </data>
+  <data name="L_ConnectionFailureWithStatus" xml:space="preserve">
+    <value>The request failed with status code of {0}.</value>
+    
+  </data>
+  <data name="ConnectionFailureWithDetails" xml:space="preserve">
+    <value>The request failed with status code of {0}, error code {1} and the following error message: {2}</value>
+    
+  </data>
   <data name="L_DialogAddressNotTrusted" xml:space="preserve">
     <value>The specified address has not been not trusted by the add-in</value>
     
@@ -590,6 +616,26 @@
   </data>
   <data name="L_DisplayDialogError" xml:space="preserve">
     <value>Display Dialog Error</value>
+    
+  </data>
+  <data name="L_UserClickIgnore" xml:space="preserve">
+    <value>The user chose to ignore the dialog box.</value>
+    
+  </data>
+  <data name="L_ValueNotLoaded" xml:space="preserve">
+    <value>The value of the result object has not been loaded yet. Before reading the value property, call "context.sync()" on the associated request context.</value>
+    
+  </data>
+  <data name="L_ShowWindowDialogNotification" xml:space="preserve">
+    <value>{0} wants to display a new window.</value>
+    
+  </data>
+  <data name="L_ShowWindowDialogNotificationAllow" xml:space="preserve">
+    <value>Allow</value>
+    
+  </data>
+  <data name="L_ShowWindowDialogNotificationIgnore" xml:space="preserve">
+    <value>Ignore</value>
     
   </data>
 </root>

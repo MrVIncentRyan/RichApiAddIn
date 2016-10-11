@@ -1,6 +1,13 @@
 var OfficeExt;
 (function (OfficeExt) {
     OfficeExt.AddinActionContextMap = {};
+    var taskpaneControlMap = {};
+    (function (CommandInvokeMode) {
+        CommandInvokeMode[CommandInvokeMode["Default"] = 1] = "Default";
+        CommandInvokeMode[CommandInvokeMode["ExclusiveForCur"] = 2] = "ExclusiveForCur";
+        CommandInvokeMode[CommandInvokeMode["ExclusiveForNew"] = 3] = "ExclusiveForNew";
+    })(OfficeExt.CommandInvokeMode || (OfficeExt.CommandInvokeMode = {}));
+    var CommandInvokeMode = OfficeExt.CommandInvokeMode;
     var ErrorCodes;
     (function (ErrorCodes) {
         ErrorCodes[ErrorCodes["ooeTimeout"] = -1] = "ooeTimeout";
@@ -13,65 +20,73 @@ var OfficeExt;
             this.manifest = addinManifest;
             this.entitlement = entitlement;
         }
-        ControlBoundActionBuilder.prototype.buildShowTaskpane = function (sourceLocation) {
-            return this.CreateManifestAndActivationContextForTaskpaneCommand(sourceLocation);
+        ControlBoundActionBuilder.prototype.buildShowTaskpane = function (sourceLocation, title, taskpaneId) {
+            return this.CreateManifestAndActivationContextForTaskpaneCommand(sourceLocation, title, taskpaneId);
         };
-        ControlBoundActionBuilder.prototype.buildShowDialog = function (sourceLocation) {
-            return this.CreateManifestAndActivationContextForDialogCommand(sourceLocation);
+        ControlBoundActionBuilder.prototype.buildCallFunction = function (functionFile, functionName, controlId) {
+            return this.CreateManifestAndActivationContextForUILessCommand(functionFile, functionName, controlId);
         };
-        ControlBoundActionBuilder.prototype.buildCallFunction = function (functionFile, functionName) {
-            return this.CreateManifestAndActivationContextForUILessCommand(functionFile, functionName);
-        };
-        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContextForTaskpaneCommand = function (sourceLocation) {
+        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContextForTaskpaneCommand = function (sourceLocation, title, taskpaneId) {
             var onHostReady = function (osfControlId, result) {
                 if (result != ErrorCodes.ooeSuccess) {
                     return;
                 }
+                if (taskpaneId != null) {
+                    taskpaneControlMap[taskpaneId] = osfControlId;
+                }
             };
-            return this.CreateManifestAndActivationContext(sourceLocation, function (host, entitlement, actionManifest) {
+            var renderInExistingOsfControl = function (taskpaneId, contextActivationMgr) {
+                var osfControlId = taskpaneControlMap[taskpaneId];
+                if (osfControlId == null)
+                    return false;
+                var osfControl = contextActivationMgr.getOsfControl(osfControlId);
+                if (osfControl == null)
+                    return false;
+                osfControl._refresh();
+                return true;
+            };
+            return this.CreateManifestAndActivationContext(sourceLocation, title, taskpaneId, function (host, contextActivationMgr, entitlement, actionManifest) {
+                if (taskpaneId != null) {
+                    renderInExistingOsfControl(taskpaneId, contextActivationMgr);
+                }
                 host.showTaskpane(entitlement, actionManifest, onHostReady);
             });
         };
-        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContextForDialogCommand = function (sourceLocation) {
-            var onHostReady = function (osfControlId, result) {
-                if (result != ErrorCodes.ooeSuccess) {
-                    return;
-                }
-            };
-            return this.CreateManifestAndActivationContext(sourceLocation, function (host, entitlement, actionManifest) {
-                host.showDialog(entitlement, actionManifest, onHostReady);
-            });
-        };
-        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContext = function (sourceLocation, callback) {
+        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContext = function (sourceLocation, title, taskpaneId, callback) {
             var _this = this;
-            var actionManifest = OfficeExt.AddinCommandsManifestManager.createManifestForAddinAction(this.manifest, sourceLocation);
+            var actionManifest = OfficeExt.AddinCommandsManifestManager.createManifestForAddinAction(this.manifest, sourceLocation, title, null);
             return function (controlID) {
-                var context = _this.contextProvider.createActionContext(controlID, function (host) {
+                var context = _this.contextProvider.createActionContext(controlID, function (host, contextActivationMgr) {
                     var entitlement = {
-                        assetId: _this.entitlement.assetId + controlID,
+                        assetId: _this.entitlement.assetId + (taskpaneId || controlID),
                         appVersion: _this.entitlement.appVersion,
                         storeId: _this.entitlement.storeId,
                         storeType: OSF.StoreType.InMemory,
                         targetType: OSF.OsfControlTarget.TaskPane
                     };
                     OfficeExt.AddinCommandsManifestManager.cacheManifestForAction(actionManifest, entitlement.assetId, entitlement.appVersion);
-                    callback(host, entitlement, actionManifest);
+                    callback(host, contextActivationMgr, entitlement, actionManifest);
                 });
                 OfficeExt.AddinActionContextMap[controlID] = context;
             };
         };
-        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContextForUILessCommand = function (functionFile, functionName) {
+        ControlBoundActionBuilder.prototype.CreateManifestAndActivationContextForUILessCommand = function (functionFile, functionName, manifestControlId) {
             var _this = this;
             var onHostReady = function (osfControlId, result) {
                 if (result != ErrorCodes.ooeSuccess) {
                     return;
                 }
-                AddinCommandsRuntimeManager.invokeAppCommand(osfControlId, functionName, null, function (status, data) {
+                var args = {
+                    source: {
+                        id: manifestControlId
+                    }
+                };
+                AddinCommandsRuntimeManager.invokeAppCommand(osfControlId, functionName, args, function (status, data) {
                 });
             };
-            var actionManifest = OfficeExt.AddinCommandsManifestManager.createManifestForAddinAction(this.manifest, functionFile);
-            return function (controlID) {
-                var context = _this.contextProvider.createActionContext(controlID, function (host) {
+            var actionManifest = OfficeExt.AddinCommandsManifestManager.createManifestForAddinAction(this.manifest, functionFile, null, null);
+            return function (ribbonControlId) {
+                var context = _this.contextProvider.createActionContext(ribbonControlId, function (host) {
                     var entitlement = {
                         assetId: _this.entitlement.assetId + "##UILessContainer##",
                         appVersion: _this.entitlement.appVersion,
@@ -87,7 +102,7 @@ var OfficeExt;
                         onHostReady(osfControlId, result);
                     });
                 });
-                OfficeExt.AddinActionContextMap[controlID] = context;
+                OfficeExt.AddinActionContextMap[ribbonControlId] = context;
             };
         };
         return ControlBoundActionBuilder;
@@ -97,21 +112,14 @@ var OfficeExt;
             this.contextProvider = contextProvider;
             this.entitlement = entitlement;
         }
-        ControlDeleterActionBuilder.prototype.buildShowTaskpane = function (sourceLocation) {
+        ControlDeleterActionBuilder.prototype.buildShowTaskpane = function (sourceLocation, title) {
             var _this = this;
             return function (controlID) {
                 delete OfficeExt.AddinActionContextMap[controlID];
                 OfficeExt.AddinCommandsManifestManager.purgeManifestForAction(_this.entitlement.assetId + controlID, _this.entitlement.appVersion);
             };
         };
-        ControlDeleterActionBuilder.prototype.buildShowDialog = function (sourceLocation) {
-            var _this = this;
-            return function (controlID) {
-                delete OfficeExt.AddinActionContextMap[controlID];
-                OfficeExt.AddinCommandsManifestManager.purgeManifestForAction(_this.entitlement.assetId + controlID, _this.entitlement.appVersion);
-            };
-        };
-        ControlDeleterActionBuilder.prototype.buildCallFunction = function (functionFile, functionName) {
+        ControlDeleterActionBuilder.prototype.buildCallFunction = function (functionFile, functionName, manifestControlId) {
             var _this = this;
             return function (controlID) {
                 delete OfficeExt.AddinActionContextMap[controlID];
@@ -143,15 +151,16 @@ var OfficeExt;
         function OsfHostEntry() {
             this.invocationQueue = {};
         }
-        OsfHostEntry.prototype.invokeAppCommand = function (appCommandId, callbackName, eventObjStr, onComplete, timeout) {
+        OsfHostEntry.prototype.invokeAppCommand = function (appCommandId, callbackName, eventObj, onComplete, timeout) {
             var args = {
                 dispid: OSF.DDA.EventDispId.dispidAppCommandInvokedEvent,
                 controlId: this.osfControlId
             };
             args[0] = appCommandId;
             args[1] = callbackName;
-            args[2] = eventObjStr;
+            args[2] = JSON.stringify(eventObj);
             timeout = timeout ? timeout : OsfHostEntry.defaultTimeout;
+            var invokeMode = (eventObj && eventObj.commandMode) ? eventObj.commandMode : CommandInvokeMode.Default;
             var e = {
                 args: args,
                 onComplete: onComplete,
@@ -163,7 +172,10 @@ var OfficeExt;
                 queue = [];
                 this.invocationQueue[callbackName] = queue;
             }
-            queue.push(e);
+            if (!(invokeMode == CommandInvokeMode.ExclusiveForCur && queue.length > 0) &&
+                !(invokeMode == CommandInvokeMode.ExclusiveForNew && queue.length > 1)) {
+                queue.push(e);
+            }
             if (queue.length == 1) {
                 this.trySendInvocation(e);
             }
@@ -252,14 +264,13 @@ var OfficeExt;
         AddinCommandsRuntimeManager.invokeAppCommand = function (osfControlId, callbackName, eventObj, onComplete) {
             var entry = AddinCommandsRuntimeManager.getOrCreateOsfHostEntry(osfControlId);
             var appCommandId = AddinCommandsRuntimeManager.getNextAppCommandId();
-            var eventObjStr = JSON.stringify(eventObj);
-            entry.invokeAppCommand(appCommandId, callbackName, eventObjStr, onComplete);
+            entry.invokeAppCommand(appCommandId, callbackName, eventObj, onComplete);
         };
         AddinCommandsRuntimeManager.invocationCompleted = function (osfControlId, args) {
             var entry = AddinCommandsRuntimeManager.getOrCreateOsfHostEntry(osfControlId);
             var appCommandId = args[0];
             var status = args[1];
-            var data = JSON.parse(args[2]);
+            var data = args[2] ? JSON.parse(args[2]) : null;
             entry.invocationCompleted(appCommandId, status, data);
         };
         AddinCommandsRuntimeManager.ensureOsfHostEntry = function (osfControlId, host) {
