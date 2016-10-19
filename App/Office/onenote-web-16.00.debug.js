@@ -1,5 +1,5 @@
 /* OneNote specific JavaScript API library */
-/* Version: 16.0.7508.1000 */
+/* Version: 16.0.7511.3000 */
 /*
 	Copyright (c) Microsoft Corporation.  All rights reserved.
 */
@@ -1224,6 +1224,21 @@ OSF.DDA.MethodDispId={
 	dispidExecuteRichApiRequestMethod: 93,
 	dispidAppCommandInvocationCompletedMethod: 94,
 	dispidCloseContainerMethod: 97,
+	dispidGetSelectedTaskMethod: 110,
+	dispidGetSelectedResourceMethod: 111,
+	dispidGetTaskMethod: 112,
+	dispidGetResourceFieldMethod: 113,
+	dispidGetWSSUrlMethod: 114,
+	dispidGetTaskFieldMethod: 115,
+	dispidGetProjectFieldMethod: 116,
+	dispidGetSelectedViewMethod: 117,
+	dispidGetTaskByIndexMethod: 118,
+	dispidGetResourceByIndexMethod: 119,
+	dispidSetTaskFieldMethod: 120,
+	dispidSetResourceFieldMethod: 121,
+	dispidGetMaxTaskIndexMethod: 122,
+	dispidGetMaxResourceIndexMethod: 123,
+	dispidCreateTaskMethod: 124,
 	dispidAddDataPartMethod: 128,
 	dispidGetDataPartByIdMethod: 129,
 	dispidGetDataPartsByNamespaceMethod: 130,
@@ -1242,22 +1257,7 @@ OSF.DDA.MethodDispId={
 	dispidSetDataNodeTextMethod: 143,
 	dispidMessageParentMethod: 144,
 	dispidSendMessageMethod: 145,
-	dispidMethodMax: 145,
-	dispidGetSelectedTaskMethod: 110,
-	dispidGetSelectedResourceMethod: 111,
-	dispidGetTaskMethod: 112,
-	dispidGetResourceFieldMethod: 113,
-	dispidGetWSSUrlMethod: 114,
-	dispidGetTaskFieldMethod: 115,
-	dispidGetProjectFieldMethod: 116,
-	dispidGetSelectedViewMethod: 117,
-	dispidGetTaskByIndexMethod: 118,
-	dispidGetResourceByIndexMethod: 119,
-	dispidSetTaskFieldMethod: 120,
-	dispidSetResourceFieldMethod: 121,
-	dispidGetMaxTaskIndexMethod: 122,
-	dispidGetMaxResourceIndexMethod: 123,
-	dispidCreateTaskMethod: 124
+	dispidMethodMax: 145
 };
 OSF.DDA.EventDispId={
 	dispidEventMin: 0,
@@ -1396,7 +1396,8 @@ OSF.DDA.ErrorCodeManager=(function () {
 			ooeDialogAlreadyOpened: 12007,
 			ooeEndUserAllow: 12008,
 			ooeEndUserIgnore: 12009,
-			ooeNotUILessDialog: 12010
+			ooeNotUILessDialog: 12010,
+			ooeCrossZone: 12011
 		},
 		initializeErrorMessages: function OSF_DDA_ErrorCodeManager$initializeErrorMessages(stringNS) {
 			_errorMappings[OSF.DDA.ErrorCodeManager.errorCodes.ooeCoercionTypeNotSupported]={ name: stringNS.L_InvalidCoercion, message: stringNS.L_CoercionTypeNotSupported };
@@ -1482,6 +1483,7 @@ OSF.DDA.ErrorCodeManager=(function () {
 			_errorMappings[OSF.DDA.ErrorCodeManager.errorCodes.ooeAppDomains]={ name: stringNS.L_DisplayDialogError, message: stringNS.L_DialogAddressNotTrusted };
 			_errorMappings[OSF.DDA.ErrorCodeManager.errorCodes.ooeRequireHTTPS]={ name: stringNS.L_DisplayDialogError, message: stringNS.L_DialogAddressNotTrusted };
 			_errorMappings[OSF.DDA.ErrorCodeManager.errorCodes.ooeEndUserIgnore]={ name: stringNS.L_DisplayDialogError, message: stringNS.L_UserClickIgnore };
+			_errorMappings[OSF.DDA.ErrorCodeManager.errorCodes.ooeCrossZone]={ name: stringNS.L_DisplayDialogError, message: stringNS.L_UserClickIgnore };
 		}
 	};
 })();
@@ -1651,7 +1653,6 @@ var OfficeExt;
 			function ExcelWebDefaultSetRequirement() {
 				_super.call(this, {
 					"bindingevents": 1.1,
-					"dialogapi": 1.1,
 					"documentevents": 1.1,
 					"matrixbindings": 1.1,
 					"matrixcoercion": 1.1,
@@ -1671,26 +1672,18 @@ var OfficeExt;
 			__extends(WordWebDefaultSetRequirement, _super);
 			function WordWebDefaultSetRequirement() {
 				_super.call(this, {
-					"bindingevents": 1.1,
 					"compressedfile": 1.1,
-					"customxmlparts": 1.1,
-					"dialogapi": 1.1,
 					"documentevents": 1.1,
 					"file": 1.1,
-					"htmlcoercion": 1.1,
 					"imagecoercion": 1.1,
-					"matrixbindings": 1.1,
 					"matrixcoercion": 1.1,
 					"ooxmlcoercion": 1.1,
 					"pdffile": 1.1,
 					"selection": 1.1,
 					"settings": 1.1,
-					"tablebindings": 1.1,
 					"tablecoercion": 1.1,
-					"textbindings": 1.1,
 					"textcoercion": 1.1,
-					"textfile": 1.1,
-					"wordapi": 1.2
+					"textfile": 1.1
 				});
 			}
 			return WordWebDefaultSetRequirement;
@@ -1701,7 +1694,6 @@ var OfficeExt;
 			function PowerpointWebDefaultSetRequirement() {
 				_super.call(this, {
 					"activeview": 1.1,
-					"dialogapi": 1.1,
 					"settings": 1.1
 				});
 			}
@@ -3263,6 +3255,29 @@ var OfficeExt;
 			return (new RegExp(_trustedDomain)).test(OSF.getClientEndPoint()._targetUrl);
 		}
 		WACUtils.isHostTrusted=isHostTrusted;
+		function addHostInfoAsQueryParam(url, hostInfoValue) {
+			if (!url) {
+				return null;
+			}
+			url=url.trim() || '';
+			var questionMark="?";
+			var hostInfo="_host_Info=";
+			var ampHostInfo="&_host_Info=";
+			var fragmentSeparator="#";
+			var urlParts=url.split(fragmentSeparator);
+			var urlWithoutFragment=urlParts.shift();
+			var fragment=urlParts.join(fragmentSeparator);
+			var querySplits=urlWithoutFragment.split(questionMark);
+			var urlWithoutFragmentWithHostInfo;
+			if (querySplits.length > 1) {
+				urlWithoutFragmentWithHostInfo=urlWithoutFragment+ampHostInfo+hostInfoValue;
+			}
+			else if (querySplits.length > 0) {
+				urlWithoutFragmentWithHostInfo=urlWithoutFragment+questionMark+hostInfo+hostInfoValue;
+			}
+			return [urlWithoutFragmentWithHostInfo, fragmentSeparator, fragment].join('');
+		}
+		WACUtils.addHostInfoAsQueryParam=addHostInfoAsQueryParam;
 	})(WACUtils=OfficeExt.WACUtils || (OfficeExt.WACUtils={}));
 })(OfficeExt || (OfficeExt={}));
 var OfficeExt;
@@ -3404,18 +3419,6 @@ var OfficeExt;
 		function MsAjaxDebug() {
 		}
 		MsAjaxDebug.trace=function (text) {
-			if (typeof Debug !=="undefined" && Debug.writeln)
-				Debug.writeln(text);
-			if (window.console && window.console.log)
-				window.console.log(text);
-			if (window.opera && window.opera.postError)
-				window.opera.postError(text);
-			if (window.debugService && window.debugService.trace)
-				window.debugService.trace(text);
-			var a=document.getElementById("TraceConsole");
-			if (a && a.tagName.toUpperCase()==="TEXTAREA") {
-				a.innerHTML+=text+"\n";
-			}
 		};
 		return MsAjaxDebug;
 	})();
@@ -5953,7 +5956,7 @@ var OSFAppTelemetry;
 		}
 		appInfo.message=context.get_hostCustomMessage();
 		appInfo.officeJSVersion=OSF.ConstantNames.FileVersion;
-		appInfo.hostJSVersion="16.0.7508.1000";
+		appInfo.hostJSVersion="16.0.7511.3000";
 		var docUrl=context.get_docUrl();
 		appInfo.docUrl=omexDomainRegex.test(docUrl) ? docUrl : "";
 		var url=location.href;
@@ -8515,6 +8518,7 @@ var OfficeExt;
 			var dialogNotificationPanel=null;
 			var closeDialogKey="action=closeDialog";
 			var showDialogCallback=null;
+			var hasCrossZoneNotification=false;
 			var checkWindowDialogCloseInterval=-1;
 			var hostThemeButtonStyle=null;
 			var commonButtonBorderColor="#ababab";
@@ -8539,6 +8543,7 @@ var OfficeExt;
 			Dialog.setHostThemeButtonStyle=setHostThemeButtonStyle;
 			function handleNewWindowDialog(dialogInfo) {
 				try {
+					hasCrossZoneNotification=false;
 					var allowButtonKeyDownClick=false;
 					var ignoreButtonKeyDownClick=false;
 					var hostInfoObj=OSF._OfficeAppFactory.getInitializationHelper()._hostInfo;
@@ -8557,7 +8562,9 @@ var OfficeExt;
 					document.body.insertBefore(dialogNotificationPanel, document.body.firstChild);
 					function allowButtonClickEventHandler() {
 						showDialog(dialogInfo);
-						dismissDialogNotification();
+						if (!hasCrossZoneNotification) {
+							dismissDialogNotification();
+						}
 					}
 					allowButton.onclick=allowButtonClickEventHandler;
 					function ignoreButtonClickEventHandler() {
@@ -8641,6 +8648,7 @@ var OfficeExt;
 						if (windowInstance !=null && !windowInstance.closed) {
 							windowInstance.close();
 						}
+						window.removeEventListener("message", receiveMessage);
 						window.clearInterval(checkWindowDialogCloseInterval);
 						windowInstance=null;
 						callback(OSF.DDA.ErrorCodeManager.errorCodes.ooeSuccess);
@@ -8688,6 +8696,21 @@ var OfficeExt;
 				dismissDialogNotification();
 			}
 			Dialog.escDismissDialogNotification=escDismissDialogNotification;
+			function receiveMessage(event) {
+				if (event.source==windowInstance) {
+					try {
+						var dialogMessageReceivedArgs={};
+						dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageType]=OSF.DialogMessageType.DialogMessageReceived;
+						dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageContent]=event.data;
+						handler(dialogMessageReceivedArgs);
+					}
+					catch (e) {
+						if (OSF.AppTelemetry) {
+							OSF.AppTelemetry.logAppException("Error happened during receive message handler."+e);
+						}
+					}
+				}
+			}
 			function showDialog(dialogInfo) {
 				var hostInfoObj=OSF._OfficeAppFactory.getInitializationHelper()._hostInfo;
 				var hostInfoVals=[
@@ -8701,6 +8724,7 @@ var OfficeExt;
 				var hostInfo=hostInfoVals.join("|");
 				var appContext=OSF._OfficeAppFactory.getInitializationHelper()._appContext;
 				var windowUrl=dialogInfo[OSF.ShowWindowDialogParameterKeys.Url];
+				windowUrl=OfficeExt.WACUtils.addHostInfoAsQueryParam(windowUrl, hostInfo);
 				var windowName=JSON.parse(window.name);
 				windowName[OSF.WindowNameItemKeys.HostInfo]=hostInfo;
 				windowName[OSF.WindowNameItemKeys.AppContext]=appContext;
@@ -8710,20 +8734,12 @@ var OfficeExt;
 				var top=appContext._clientWindowHeight / 2 - height / 2;
 				var windowSpecs="width="+width+", height="+height+", left="+left+", top="+top+",channelmode=no,directories=no,fullscreen=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,titlebar=yes,toolbar=no";
 				windowInstance=window.open(windowUrl, OfficeExt.WACUtils.serializeObjectToString(windowName), windowSpecs);
-				function receiveMessage(event) {
-					if (event.source==windowInstance) {
-						try {
-							var dialogMessageReceivedArgs={};
-							dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageType]=OSF.DialogMessageType.DialogMessageReceived;
-							dialogMessageReceivedArgs[OSF.DDA.Marshaling.Dialog.DialogMessageReceivedEventKeys.MessageContent]=event.data;
-							handler(dialogMessageReceivedArgs);
-						}
-						catch (e) {
-							if (OSF.AppTelemetry) {
-								OSF.AppTelemetry.logAppException("Error happened during receive message handler."+e);
-							}
-						}
-					}
+				if (windowInstance==null) {
+					OSF.AppTelemetry.logAppCommonMessage("Encountered cross zone issue in displayDialogAsync api.");
+					removeDialogNotificationElement();
+					showCrossZoneNotification();
+					showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeCrossZone);
+					return;
 				}
 				window.addEventListener("message", receiveMessage);
 				function checkWindowClose() {
@@ -8837,6 +8853,45 @@ var OfficeExt;
 					OSF.OUtil.focusToFirstTabbable(list, false);
 				}
 			}
+			function showCrossZoneNotification() {
+				var okButtonKeyDownClick=false;
+				var hostInfoObj=OSF._OfficeAppFactory.getInitializationHelper()._hostInfo;
+				var dialogCssManager=OfficeExt.WacCommonUICssManager.getDialogCssManager(hostInfoObj.hostType);
+				var notificationText="There is a cross zone issue here, please change the browser setting or use other browser";
+				overlayElement=createOverlayElement(dialogCssManager);
+				document.body.insertBefore(overlayElement, document.body.firstChild);
+				dialogNotificationPanel=createNotificationPanel(dialogCssManager, notificationText);
+				var dialogNotificationButtonPanel=createButtonPanel(dialogCssManager);
+				var okButton=createButtonControl(dialogCssManager, "OK");
+				dialogNotificationButtonPanel.appendChild(okButton);
+				dialogNotificationPanel.appendChild(dialogNotificationButtonPanel);
+				document.body.insertBefore(dialogNotificationPanel, document.body.firstChild);
+				hasCrossZoneNotification=true;
+				okButton.onclick=function () {
+					dismissDialogNotification();
+				};
+				okButton.addEventListener("keydown", function (event) {
+					if (event.keyCode==9) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+					else if (event.keyCode==13) {
+						okButtonKeyDownClick=true;
+						event.preventDefault();
+						event.stopPropagation();
+					}
+				}, false);
+				okButton.addEventListener("keyup", function (event) {
+					if (event.keyCode==13 && okButtonKeyDownClick) {
+						okButtonKeyDownClick=false;
+						dismissDialogNotification();
+						event.preventDefault();
+						event.stopPropagation();
+					}
+				}, false);
+				window.focus();
+				okButton.focus();
+			}
 		})(Dialog=AddinNativeAction.Dialog || (AddinNativeAction.Dialog={}));
 	})(AddinNativeAction=OfficeExt.AddinNativeAction || (OfficeExt.AddinNativeAction={}));
 })(OfficeExt || (OfficeExt={}));
@@ -8894,8 +8949,8 @@ OSF.DDA.WAC.Delegate.openDialog=function OSF_DDA_WAC_Delegate$OpenDialog(args) {
 		return;
 	}
 	var dialogUrl=dialogInfo[OSF.ShowWindowDialogParameterKeys.Url].toLowerCase();
-	if (dialogUrl==null || !dialogUrl.startsWith(httpsIdentifyString)) {
-		if (dialogUrl.startsWith(httpIdentifyString)) {
+	if (dialogUrl==null || !(dialogUrl.substr(0, httpsIdentifyString.length)===httpsIdentifyString)) {
+		if (dialogUrl.substr(0, httpIdentifyString.length)===httpIdentifyString) {
 			showDialogCallback(OSF.DDA.ErrorCodeManager.errorCodes.ooeRequireHTTPS);
 		}
 		else {
@@ -10094,11 +10149,15 @@ var OfficeExtension;
 				}
 				else {
 					var errorObj=null;
-					try {
-						errorObj=JSON.parse(responseInfo.body);
-					}
-					catch (e) {
-						OfficeExtension.Utility.log("Error when parse "+responseInfo.body);
+					OfficeExtension.Utility.log("Error Response:"+responseInfo.body);
+					if (!OfficeExtension.Utility.isNullOrEmptyString(responseInfo.body)) {
+						var errorResponseBody=OfficeExtension.Utility.trim(responseInfo.body);
+						try {
+							errorObj=JSON.parse(errorResponseBody);
+						}
+						catch (e) {
+							OfficeExtension.Utility.log("Error when parse "+errorResponseBody);
+						}
 					}
 					var errorMessage;
 					var errorCode;
@@ -11107,7 +11166,7 @@ var OfficeExtension;
 		})(PromiseImpl=_Internal.PromiseImpl || (_Internal.PromiseImpl={}));
 	})(_Internal=OfficeExtension._Internal || (OfficeExtension._Internal={}));
 	if (!OfficeExtension["Promise"]) {
-		if (window.Promise) {
+		if (typeof (window) !=="undefined" && window.Promise) {
 			if (IsEdgeLessThan14()) {
 				_Internal.PromiseImpl.Init();
 			}
@@ -11479,8 +11538,8 @@ var OfficeExtension;
 			}
 		};
 		Utility.log=function (message) {
-			if (Utility._logEnabled && window.console && window.console.log) {
-				window.console.log(message);
+			if (Utility._logEnabled && typeof (console) !=="undefined" && console.log) {
+				console.log(message);
 			}
 		};
 		Utility.load=function (clientObj, option) {
@@ -11522,7 +11581,7 @@ var OfficeExtension;
 		};
 		Utility._getResourceString=function (resourceId, arg) {
 			var ret=resourceId;
-			if (window.Strings && window.Strings.OfficeOM) {
+			if (typeof (window) !=="undefined" && window.Strings && window.Strings.OfficeOM) {
 				var stringName="L_"+resourceId;
 				var stringValue=window.Strings.OfficeOM[stringName];
 				if (stringValue) {
@@ -11591,7 +11650,7 @@ var OfficeExtension;
 		};
 		Utility._createTimeoutPromise=function (timeout) {
 			return new OfficeExtension.Promise(function (resolve, reject) {
-				window.setTimeout(function () {
+				setTimeout(function () {
 					resolve(null);
 				}, timeout);
 			});
@@ -11684,6 +11743,7 @@ var OneNote;
 	var _fixObjectPathIfNecessary=OfficeExtension.Utility.fixObjectPathIfNecessary;
 	var _addActionResultHandler=OfficeExtension.Utility._addActionResultHandler;
 	var _handleNavigationPropertyResults=OfficeExtension.Utility._handleNavigationPropertyResults;
+	var _adjustToDateTime=OfficeExtension.Utility.adjustToDateTime;
 	var Application=(function (_super) {
 		__extends(Application, _super);
 		function Application() {
@@ -11695,6 +11755,14 @@ var OneNote;
 					this.m_notebooks=new OneNote.NotebookCollection(this.context, _createPropertyObjectPath(this.context, this, "Notebooks", true, false));
 				}
 				return this.m_notebooks;
+			},
+			enumerable: true,
+			configurable: true
+		});
+		Object.defineProperty(Application.prototype, "_fastHieararchyEnabled", {
+			get: function () {
+				_throwIfNotLoaded("_fastHieararchyEnabled", this.m__fastHieararchyEnabled, "Application", this._isNull);
+				return this.m__fastHieararchyEnabled;
 			},
 			enumerable: true,
 			configurable: true
@@ -11753,17 +11821,29 @@ var OneNote;
 		Application.prototype._RemoveReference=function (referenceId) {
 			_createMethodAction(this.context, this, "_RemoveReference", 1 , [referenceId]);
 		};
+		Application.prototype._SendDataToLearningTools=function (data) {
+			var action=_createMethodAction(this.context, this, "_SendDataToLearningTools", 0 , [data]);
+			var ret=new OfficeExtension.ClientResult();
+			_addActionResultHandler(this, action, ret);
+			return ret;
+		};
 		Application.prototype._handleResult=function (value) {
 			_super.prototype._handleResult.call(this, value);
 			if (_isNullOrUndefined(value))
 				return;
 			var obj=value;
 			_fixObjectPathIfNecessary(this, obj);
+			if (!_isUndefined(obj["_fastHieararchyEnabled"])) {
+				this.m__fastHieararchyEnabled=obj["_fastHieararchyEnabled"];
+			}
 			_handleNavigationPropertyResults(this, obj, ["notebooks", "Notebooks"]);
 		};
 		Application.prototype.load=function (option) {
 			_load(this, option);
 			return this;
+		};
+		Application.prototype.toJSON=function () {
+			return {};
 		};
 		return Application;
 	})(OfficeExtension.ClientObject);
@@ -11842,6 +11922,19 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		InkAnalysis.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysis.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysis.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
+		};
 		return InkAnalysis;
 	})(OfficeExtension.ClientObject);
 	OneNote.InkAnalysis=InkAnalysis;
@@ -11919,6 +12012,19 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		InkAnalysisParagraph.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisParagraph.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisParagraph.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
+		};
 		return InkAnalysisParagraph;
 	})(OfficeExtension.ClientObject);
 	OneNote.InkAnalysisParagraph=InkAnalysisParagraph;
@@ -11994,6 +12100,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		InkAnalysisParagraphCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisParagraphCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisParagraphCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return InkAnalysisParagraphCollection;
 	})(OfficeExtension.ClientObject);
@@ -12072,6 +12191,19 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		InkAnalysisLine.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisLine.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisLine.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
+		};
 		return InkAnalysisLine;
 	})(OfficeExtension.ClientObject);
 	OneNote.InkAnalysisLine=InkAnalysisLine;
@@ -12147,6 +12279,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		InkAnalysisLineCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisLineCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisLineCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return InkAnalysisLineCollection;
 	})(OfficeExtension.ClientObject);
@@ -12248,6 +12393,22 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		InkAnalysisWord.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisWord.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisWord.prototype.toJSON=function () {
+			return {
+				"id": this.m_id,
+				"languageId": this.m_languageId,
+				"strokePointers": this.m_strokePointers,
+				"wordAlternates": this.m_wordAlternates
+			};
+		};
 		return InkAnalysisWord;
 	})(OfficeExtension.ClientObject);
 	OneNote.InkAnalysisWord=InkAnalysisWord;
@@ -12323,6 +12484,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		InkAnalysisWordCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkAnalysisWordCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkAnalysisWordCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return InkAnalysisWordCollection;
 	})(OfficeExtension.ClientObject);
@@ -12401,6 +12575,19 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		FloatingInk.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		FloatingInk.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		FloatingInk.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
+		};
 		return FloatingInk;
 	})(OfficeExtension.ClientObject);
 	OneNote.FloatingInk=FloatingInk;
@@ -12467,6 +12654,19 @@ var OneNote;
 			if (!_isUndefined(value["Id"])) {
 				this.m_id=value["Id"];
 			}
+		};
+		InkStroke.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkStroke.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkStroke.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
 		};
 		return InkStroke;
 	})(OfficeExtension.ClientObject);
@@ -12543,6 +12743,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		InkStrokeCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkStrokeCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkStrokeCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return InkStrokeCollection;
 	})(OfficeExtension.ClientObject);
@@ -12633,6 +12846,21 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		InkWord.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkWord.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkWord.prototype.toJSON=function () {
+			return {
+				"id": this.m_id,
+				"languageId": this.m_languageId,
+				"wordAlternates": this.m_wordAlternates
+			};
+		};
 		return InkWord;
 	})(OfficeExtension.ClientObject);
 	OneNote.InkWord=InkWord;
@@ -12708,6 +12936,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		InkWordCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		InkWordCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		InkWordCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return InkWordCollection;
 	})(OfficeExtension.ClientObject);
@@ -12814,6 +13055,21 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Notebook.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Notebook.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Notebook.prototype.toJSON=function () {
+			return {
+				"clientUrl": this.m_clientUrl,
+				"id": this.m_id,
+				"name": this.m_name
+			};
+		};
 		return Notebook;
 	})(OfficeExtension.ClientObject);
 	OneNote.Notebook=Notebook;
@@ -12892,6 +13148,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		NotebookCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		NotebookCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		NotebookCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return NotebookCollection;
 	})(OfficeExtension.ClientObject);
@@ -13028,6 +13297,21 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		SectionGroup.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		SectionGroup.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		SectionGroup.prototype.toJSON=function () {
+			return {
+				"clientUrl": this.m_clientUrl,
+				"id": this.m_id,
+				"name": this.m_name
+			};
+		};
 		return SectionGroup;
 	})(OfficeExtension.ClientObject);
 	OneNote.SectionGroup=SectionGroup;
@@ -13106,6 +13390,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		SectionGroupCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		SectionGroupCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		SectionGroupCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return SectionGroupCollection;
 	})(OfficeExtension.ClientObject);
@@ -13238,6 +13535,21 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Section.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Section.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Section.prototype.toJSON=function () {
+			return {
+				"clientUrl": this.m_clientUrl,
+				"id": this.m_id,
+				"name": this.m_name
+			};
+		};
 		return Section;
 	})(OfficeExtension.ClientObject);
 	OneNote.Section=Section;
@@ -13316,6 +13628,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		SectionCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		SectionCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		SectionCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return SectionCollection;
 	})(OfficeExtension.ClientObject);
@@ -13465,6 +13790,23 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Page.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Page.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Page.prototype.toJSON=function () {
+			return {
+				"clientUrl": this.m_clientUrl,
+				"id": this.m_id,
+				"pageLevel": this.m_pageLevel,
+				"title": this.m_title,
+				"webUrl": this.m_webUrl
+			};
+		};
 		return Page;
 	})(OfficeExtension.ClientObject);
 	OneNote.Page=Page;
@@ -13543,6 +13885,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		PageCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		PageCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		PageCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return PageCollection;
 	})(OfficeExtension.ClientObject);
@@ -13685,6 +14040,22 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		PageContent.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		PageContent.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		PageContent.prototype.toJSON=function () {
+			return {
+				"id": this.m_id,
+				"left": this.m_left,
+				"top": this.m_top,
+				"type": this.m_type
+			};
+		};
 		return PageContent;
 	})(OfficeExtension.ClientObject);
 	OneNote.PageContent=PageContent;
@@ -13760,6 +14131,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		PageContentCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		PageContentCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		PageContentCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return PageContentCollection;
 	})(OfficeExtension.ClientObject);
@@ -13849,6 +14233,19 @@ var OneNote;
 			if (!_isUndefined(value["Id"])) {
 				this.m_id=value["Id"];
 			}
+		};
+		Outline.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Outline.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Outline.prototype.toJSON=function () {
+			return {
+				"id": this.m_id
+			};
 		};
 		return Outline;
 	})(OfficeExtension.ClientObject);
@@ -14033,6 +14430,20 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Paragraph.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Paragraph.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Paragraph.prototype.toJSON=function () {
+			return {
+				"id": this.m_id,
+				"type": this.m_type
+			};
+		};
 		return Paragraph;
 	})(OfficeExtension.ClientObject);
 	OneNote.Paragraph=Paragraph;
@@ -14108,6 +14519,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		ParagraphCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		ParagraphCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		ParagraphCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return ParagraphCollection;
 	})(OfficeExtension.ClientObject);
@@ -14203,6 +14627,21 @@ var OneNote;
 			if (!_isUndefined(value["Id"])) {
 				this.m_id=value["Id"];
 			}
+		};
+		RichText.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		RichText.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		RichText.prototype.toJSON=function () {
+			return {
+				"id": this.m_id,
+				"languageId": this.m_languageId,
+				"text": this.m_text
+			};
 		};
 		return RichText;
 	})(OfficeExtension.ClientObject);
@@ -14358,6 +14797,24 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Image.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Image.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Image.prototype.toJSON=function () {
+			return {
+				"description": this.m_description,
+				"height": this.m_height,
+				"hyperlink": this.m_hyperlink,
+				"id": this.m_id,
+				"ocrData": this.m_ocrData,
+				"width": this.m_width
+			};
+		};
 		return Image;
 	})(OfficeExtension.ClientObject);
 	OneNote.Image=Image;
@@ -14493,6 +14950,22 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		Table.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		Table.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		Table.prototype.toJSON=function () {
+			return {
+				"borderVisible": this.m_borderVisible,
+				"columnCount": this.m_columnCount,
+				"id": this.m_id,
+				"rowCount": this.m_rowCount
+			};
+		};
 		return Table;
 	})(OfficeExtension.ClientObject);
 	OneNote.Table=Table;
@@ -14601,6 +15074,21 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		TableRow.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		TableRow.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		TableRow.prototype.toJSON=function () {
+			return {
+				"cellCount": this.m_cellCount,
+				"id": this.m_id,
+				"rowIndex": this.m_rowIndex
+			};
+		};
 		return TableRow;
 	})(OfficeExtension.ClientObject);
 	OneNote.TableRow=TableRow;
@@ -14676,6 +15164,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		TableRowCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		TableRowCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		TableRowCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return TableRowCollection;
 	})(OfficeExtension.ClientObject);
@@ -14806,6 +15307,22 @@ var OneNote;
 				this.m_id=value["Id"];
 			}
 		};
+		TableCell.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		TableCell.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		TableCell.prototype.toJSON=function () {
+			return {
+				"cellIndex": this.m_cellIndex,
+				"id": this.m_id,
+				"rowIndex": this.m_rowIndex,
+				"shadingColor": this.m_shadingColor
+			};
+		};
 		return TableCell;
 	})(OfficeExtension.ClientObject);
 	OneNote.TableCell=TableCell;
@@ -14881,6 +15398,19 @@ var OneNote;
 			if (!_isUndefined(value["_ReferenceId"])) {
 				this.m__ReferenceId=value["_ReferenceId"];
 			}
+		};
+		TableCellCollection.prototype.track=function () {
+			this.context.trackedObjects.add(this);
+			return this;
+		};
+		TableCellCollection.prototype.untrack=function () {
+			this.context.trackedObjects.remove(this);
+			return this;
+		};
+		TableCellCollection.prototype.toJSON=function () {
+			return {
+				"count": this.m_count
+			};
 		};
 		return TableCellCollection;
 	})(OfficeExtension.ClientObject);
