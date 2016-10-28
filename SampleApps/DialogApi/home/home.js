@@ -34,7 +34,7 @@
 			{
 				width: 80,
 				height: 80,
-				displayInIframe: true
+				displayInIframe: false
 			},
 			function (dialogProxy) {
 				dialogHandler = dialogProxy.value;
