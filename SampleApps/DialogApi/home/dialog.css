@@ -1,0 +1,29 @@
+html {
+	margin: 0;
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#content {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	bottom: 50px;
+	right: 10px;
+	background-color: #eee;
+}
+
+button {
+	font-size: 18px;
+	height: 40px;
+	min-width: 150px;
+}
+
+#nav {
+	position: absolute;
+	left: 50%;
+	margin-left: -200px;
+	bottom: 0px;
+}
