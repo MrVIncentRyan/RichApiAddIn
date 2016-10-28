@@ -30,7 +30,7 @@
 	// Launches the dialog
 	function openDialog() {
 		Office.context.ui.displayDialogAsync(
-			'https://localhost:8443/app/home/dialog.html',
+			'https://richapiaddin.azurewebsites.net/SampleApps/DialogApi/home/dialog.html',
 			{
 				width: 80,
 				height: 80,

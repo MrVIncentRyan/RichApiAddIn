@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp
+    xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+    xsi:type="TaskPaneApp">
+    <Id>55d3f1fa-260f-4aa7-8e76-b8149b92453f</Id>
+    <Version>1.0.0.0</Version>
+    <ProviderName>Microsoft</ProviderName>
+    <DefaultLocale>en-US</DefaultLocale>
+    <DisplayName DefaultValue="Class Notebook"/>
+    <Description DefaultValue="Class Notebook"/>
+    <Hosts>
+        <Host Name="Notebook"/>
+        <Host Name="Document"/>
+    </Hosts>
+    <Permissions>ReadWriteDocument</Permissions>
+    <AppDomains>
+      <AppDomain>https://richapiaddin.azurewebsites.net/SampleApps/DialogApi/home/dialog.html</AppDomain>
+    </AppDomains>    
+    <DefaultSettings>
+        <SourceLocation DefaultValue="https://richapiaddin.azurewebsites.net/SampleApps/DialogApi/home/home.html"/>
+    </DefaultSettings>
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+        <Description resid="residToolTip" />
+        <Hosts>
+            <Host xsi:type="Notebook">
+                <DesktopFormFactor>
+                    <FunctionFile resid="residDesktopFuncUrl" />
+                    <ExtensionPoint xsi:type="PrimaryCommandSurface">
+                        <CustomTab id="External Data56">
+                            <Group id="Group1Id">
+                                <Label resid="residTaskPaneGroupLabel" />
+                                <Icon>
+                                    <bt:Image size="16" resid="icon1_16x16" />
+                                    <bt:Image size="32" resid="icon1_32x32" />
+                                    <bt:Image size="80" resid="icon1_80x80" />
+                                </Icon>
+                                <Control xsi:type="Button" id="Button1id">
+                                    <Label resid="residLabel1" />
+                                    <Tooltip resid="residToolTip" />
+                                    <Supertip>
+                                        <Title resid="NoTitle" />
+                                        <Description resid="residToolTip" />
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="icon1_16x16" />
+                                        <bt:Image size="32" resid="icon1_32x32" />
+                                        <bt:Image size="80" resid="icon1_80x80" />
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <SourceLocation resid="ContentOptimizerTaskPaneUrl" />
+                                    </Action>
+                                </Control>
+                            </Group>
+                            <Label resid="residTabLabel" />
+                        </CustomTab>
+                    </ExtensionPoint>
+                </DesktopFormFactor>
+            </Host>
+            <Host xsi:type="Document">
+                <DesktopFormFactor>
+                    <FunctionFile resid="residDesktopFuncUrl" />
+                    <ExtensionPoint xsi:type="PrimaryCommandSurface">
+                        <CustomTab id="External Data56">
+                            <Group id="Group1Id">
+                                <Label resid="residTaskPaneGroupLabel" />
+                                <Icon>
+                                    <bt:Image size="16" resid="icon1_16x16" />
+                                    <bt:Image size="32" resid="icon1_32x32" />
+                                    <bt:Image size="80" resid="icon1_80x80" />
+                                </Icon>
+                                <Control xsi:type="Button" id="Button1id">
+                                    <Label resid="residLabel1" />
+                                    <Tooltip resid="residToolTip" />
+                                    <Supertip>
+                                        <Title resid="NoTitle" />
+                                        <Description resid="residToolTip" />
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="icon1_16x16" />
+                                        <bt:Image size="32" resid="icon1_32x32" />
+                                        <bt:Image size="80" resid="icon1_80x80" />
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <SourceLocation resid="ContentOptimizerTaskPaneUrl" />
+                                    </Action>
+                                </Control>
+                            </Group>
+                            <Label resid="residTabLabel" />
+                        </CustomTab>
+                    </ExtensionPoint>
+                </DesktopFormFactor>
+            </Host>
+        </Hosts>
+        <Resources>
+            <bt:Images>
+                <bt:Image id="icon1_16x16" DefaultValue="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png">
+                    <bt:Override Locale="ja-jp" Value="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png" />
+                </bt:Image>
+                <bt:Image id="icon1_32x32" DefaultValue="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png">
+                    <bt:Override Locale="ja-jp" Value="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png" />
+                </bt:Image>
+                <bt:Image id="icon1_80x80" DefaultValue="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png">
+                    <bt:Override Locale="ja-jp" Value="http://richapiaddin.azurewebsites.net/Images/onestorm-ribbon-icon.png" />
+                </bt:Image>
+            </bt:Images>
+            <bt:Urls>
+                <bt:Url id="residDesktopFuncUrl" DefaultValue="https://richapiaddin.azurewebsites.net/App/RichApiAddInFunctions.html" />
+                <bt:Url id="ContentOptimizerTaskPaneUrl" DefaultValue="https://richapiaddin.azurewebsites.net/SampleApps/DialogApi/home/home.html" />
+            </bt:Urls>
+            <bt:ShortStrings>
+                <bt:String id="residTaskPaneGroupLabel" DefaultValue="OneStorm" />
+                <bt:String id="residLabel1" DefaultValue="OneStorm" />
+                <bt:String id="NoTitle" DefaultValue="" />
+                <bt:String id="residTabLabel" DefaultValue="OneStorm" />
+            </bt:ShortStrings>
+            <bt:LongStrings>
+                <bt:String id="residToolTip" DefaultValue="Rich Api Tooltip">
+                    <bt:Override Locale="ja-jp" Value="JA-JP Rich Api Tooltip" />
+                </bt:String>
+            </bt:LongStrings>
+        </Resources>
+    </VersionOverrides>
+
+</OfficeApp>
